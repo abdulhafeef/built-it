@@ -73,3 +73,15 @@ p {
     font-weight: bold;
     min-height: 30px;
 }
+
+
+#game-screen #try-again-button {
+    display: none;
+    margin-top: 25px;
+    padding: 14px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
