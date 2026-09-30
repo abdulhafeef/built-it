@@ -8,6 +8,9 @@ const scoreDisplay = document.getElementById("score");
 const questionNumber = document.getElementById("question-number");
 const questionText = document.getElementById("question-text");
 const feedback = document.getElementById("feedback");
+const buildProgress = document.getElementById("build-progress");
+
+const housePieces = document.querySelectorAll(".house-piece");
 
 const correctAnswer = document.getElementById("correct-answer");
 const wrongAnswer1 = document.getElementById("wrong-answer-1");
@@ -26,6 +29,7 @@ let score = 0;
 let lives = 3;
 let answered = false;
 let currentQuestion = 0;
+let buildingProgress = 0;
 
 
 const questions = [
@@ -51,6 +55,30 @@ const questions = [
         correct: 1
     }
 ];
+
+
+function updateBuilding() {
+    housePieces.forEach(function (piece, index) {
+        piece.classList.toggle("built", index < buildingProgress);
+    });
+
+    buildProgress.textContent =
+        "House progress: " + buildingProgress + " / " + questions.length;
+}
+
+
+function resetBuilding() {
+    buildingProgress = 0;
+    updateBuilding();
+}
+
+
+function buildNextPiece() {
+    if (buildingProgress < housePieces.length) {
+        buildingProgress = buildingProgress + 1;
+        updateBuilding();
+    }
+}
 
 
 function loadQuestion() {
@@ -85,7 +113,8 @@ function handleAnswer(selectedIndex) {
         score = score + 10;
         scoreDisplay.textContent = "Score: " + score;
 
-        feedback.textContent = "Correct! 🎉";
+        buildNextPiece();
+        feedback.textContent = "Correct! 🎉 House piece built! 🧱";
 
     } else {
 
@@ -110,7 +139,7 @@ function handleAnswer(selectedIndex) {
 
         } else {
 
-            feedback.textContent = "Wrong answer ❌";
+            feedback.textContent = "Wrong answer ❌ No house piece built.";
         }
     }
 
@@ -127,7 +156,7 @@ function handleAnswer(selectedIndex) {
 
             questionNumber.textContent = "🏆 COMPLETE!";
             questionText.textContent =
-                "You completed all the questions!";
+                "You completed all the questions and built the house!";
 
             feedback.textContent =
                 "Final Score: " + score;
@@ -168,6 +197,7 @@ startButton.addEventListener("click", function () {
 
     tryAgainButton.style.display = "none";
 
+    resetBuilding();
     loadQuestion();
 
 });
@@ -185,6 +215,10 @@ tryAgainButton.addEventListener("click", function () {
 
     tryAgainButton.style.display = "none";
 
+    resetBuilding();
     loadQuestion();
 
 });
+
+
+resetBuilding();

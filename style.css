@@ -15,7 +15,15 @@ p {
     font-size: 20px;
 }
 
-
+.game-container {
+    width: 90%;
+    max-width: 700px;
+    margin: 80px auto;
+    padding: 40px;
+    background: #1e293b;
+    border-radius: 20px;
+    box-sizing: border-box;
+}
 
 #start-button {
     margin-top: 30px;
@@ -27,11 +35,20 @@ p {
     cursor: pointer;
 }
 
-
 #game-screen {
     display: none;
 }
 
+#game-screen h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+#game-screen > p:not(#score) {
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
 
 #game-screen button {
     display: block;
@@ -47,25 +64,129 @@ p {
     border-radius: 12px;
     cursor: pointer;
     transition: 0.2s;
+    box-sizing: border-box;
 }
 
-#game-screen button:hover {
+#game-screen button:hover:not(:disabled) {
     background: #475569;
     transform: translateY(-2px);
 }
 
-
-#game-screen h2 {
-    font-size: 28px;
-    margin-bottom: 20px;
+#game-screen button:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
 }
 
-#game-screen > p:not(#score) {
-    font-size: 24px;
-    font-weight: 500;
-    margin-bottom: 30px;
+#house-builder {
+    margin: 25px auto 35px;
+    padding: 18px 12px 14px;
+    max-width: 560px;
+    background: #0f172a;
+    border: 2px solid #334155;
+    border-radius: 16px;
+    box-sizing: border-box;
 }
 
+.builder-title {
+    margin: 0 0 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.house {
+    position: relative;
+    width: min(90%, 360px);
+    height: 230px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 12px;
+    background: linear-gradient(#7dd3fc 0 68%, #86efac 68% 100%);
+}
+
+.house::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 10px;
+    background: #65a30d;
+}
+
+.house-piece {
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    transform: translateY(12px) scale(0.96);
+}
+
+.house-piece.built {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.foundation {
+    left: 18%;
+    bottom: 24px;
+    width: 64%;
+    height: 18px;
+    background: #78716c;
+    border-radius: 3px;
+}
+
+.walls {
+    left: 24%;
+    bottom: 42px;
+    width: 52%;
+    height: 105px;
+    background: #f8fafc;
+    border: 5px solid #cbd5e1;
+    box-sizing: border-box;
+}
+
+.door {
+    left: 44%;
+    bottom: 42px;
+    width: 14%;
+    height: 62px;
+    background: #92400e;
+    border-radius: 5px 5px 0 0;
+}
+
+.window {
+    bottom: 92px;
+    width: 34px;
+    height: 34px;
+    background: #38bdf8;
+    border: 5px solid #64748b;
+    box-sizing: border-box;
+}
+
+.window-left {
+    left: 29%;
+}
+
+.window-right {
+    right: 29%;
+}
+
+.roof {
+    left: 19%;
+    bottom: 142px;
+    width: 0;
+    height: 0;
+    border-left: 112px solid transparent;
+    border-right: 112px solid transparent;
+    border-bottom: 70px solid #b91c1c;
+}
+
+#build-progress {
+    margin: 10px 0 0;
+    font-size: 16px;
+    color: #cbd5e1;
+}
 
 #feedback {
     margin-top: 25px;
@@ -73,7 +194,6 @@ p {
     font-weight: bold;
     min-height: 30px;
 }
-
 
 #game-screen #try-again-button {
     display: none;
@@ -84,4 +204,34 @@ p {
     border: none;
     border-radius: 10px;
     cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .game-container {
+        width: 94%;
+        margin: 30px auto;
+        padding: 24px 16px;
+    }
+
+    h1 {
+        margin-top: 20px;
+        font-size: 38px;
+    }
+
+    #game-screen button {
+        width: 100%;
+        font-size: 18px;
+        padding: 16px;
+    }
+
+    .house {
+        height: 210px;
+    }
+
+    .roof {
+        left: 16%;
+        border-left-width: 92px;
+        border-right-width: 92px;
+        border-bottom-width: 60px;
+    }
 }

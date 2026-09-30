@@ -19,20 +19,34 @@
 
         <button id="start-button">START GAME</button>
 
-<div id="game-screen">
-    <p id="score">Score: 0</p>
-    <p id="lives">Lives: ❤️ ❤️ ❤️</p>
-    <h2 id="question-number">Question 1</h2>
-    <p id="question-text">What is the correct way to print something in Python?</p>
+        <div id="game-screen">
+            <p id="score">Score: 0</p>
+            <p id="lives">Lives: ❤️ ❤️ ❤️</p>
 
-    <button id="correct-answer">print("Hello")</button>
-    <button id="wrong-answer-1">echo "Hello"</button>
-    <button id="wrong-answer-2">printf("Hello")</button>
-    <button id="wrong-answer-3">console.log("Hello")</button>
+            <div id="house-builder" aria-label="House building progress">
+                <p class="builder-title">🏠 BUILD YOUR HOUSE</p>
+                <div id="house" class="house">
+                    <div class="house-piece foundation" data-piece="foundation"></div>
+                    <div class="house-piece walls" data-piece="walls"></div>
+                    <div class="house-piece door" data-piece="door"></div>
+                    <div class="house-piece window window-left" data-piece="window-left"></div>
+                    <div class="house-piece window window-right" data-piece="window-right"></div>
+                    <div class="house-piece roof" data-piece="roof"></div>
+                </div>
+                <p id="build-progress">House progress: 0 / 2</p>
+            </div>
 
-    <div id="feedback"></div>
-    <button id="try-again-button">TRY AGAIN</button>
-</div>
+            <h2 id="question-number">Question 1</h2>
+            <p id="question-text">What is the correct way to print something in Python?</p>
+
+            <button id="correct-answer">print("Hello")</button>
+            <button id="wrong-answer-1">echo "Hello"</button>
+            <button id="wrong-answer-2">printf("Hello")</button>
+            <button id="wrong-answer-3">console.log("Hello")</button>
+
+            <div id="feedback"></div>
+            <button id="try-again-button">TRY AGAIN</button>
+        </div>
 
     </div>
 
