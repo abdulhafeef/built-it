@@ -1,22 +1,26 @@
 /* ==================================================
-   BUILD IT! — V2 Design System & Game Styles
-   Vanilla CSS — Clean, Modern, Game-like Aesthetics
+   BUILD IT! — V3 Design System & Game Styles
+   Vanilla CSS — Modern, Sleek, Game-Grade Aesthetics
    ================================================== */
 
 :root {
     --bg-dark: #090d16;
-    --card-bg: rgba(30, 41, 59, 0.92);
+    --card-bg: rgba(22, 30, 49, 0.94);
+    --card-bg-subtle: rgba(15, 23, 42, 0.7);
     --border-color: rgba(148, 163, 184, 0.18);
+    --border-focus: rgba(56, 189, 248, 0.5);
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
+    --text-muted: #64748b;
     --accent-blue: #38bdf8;
     --accent-indigo: #6366f1;
     --accent-emerald: #10b981;
     --accent-amber: #f59e0b;
     --accent-rose: #f43f5e;
+    --accent-purple: #c084fc;
     --btn-bg: #1e293b;
     --btn-border: #334155;
-    --btn-hover: #334155;
+    --btn-hover: #293548;
 }
 
 * {
@@ -27,28 +31,29 @@ body {
     margin: 0;
     min-height: 100vh;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background: radial-gradient(circle at 50% 10%, #1e1b4b 0%, #0f172a 45%, #090d16 100%);
+    background: radial-gradient(circle at 50% 8%, #1e1b4b 0%, #0f172a 45%, #090d16 100%);
     color: var(--text-primary);
     text-align: center;
-    padding: 24px 12px;
+    padding: 20px 12px 32px;
     display: flex;
     justify-content: center;
     align-items: flex-start;
+    overflow-x: hidden;
 }
 
 /* ==================================================
-   MAIN CONTAINER
+   MAIN GAME CONTAINER
    ================================================== */
 
 .game-container {
     width: 100%;
-    max-width: 720px;
-    margin: 16px auto;
-    padding: 32px 28px;
+    max-width: 740px;
+    margin: 12px auto;
+    padding: 28px 24px;
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 24px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7),
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75),
                 0 0 0 1px rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(16px);
 }
@@ -61,7 +66,7 @@ body {
     display: inline-block;
     padding: 5px 14px;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: 1.5px;
     color: #38bdf8;
     background: rgba(56, 189, 248, 0.12);
@@ -72,19 +77,20 @@ body {
 }
 
 .game-title {
-    margin: 0 0 8px;
-    font-size: 46px;
+    margin: 0 0 6px;
+    font-size: 48px;
     font-weight: 900;
     letter-spacing: -0.5px;
     background: linear-gradient(135deg, #ffffff 20%, #38bdf8 60%, #818cf8 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 4px 20px rgba(56, 189, 248, 0.25);
+    text-shadow: 0 4px 20px rgba(56, 189, 248, 0.3);
 }
 
 .tagline {
-    margin: 0 0 16px;
-    font-size: 18px;
+    margin: 0 0 14px;
+    font-size: 17px;
     font-weight: 600;
     color: #cbd5e1;
     letter-spacing: 0.5px;
@@ -92,32 +98,32 @@ body {
 
 .game-desc {
     margin: 0 auto 24px;
-    max-width: 540px;
-    font-size: 15px;
+    max-width: 560px;
+    font-size: 14.5px;
     line-height: 1.6;
     color: var(--text-secondary);
 }
 
-/* Level Preview Cards on Start Screen */
+/* Level Preview Grid */
 .level-preview-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
-    margin: 20px 0 24px;
+    margin: 18px 0 22px;
 }
 
 .preview-card {
-    background: rgba(15, 23, 42, 0.6);
+    background: rgba(15, 23, 42, 0.65);
     border: 1px solid rgba(148, 163, 184, 0.15);
     border-radius: 14px;
-    padding: 14px 10px;
+    padding: 16px 12px;
     text-align: center;
     transition: transform 0.2s, border-color 0.2s;
 }
 
 .preview-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(99, 102, 241, 0.4);
+    border-color: rgba(99, 102, 241, 0.5);
 }
 
 .preview-badge {
@@ -150,7 +156,7 @@ body {
 
 .preview-card h3 {
     margin: 4px 0 4px;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
     color: #f1f5f9;
 }
@@ -168,14 +174,14 @@ body {
     flex-wrap: wrap;
     justify-content: center;
     gap: 8px;
-    margin-bottom: 28px;
+    margin-bottom: 26px;
 }
 
 .rule-chip {
     font-size: 12px;
     font-weight: 600;
     color: #e2e8f0;
-    background: rgba(51, 65, 85, 0.6);
+    background: rgba(51, 65, 85, 0.55);
     border: 1px solid rgba(100, 116, 139, 0.4);
     padding: 6px 12px;
     border-radius: 8px;
@@ -187,9 +193,10 @@ body {
 
 .btn-action {
     display: inline-block;
-    padding: 15px 36px;
-    font-size: 17px;
-    font-weight: 700;
+    padding: 14px 34px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 800;
     letter-spacing: 0.5px;
     color: #ffffff;
     background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
@@ -203,7 +210,7 @@ body {
 .btn-action:hover {
     background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);
     transform: translateY(-2px);
-    box-shadow: 0 6px 22px rgba(37, 99, 235, 0.6);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
 }
 
 .btn-action:active {
@@ -211,16 +218,105 @@ body {
 }
 
 /* ==================================================
-   GAME SCREEN & HEADER
+   BUILD WORLD PROGRESSION BAR
    ================================================== */
 
-#game-screen {
-    width: 100%;
+.build-world-bar {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 10px 14px;
+    margin-bottom: 18px;
 }
 
+.world-title-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #64748b;
+    text-align: left;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.world-items-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.world-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 10px;
+    transition: all 0.25s ease;
+    text-align: left;
+}
+
+.world-item.active {
+    background: rgba(56, 189, 248, 0.14);
+    border-color: rgba(56, 189, 248, 0.45);
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
+}
+
+.world-item.completed {
+    background: rgba(16, 185, 129, 0.12);
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.world-item.locked,
+.world-item.future {
+    opacity: 0.65;
+    background: rgba(15, 23, 42, 0.35);
+    border-color: rgba(71, 85, 105, 0.25);
+}
+
+.world-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.world-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.world-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: #f1f5f9;
+    white-space: nowrap;
+}
+
+.world-status {
+    font-size: 11px;
+    font-weight: 600;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+
+.world-item.active .world-status {
+    color: #38bdf8;
+    font-weight: 700;
+}
+
+.world-item.completed .world-status {
+    color: #34d399;
+    font-weight: 700;
+}
+
+/* ==================================================
+   GAME HEADER & STATS BAR
+   ================================================== */
+
 .game-header {
-    margin-bottom: 20px;
-    padding-bottom: 16px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -228,7 +324,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .level-indicator {
@@ -272,15 +368,15 @@ body {
 
 .stats-bar {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
 }
 
 .stat-item {
-    background: rgba(15, 23, 42, 0.5);
+    background: rgba(15, 23, 42, 0.55);
     border: 1px solid rgba(148, 163, 184, 0.15);
     border-radius: 12px;
-    padding: 8px 12px;
+    padding: 8px 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -289,31 +385,32 @@ body {
 
 .stat-label {
     font-size: 10px;
-    font-weight: 700;
+    font-weight: 800;
     letter-spacing: 1px;
     color: #64748b;
     margin-bottom: 2px;
 }
 
 .stat-value {
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 800;
     color: #f1f5f9;
 }
 
 /* Hint Button in Stats Bar */
 .hint-button {
     font-family: inherit;
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 700;
     color: #fef08a;
     background: rgba(245, 158, 11, 0.16);
     border: 1px solid rgba(245, 158, 11, 0.4);
-    padding: 6px 14px;
+    padding: 6px 12px;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s;
     outline: none;
+    white-space: nowrap;
 }
 
 .hint-button:hover:not(:disabled) {
@@ -332,12 +429,26 @@ body {
     opacity: 0.75;
 }
 
+/* Streak Milestone Banner */
+.streak-banner {
+    background: linear-gradient(90deg, #f59e0b 0%, #ef4444 100%);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+    animation: bounceIn 0.35s ease-out;
+}
+
 /* ==================================================
-   HOUSE BUILDER SCENE
+   BUILDER STAGE & PROGRESS
    ================================================== */
 
-#house-builder {
-    margin: 0 auto 24px;
+.builder-stage {
+    margin: 0 auto 20px;
     padding: 16px;
     background: rgba(15, 23, 42, 0.65);
     border: 1px solid var(--btn-border);
@@ -349,7 +460,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     padding: 0 4px;
 }
 
@@ -363,19 +474,44 @@ body {
 
 .build-progress {
     margin: 0;
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 700;
     color: #38bdf8;
-    background: rgba(56, 189, 248, 0.1);
+    background: rgba(56, 189, 248, 0.12);
     padding: 3px 10px;
     border-radius: 6px;
     border: 1px solid rgba(56, 189, 248, 0.25);
 }
 
-.house {
+.progress-bar-track {
+    width: 100%;
+    height: 6px;
+    background: rgba(30, 41, 59, 0.8);
+    border-radius: 9999px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #38bdf8 0%, #6366f1 50%, #10b981 100%);
+    border-radius: 9999px;
+    transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.build-scene {
+    width: 100%;
+}
+
+/* ==================================================
+   SCENE 1: 🏠 HOUSE (10 Distinct Pieces)
+   ================================================== */
+
+.house-canvas {
     position: relative;
     width: min(100%, 360px);
-    height: 230px;
+    height: 220px;
     margin: 0 auto;
     overflow: hidden;
     border-radius: 14px;
@@ -385,7 +521,7 @@ body {
     border: 2px solid rgba(148, 163, 184, 0.2);
 }
 
-.house::after {
+.house-canvas::after {
     content: "";
     position: absolute;
     left: 0;
@@ -395,13 +531,12 @@ body {
     background: #16a34a;
 }
 
-/* House Pieces Base Styling */
 .house-piece {
     position: absolute;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-    transform: translateY(12px) scale(0.94);
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: translateY(12px) scale(0.92);
 }
 
 .house-piece.built {
@@ -410,215 +545,918 @@ body {
     transform: translateY(0) scale(1);
 }
 
-/* 1. Foundation */
-.foundation {
-    left: 19%;
-    bottom: 24px;
-    width: 62%;
-    height: 16px;
-    background: #64748b;
-    border: 2px solid #475569;
-    border-radius: 3px;
+/* 1. Foundation Base */
+.foundation-base {
+    left: 17%;
+    bottom: 16px;
+    width: 66%;
+    height: 12px;
+    background: #475569;
+    border: 2px solid #334155;
+    border-radius: 2px;
     z-index: 2;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* 2. Main Walls */
-.walls {
+/* 2. Foundation Slab */
+.foundation-slab {
+    left: 20%;
+    bottom: 28px;
+    width: 60%;
+    height: 12px;
+    background: #64748b;
+    border: 2px solid #475569;
+    border-radius: 2px;
+    z-index: 3;
+}
+
+/* 3. Walls Lower */
+.walls-lower {
     left: 24%;
     bottom: 40px;
     width: 52%;
-    height: 104px;
-    background: #fffbeb;
-    border: 4px solid #cbd5e1;
-    box-sizing: border-box;
-    z-index: 3;
-    box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.04);
+    height: 54px;
+    background: #fef3c7;
+    border: 3px solid #d97706;
+    background-image: repeating-linear-gradient(0deg, #d97706, #d97706 1px, transparent 1px, transparent 18px);
+    z-index: 4;
 }
 
-/* 3. Door */
-.door {
+/* 4. Walls Upper */
+.walls-upper {
+    left: 24%;
+    bottom: 94px;
+    width: 52%;
+    height: 50px;
+    background: #fffbeb;
+    border: 3px solid #cbd5e1;
+    border-bottom: none;
+    z-index: 4;
+}
+
+/* 5. Door */
+.house-piece.door {
     left: 44%;
     bottom: 40px;
     width: 13%;
-    height: 56px;
+    height: 50px;
     background: #78350f;
     border: 2px solid #451a03;
-    border-radius: 5px 5px 0 0;
-    z-index: 4;
+    border-radius: 4px 4px 0 0;
+    z-index: 5;
 }
 
-/* 4. Door Knob */
-.door-knob {
-    left: 53.5%;
-    bottom: 64px;
+.house-piece.door::after {
+    content: "";
+    position: absolute;
+    right: 4px;
+    top: 50%;
     width: 5px;
     height: 5px;
     background: #fde047;
-    border: 1px solid #b45309;
     border-radius: 50%;
-    z-index: 5;
     box-shadow: 0 0 3px #fde047;
 }
 
-/* 5 & 6. Windows */
-.window {
-    bottom: 82px;
+/* 6. Window Left */
+.window-left {
+    left: 28%;
+    bottom: 80px;
     width: 32px;
     height: 32px;
     background-color: #38bdf8;
-    border: 3px solid #cbd5e1;
+    border: 3px solid #64748b;
     border-radius: 4px;
-    box-sizing: border-box;
-    z-index: 4;
-    background-image: linear-gradient(#cbd5e1, #cbd5e1), linear-gradient(#cbd5e1, #cbd5e1);
+    z-index: 5;
+    background-image: linear-gradient(#64748b, #64748b), linear-gradient(#64748b, #64748b);
     background-size: 100% 2px, 2px 100%;
     background-position: center;
     background-repeat: no-repeat;
     box-shadow: inset 1px 1px 4px rgba(255, 255, 255, 0.6);
 }
 
-.window-left {
-    left: 28%;
-}
-
+/* 7. Window Right */
 .window-right {
     right: 28%;
+    bottom: 80px;
+    width: 32px;
+    height: 32px;
+    background-color: #38bdf8;
+    border: 3px solid #64748b;
+    border-radius: 4px;
+    z-index: 5;
+    background-image: linear-gradient(#64748b, #64748b), linear-gradient(#64748b, #64748b);
+    background-size: 100% 2px, 2px 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: inset 1px 1px 4px rgba(255, 255, 255, 0.6);
 }
 
-/* 7. Triangular Roof */
-.roof {
+/* 8. Roof Main */
+.roof-main {
     left: 17%;
     bottom: 144px;
     width: 0;
     height: 0;
     border-left: 118px solid transparent;
     border-right: 118px solid transparent;
-    border-bottom: 70px solid #dc2626;
+    border-bottom: 64px solid #dc2626;
     z-index: 6;
     filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.25));
 }
 
-/* 8. Roof Eaves Trim */
+/* 9. Roof Trim & Attic Window */
 .roof-trim {
     left: 18%;
     bottom: 140px;
     width: 64%;
     height: 6px;
-    background: #b91c1c;
+    background: #991b1b;
     border-radius: 3px;
     z-index: 7;
 }
 
-/* 9. Attic Window in Roof Gable */
-.attic-window {
-    left: calc(50% - 13px);
-    bottom: 154px;
-    width: 26px;
-    height: 26px;
-    background-color: #e0f2fe;
-    border: 3px solid #fef08a;
+.roof-trim::after {
+    content: "";
+    position: absolute;
+    left: calc(50% - 11px);
+    bottom: 10px;
+    width: 22px;
+    height: 22px;
+    background: #e0f2fe;
+    border: 3px solid #fde047;
     border-radius: 50%;
-    z-index: 8;
-    box-sizing: border-box;
-    background-image: linear-gradient(#fef08a, #fef08a), linear-gradient(#fef08a, #fef08a);
-    background-size: 100% 2px, 2px 100%;
-    background-position: center;
-    background-repeat: no-repeat;
     box-shadow: 0 0 5px rgba(254, 240, 138, 0.5);
 }
 
-/* 10. Brick Chimney */
-.chimney {
-    right: 28%;
-    bottom: 170px;
-    width: 20px;
-    height: 40px;
-    background: #991b1b;
-    border: 2px solid #7f1d1d;
-    border-radius: 2px 2px 0 0;
-    z-index: 5;
+/* 10. Surroundings (Chimney, Smoke, Garden, Fence) */
+.surroundings {
+    inset: 0;
+    z-index: 8;
+    pointer-events: none;
 }
 
-/* 11. Chimney Smoke */
-.smoke {
-    right: 28%;
-    bottom: 214px;
-    width: 14px;
-    height: 14px;
-    background: rgba(255, 255, 255, 0.85);
-    border-radius: 50%;
-    z-index: 9;
-    box-shadow: -8px -6px 0 2px rgba(255, 255, 255, 0.7),
-                -16px -12px 0 4px rgba(255, 255, 255, 0.45);
+.surroundings::before {
+    /* Brick chimney + smoke */
+    content: "💨";
+    position: absolute;
+    right: 27%;
+    bottom: 185px;
+    font-size: 16px;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
 }
 
-/* 12. Door Steps */
-.door-steps {
-    left: 41%;
-    bottom: 16px;
-    width: 18%;
-    height: 8px;
-    background: #94a3b8;
-    border: 1px solid #475569;
-    border-radius: 2px;
+.surroundings::after {
+    /* Garden flowers & picket fence */
+    content: "🌷 🌸 🏡 🌼 🌷";
+    position: absolute;
+    left: 12%;
+    bottom: 8px;
+    font-size: 14px;
+    letter-spacing: 12px;
+}
+
+/* ==================================================
+   SCENE 2: 🚗 CAR (10 Distinct Pieces)
+   ================================================== */
+
+.car-canvas {
+    position: relative;
+    width: min(100%, 360px);
+    height: 220px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 40%, #312e81 65%, #334155 65%, #1e293b 100%);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4),
+                0 6px 16px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(148, 163, 184, 0.2);
+}
+
+.car-canvas::after {
+    /* Asphalt road with dash lines */
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 22px;
+    height: 4px;
+    background: repeating-linear-gradient(90deg, #f8fafc, #f8fafc 16px, transparent 16px, transparent 32px);
+    opacity: 0.6;
+}
+
+.car-piece {
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: translateY(12px) scale(0.92);
+}
+
+.car-piece.built {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* 1. Chassis Frame */
+.chassis-frame {
+    left: 12%;
+    bottom: 52px;
+    width: 76%;
+    height: 12px;
+    background: #0f172a;
+    border: 2px solid #334155;
+    border-radius: 6px;
+    z-index: 2;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* 2. Axles & Suspension */
+.axles-suspension {
+    left: 18%;
+    bottom: 46px;
+    width: 64%;
+    height: 10px;
+    background: #475569;
+    border-radius: 4px;
     z-index: 3;
 }
 
-/* 13. Pathway */
-.pathway {
-    left: 43%;
-    bottom: 0;
-    width: 14%;
+.axles-suspension::before,
+.axles-suspension::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    width: 24px;
+    height: 24px;
+    background: #94a3b8;
+    border-radius: 50%;
+    border: 3px dashed #334155;
+}
+
+.axles-suspension::before {
+    left: 6px;
+}
+
+.axles-suspension::after {
+    right: 6px;
+}
+
+/* 3. Lower Car Body */
+.body-lower {
+    left: 10%;
+    bottom: 58px;
+    width: 80%;
+    height: 38px;
+    background: linear-gradient(180deg, #ef4444 0%, #b91c1c 70%, #7f1d1d 100%);
+    border: 2px solid #f87171;
+    border-radius: 16px 28px 10px 10px;
+    z-index: 4;
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.35);
+}
+
+/* 4. Body Cabin */
+.body-cabin {
+    left: 28%;
+    bottom: 86px;
+    width: 46%;
+    height: 36px;
+    background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
+    border: 2px solid #f87171;
+    border-bottom: none;
+    border-radius: 24px 34px 0 0;
+    z-index: 4;
+}
+
+/* 5. Sport Wheels */
+.wheels {
+    left: 18%;
+    bottom: 34px;
+    width: 64%;
+    height: 36px;
+    z-index: 6;
+    pointer-events: none;
+}
+
+.wheels::before,
+.wheels::after {
+    content: "";
+    position: absolute;
+    width: 38px;
+    height: 38px;
+    background: radial-gradient(circle, #f1f5f9 20%, #475569 25%, #0f172a 65%, #020617 100%);
+    border: 3px solid #334155;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+.wheels::before {
+    left: 0;
+}
+
+.wheels::after {
+    right: 0;
+}
+
+/* 6. Windshield */
+.windshield {
+    right: 28%;
+    bottom: 92px;
+    width: 22px;
+    height: 26px;
+    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+    border: 2px solid #e0f2fe;
+    border-radius: 4px 14px 0 0;
+    transform: skew(-18deg);
+    z-index: 5;
+    box-shadow: inset 1px 1px 3px rgba(255, 255, 255, 0.7);
+}
+
+/* 7. Side Windows */
+.side-windows {
+    left: 32%;
+    bottom: 92px;
+    width: 32px;
+    height: 26px;
+    background: linear-gradient(180deg, #38bdf8 0%, #0369a1 100%);
+    border: 2px solid #e0f2fe;
+    border-radius: 12px 4px 0 0;
+    z-index: 5;
+    box-shadow: inset 1px 1px 3px rgba(255, 255, 255, 0.6);
+}
+
+/* 8. Headlights */
+.headlights {
+    right: 8%;
+    bottom: 64px;
+    width: 14px;
     height: 16px;
-    background: #d6d3d1;
-    border-left: 2px dashed #a8a29e;
-    border-right: 2px dashed #a8a29e;
+    background: #fef08a;
+    border: 2px solid #facc15;
+    border-radius: 0 8px 8px 0;
+    z-index: 5;
+    box-shadow: 0 0 16px #fef08a, 12px 0 24px rgba(254, 240, 138, 0.85);
+}
+
+/* 9. Taillights & Grille */
+.taillights-grille {
+    left: 9%;
+    bottom: 66px;
+    width: 10px;
+    height: 14px;
+    background: #f43f5e;
+    border-radius: 6px 0 0 6px;
+    z-index: 5;
+    box-shadow: 0 0 14px #f43f5e, -6px 0 16px rgba(244, 63, 94, 0.8);
+}
+
+/* 10. Car Finishing (Spoiler, Decal Stripe & Speed Glow) */
+.car-finishing {
+    inset: 0;
+    z-index: 7;
+    pointer-events: none;
+}
+
+.car-finishing::before {
+    /* Rear Spoiler Wing */
+    content: "";
+    position: absolute;
+    left: 10%;
+    bottom: 96px;
+    width: 24px;
+    height: 16px;
+    border-top: 5px solid #0f172a;
+    border-left: 3px solid #0f172a;
+    border-radius: 4px 0 0 0;
+}
+
+.car-finishing::after {
+    /* Racing Stripe & Gleam */
+    content: "⚡ RACER";
+    position: absolute;
+    left: 34%;
+    bottom: 66px;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #fef08a;
+    text-shadow: 0 0 6px rgba(254, 240, 138, 0.8);
+}
+
+/* ==================================================
+   SCENE 3: 🚀 ROCKET (10 Distinct Pieces)
+   ================================================== */
+
+.rocket-canvas {
+    position: relative;
+    width: min(100%, 360px);
+    height: 220px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 14px;
+    background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #090d16 80%);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5),
+                0 6px 16px rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(148, 163, 184, 0.2);
+}
+
+.rocket-canvas::after {
+    /* Launchpad base platform */
+    content: "";
+    position: absolute;
+    left: 20%;
+    right: 20%;
+    bottom: 12px;
+    height: 10px;
+    background: #334155;
+    border: 2px solid #475569;
+    border-radius: 4px;
+}
+
+.rocket-piece {
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: translateY(12px) scale(0.92);
+}
+
+.rocket-piece.built {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* 1. Fuselage Lower (First stage booster) */
+.fuselage-lower {
+    left: calc(50% - 24px);
+    bottom: 48px;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(90deg, #cbd5e1 0%, #f8fafc 40%, #94a3b8 100%);
+    border: 2px solid #64748b;
+    border-radius: 4px;
+    z-index: 3;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
+}
+
+/* 2. Fuselage Upper (Second stage orbital) */
+.fuselage-upper {
+    left: calc(50% - 24px);
+    bottom: 94px;
+    width: 48px;
+    height: 50px;
+    background: linear-gradient(90deg, #e2e8f0 0%, #ffffff 40%, #cbd5e1 100%);
+    border: 2px solid #64748b;
+    border-bottom: 2px solid #334155;
+    z-index: 3;
+}
+
+/* 3. Left Fin */
+.fin-left {
+    left: calc(50% - 50px);
+    bottom: 38px;
+    width: 0;
+    height: 0;
+    border-right: 28px solid #dc2626;
+    border-top: 40px solid transparent;
+    z-index: 2;
+    filter: drop-shadow(-2px 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+/* 4. Right Fin */
+.fin-right {
+    right: calc(50% - 50px);
+    bottom: 38px;
+    width: 0;
+    height: 0;
+    border-left: 28px solid #dc2626;
+    border-top: 40px solid transparent;
+    z-index: 2;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+/* 5. Cockpit Window */
+.cockpit-window {
+    left: calc(50% - 13px);
+    bottom: 110px;
+    width: 26px;
+    height: 26px;
+    background: radial-gradient(circle, #38bdf8 20%, #0284c7 80%);
+    border: 3px solid #f8fafc;
+    border-radius: 50%;
+    z-index: 5;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+}
+
+/* 6. Engine Nozzle */
+.engine-nozzle {
+    left: calc(50% - 16px);
+    bottom: 24px;
+    width: 32px;
+    height: 24px;
+    background: #334155;
+    clip-path: polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%);
+    z-index: 4;
+    border: 1px solid #64748b;
+}
+
+/* 7. Thrusters */
+.thrusters {
+    left: calc(50% - 28px);
+    bottom: 28px;
+    width: 56px;
+    height: 18px;
     z-index: 2;
 }
 
-/* 14. Garden Picket Fence */
-.garden-fence {
-    left: 4%;
-    bottom: 20px;
-    width: 16%;
-    height: 18px;
-    background: repeating-linear-gradient(90deg, #f8fafc, #f8fafc 5px, transparent 5px, transparent 9px);
-    border-top: 2px solid #e2e8f0;
-    z-index: 3;
-}
-
-.garden-fence::after {
+.thrusters::before,
+.thrusters::after {
     content: "";
     position: absolute;
-    left: 480%;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(90deg, #f8fafc, #f8fafc 5px, transparent 5px, transparent 9px);
-    border-top: 2px solid #e2e8f0;
+    width: 10px;
+    height: 18px;
+    background: #475569;
+    border-radius: 2px;
 }
 
-/* 15. Garden Flowers & Porch Lantern */
-.garden-flowers {
-    left: 22%;
-    bottom: 18px;
-    width: 56%;
-    height: 10px;
+.thrusters::before {
+    left: 0;
+}
+
+.thrusters::after {
+    right: 0;
+}
+
+/* 8. Nose Cone */
+.nose-cone {
+    left: calc(50% - 24px);
+    bottom: 142px;
+    width: 0;
+    height: 0;
+    border-left: 24px solid transparent;
+    border-right: 24px solid transparent;
+    border-bottom: 46px solid #dc2626;
     z-index: 4;
-    background: radial-gradient(circle 3px at 15% 50%, #f43f5e 98%, transparent),
-                radial-gradient(circle 3px at 30% 50%, #fbbf24 98%, transparent),
-                radial-gradient(circle 3px at 70% 50%, #a855f7 98%, transparent),
-                radial-gradient(circle 3px at 85% 50%, #ec4899 98%, transparent);
+    filter: drop-shadow(0 -2px 6px rgba(220, 38, 38, 0.4));
 }
 
-.garden-flowers::after {
-    content: "💡";
+/* 9. Rocket Details (Stripes, Antenna, Decals) */
+.rocket-details {
+    left: calc(50% - 24px);
+    bottom: 74px;
+    width: 48px;
+    height: 10px;
+    background: #2563eb;
+    z-index: 5;
+    box-shadow: 0 0 4px rgba(37, 99, 235, 0.6);
+}
+
+.rocket-details::before {
+    content: "";
     position: absolute;
-    left: 45%;
-    bottom: 60px;
+    left: 22px;
+    bottom: 104px;
+    width: 4px;
+    height: 20px;
+    background: #f8fafc;
+    border-radius: 2px 2px 0 0;
+}
+
+/* 10. Launch Effects (Thruster Plume, Stars & Smoke) */
+.launch-effects {
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.launch-effects::before {
+    /* Thruster blast flame */
+    content: "";
+    position: absolute;
+    left: calc(50% - 14px);
+    bottom: 0px;
+    width: 28px;
+    height: 26px;
+    background: radial-gradient(ellipse at 50% 0%, #ffffff 0%, #fef08a 25%, #f97316 65%, transparent 100%);
+    border-radius: 50% 50% 40% 40%;
+    animation: flamePulse 0.15s infinite alternate;
+    box-shadow: 0 0 20px #f97316, 0 0 35px #ef4444;
+}
+
+.launch-effects::after {
+    /* Space stars */
+    content: "✦   ★      ✦    ★   ✦";
+    position: absolute;
+    left: 8%;
+    top: 14px;
+    font-size: 14px;
+    color: #e0f2fe;
+    letter-spacing: 28px;
+    text-shadow: 0 0 8px #38bdf8;
+}
+
+@keyframes flamePulse {
+    0% { transform: scaleY(0.9) scaleX(0.95); opacity: 0.85; }
+    100% { transform: scaleY(1.2) scaleX(1.05); opacity: 1; }
+}
+
+/* ==================================================
+   SCENE 3: 🤖 ROBOT (10 Distinct Pieces)
+   ================================================== */
+
+.robot-canvas {
+    position: relative;
+    width: min(100%, 360px);
+    height: 220px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 14px;
+    background: radial-gradient(circle at 50% 30%, #083344 0%, #0f172a 70%, #020617 100%);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5),
+                0 6px 16px rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(56, 189, 248, 0.25);
+}
+
+.robot-canvas::after {
+    /* Tech floor platform with glowing grid line */
+    content: "";
+    position: absolute;
+    left: 15%;
+    right: 15%;
+    bottom: 12px;
+    height: 6px;
+    background: linear-gradient(90deg, transparent 0%, #38bdf8 50%, transparent 100%);
+    box-shadow: 0 0 10px #38bdf8;
+}
+
+.robot-piece {
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: translateY(12px) scale(0.92);
+}
+
+.robot-piece.built {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* 1. Torso Base */
+.robot-torso-base {
+    left: calc(50% - 32px);
+    bottom: 66px;
+    width: 64px;
+    height: 56px;
+    background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+    border: 2.5px solid #06b6d4;
+    border-radius: 8px;
+    z-index: 3;
+    box-shadow: inset 0 0 8px rgba(6, 182, 212, 0.25);
+}
+
+/* 2. Chest Core */
+.robot-chest-core {
+    left: calc(50% - 13px);
+    bottom: 84px;
+    width: 26px;
+    height: 26px;
+    background: radial-gradient(circle, #ffffff 15%, #22d3ee 50%, #0891b2 100%);
+    border: 2px solid #a5f3fc;
+    border-radius: 50%;
+    z-index: 5;
+    box-shadow: 0 0 12px #22d3ee, 0 0 24px rgba(34, 211, 238, 0.6);
+    animation: pulseCore 1.5s infinite alternate;
+}
+
+@keyframes pulseCore {
+    0% { transform: scale(0.94); box-shadow: 0 0 8px #22d3ee; }
+    100% { transform: scale(1.06); box-shadow: 0 0 16px #22d3ee, 0 0 28px rgba(34, 211, 238, 0.8); }
+}
+
+/* 3. Head Chassis */
+.robot-head-chassis {
+    left: calc(50% - 24px);
+    bottom: 126px;
+    width: 48px;
+    height: 38px;
+    background: linear-gradient(180deg, #475569 0%, #334155 100%);
+    border: 2.5px solid #06b6d4;
+    border-radius: 8px 8px 4px 4px;
+    z-index: 4;
+}
+
+.robot-head-chassis::before {
+    content: "";
+    position: absolute;
+    left: 17px;
+    bottom: -6px;
+    width: 10px;
+    height: 6px;
+    background: #0f172a;
+    border: 1px solid #64748b;
+}
+
+/* 4. Head Antenna */
+.robot-head-antenna {
+    left: calc(50% - 20px);
+    bottom: 164px;
+    width: 40px;
+    height: 14px;
+    z-index: 5;
+}
+
+.robot-head-antenna::before {
+    content: "";
+    position: absolute;
+    left: 2px;
+    bottom: 0;
+    width: 3px;
+    height: 12px;
+    background: #94a3b8;
+    box-shadow: 0 -3px 0 2px #06b6d4;
+}
+
+.robot-head-antenna::after {
+    content: "";
+    position: absolute;
+    right: 2px;
+    bottom: 0;
+    width: 3px;
+    height: 12px;
+    background: #94a3b8;
+    box-shadow: 0 -3px 0 2px #06b6d4;
+}
+
+/* 5. Visor Eyes */
+.robot-visor-eyes {
+    left: calc(50% - 18px);
+    bottom: 138px;
+    width: 36px;
+    height: 12px;
+    background: #0f172a;
+    border: 1.5px solid #0891b2;
+    border-radius: 4px;
+    z-index: 6;
+    box-shadow: 0 0 8px rgba(6, 182, 212, 0.4);
+}
+
+.robot-visor-eyes::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 8px;
+    height: 6px;
+    background: #38bdf8;
+    border-radius: 2px;
+    box-shadow: 16px 0 0 #38bdf8, 0 0 6px #38bdf8, 16px 0 6px #38bdf8;
+}
+
+/* 6. Arm Left */
+.robot-arm-left {
+    left: calc(50% - 54px);
+    bottom: 74px;
+    width: 18px;
+    height: 44px;
+    background: linear-gradient(180deg, #475569 0%, #1e293b 100%);
+    border: 2px solid #64748b;
+    border-radius: 6px;
+    z-index: 2;
+}
+
+.robot-arm-left::after {
+    content: "";
+    position: absolute;
+    left: 1px;
+    bottom: -6px;
+    width: 12px;
+    height: 6px;
+    background: #06b6d4;
+    border-radius: 2px;
+}
+
+/* 7. Arm Right */
+.robot-arm-right {
+    right: calc(50% - 54px);
+    bottom: 74px;
+    width: 18px;
+    height: 44px;
+    background: linear-gradient(180deg, #475569 0%, #1e293b 100%);
+    border: 2px solid #64748b;
+    border-radius: 6px;
+    z-index: 2;
+}
+
+.robot-arm-right::after {
+    content: "";
+    position: absolute;
+    right: 1px;
+    bottom: -6px;
+    width: 12px;
+    height: 6px;
+    background: #06b6d4;
+    border-radius: 2px;
+}
+
+/* 8. Robot Legs */
+.robot-legs {
+    left: calc(50% - 26px);
+    bottom: 24px;
+    width: 52px;
+    height: 42px;
+    z-index: 2;
+}
+
+.robot-legs::before,
+.robot-legs::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    width: 18px;
+    height: 40px;
+    background: linear-gradient(180deg, #334155 0%, #1e293b 70%, #0f172a 100%);
+    border: 2px solid #64748b;
+    border-radius: 4px 4px 6px 6px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+.robot-legs::before {
+    left: 2px;
+}
+
+.robot-legs::after {
+    right: 2px;
+}
+
+/* 9. Robot Details (Shoulder armor & cooling vents) */
+.robot-details {
+    left: calc(50% - 40px);
+    bottom: 104px;
+    width: 80px;
+    height: 16px;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.robot-details::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 16px;
+    height: 14px;
+    background: #06b6d4;
+    border-radius: 4px;
+    box-shadow: 0 0 6px rgba(6, 182, 212, 0.4);
+}
+
+.robot-details::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 16px;
+    height: 14px;
+    background: #06b6d4;
+    border-radius: 4px;
+    box-shadow: 0 0 6px rgba(6, 182, 212, 0.4);
+}
+
+/* 10. Robot Finishing (Holo HUD & Spark Energy) */
+.robot-finishing {
+    inset: 0;
+    z-index: 7;
+    pointer-events: none;
+}
+
+.robot-finishing::before {
+    content: "⚡ AI ONLINE";
+    position: absolute;
+    left: calc(50% - 46px);
+    top: 14px;
     font-size: 11px;
-    filter: drop-shadow(0 0 6px #fde047);
+    font-weight: 900;
+    letter-spacing: 2px;
+    color: #38bdf8;
+    background: rgba(8, 51, 68, 0.85);
+    border: 1px solid #38bdf8;
+    padding: 3px 8px;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+.robot-finishing::after {
+    content: "✦    ⚡    ✦";
+    position: absolute;
+    left: calc(50% - 38px);
+    bottom: 4px;
+    font-size: 12px;
+    color: #a5f3fc;
+    letter-spacing: 16px;
+    text-shadow: 0 0 8px #22d3ee;
 }
 
 /* ==================================================
@@ -626,7 +1464,7 @@ body {
    ================================================== */
 
 .question-card {
-    background: rgba(15, 23, 42, 0.6);
+    background: rgba(15, 23, 42, 0.65);
     border: 1px solid var(--border-color);
     border-radius: 18px;
     padding: 24px 20px;
@@ -634,8 +1472,15 @@ body {
     text-align: left;
 }
 
+.question-meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
 .question-header h2 {
-    margin: 0 0 10px;
+    margin: 0;
     font-size: 13px;
     font-weight: 800;
     letter-spacing: 1px;
@@ -643,12 +1488,57 @@ body {
     text-transform: uppercase;
 }
 
+.difficulty-badge {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+.badge-easy {
+    background: rgba(16, 185, 129, 0.16);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.badge-medium {
+    background: rgba(245, 158, 11, 0.16);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.badge-challenge {
+    background: rgba(244, 63, 94, 0.18);
+    color: #fb7185;
+    border: 1px solid rgba(244, 63, 94, 0.4);
+}
+
 #question-text {
-    margin: 0 0 20px;
-    font-size: 18px;
+    margin: 0 0 16px;
+    font-size: 17.5px;
     font-weight: 600;
     line-height: 1.5;
     color: #f8fafc;
+}
+
+/* Code Snippet Box */
+.code-snippet-box {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-left: 4px solid var(--accent-blue);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin: 0 0 18px;
+    overflow-x: auto;
+}
+
+.code-snippet-box pre {
+    margin: 0;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: #e2e8f0;
 }
 
 /* Hint Display Box */
@@ -658,7 +1548,7 @@ body {
     color: #fef3c7;
     border-radius: 8px;
     padding: 12px 16px;
-    margin: 0 0 20px;
+    margin: 0 0 18px;
     font-size: 14px;
     line-height: 1.5;
     animation: fadeIn 0.25s ease-out;
@@ -676,7 +1566,7 @@ body {
     margin: 0;
     padding: 14px 16px;
     font-family: inherit;
-    font-size: 15px;
+    font-size: 14.5px;
     font-weight: 600;
     line-height: 1.4;
     text-align: left;
@@ -703,7 +1593,7 @@ body {
     opacity: 0.85;
 }
 
-/* Answer button feedback states */
+/* Answer feedback styling */
 .answer-btn.btn-correct {
     background: #064e3b !important;
     border-color: #10b981 !important;
@@ -718,29 +1608,105 @@ body {
     box-shadow: 0 0 16px rgba(239, 68, 68, 0.45) !important;
 }
 
-/* Feedback message */
-.feedback {
+/* ==================================================
+   RESULT & EXPLANATION BOX (With Manual CONTINUE)
+   ================================================== */
+
+.result-box {
     margin-top: 18px;
-    font-size: 17px;
-    font-weight: 700;
-    min-height: 26px;
-    text-align: center;
+    padding: 18px 20px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid var(--border-color);
+    animation: fadeIn 0.3s ease-out;
 }
 
-.feedback-correct {
+.result-box.result-correct {
+    border-color: rgba(16, 185, 129, 0.45);
+    background: rgba(6, 78, 59, 0.25);
+}
+
+.result-box.result-wrong {
+    border-color: rgba(239, 68, 68, 0.45);
+    background: rgba(127, 29, 29, 0.25);
+}
+
+.result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.result-status {
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.result-correct .result-status {
     color: #34d399;
 }
 
-.feedback-wrong {
+.result-wrong .result-status {
     color: #f87171;
 }
 
+.result-xp-tag {
+    font-size: 13px;
+    font-weight: 800;
+    color: #fbbf24;
+    background: rgba(245, 158, 11, 0.16);
+    padding: 3px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.result-streak-tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 800;
+    color: #f97316;
+    margin-bottom: 6px;
+}
+
+.result-correct-answer {
+    font-size: 14px;
+    font-weight: 700;
+    color: #e2e8f0;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    background: rgba(30, 41, 59, 0.6);
+    border-radius: 6px;
+    border-left: 3px solid #10b981;
+}
+
+.result-explanation {
+    margin: 6px 0 16px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: #cbd5e1;
+}
+
+.continue-btn {
+    width: 100%;
+    padding: 13px;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+}
+
+.continue-btn:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+}
+
 /* ==================================================
-   STATE CARDS (LEVEL COMPLETE, GAME OVER, COMPLETE)
+   STATE CARDS (BUILD COMPLETE, GAME OVER, COMPLETE)
    ================================================== */
 
 .state-card {
-    background: rgba(15, 23, 42, 0.7);
+    background: rgba(15, 23, 42, 0.75);
     border: 1px solid var(--border-color);
     border-radius: 18px;
     padding: 32px 24px;
@@ -755,16 +1721,16 @@ body {
 }
 
 .state-card h3 {
-    margin: 0 0 10px;
+    margin: 0 0 8px;
     font-size: 26px;
     font-weight: 800;
     color: #f8fafc;
 }
 
 .complete-subtitle {
-    margin: -6px 0 16px;
-    font-size: 14px;
-    font-weight: 700;
+    margin: 0 0 16px;
+    font-size: 13px;
+    font-weight: 800;
     letter-spacing: 1.5px;
     color: #fbbf24;
     text-transform: uppercase;
@@ -773,7 +1739,7 @@ body {
 .state-card p {
     margin: 0 auto 20px;
     max-width: 500px;
-    font-size: 15px;
+    font-size: 14.5px;
     line-height: 1.6;
     color: var(--text-secondary);
 }
@@ -783,7 +1749,7 @@ body {
     border: 1px solid rgba(148, 163, 184, 0.15);
     border-radius: 12px;
     padding: 16px 20px;
-    margin: 0 auto 24px;
+    margin: 0 auto 22px;
     max-width: 420px;
     text-align: left;
 }
@@ -798,12 +1764,46 @@ body {
     color: #38bdf8;
 }
 
+.unlock-banner {
+    display: inline-block;
+    margin-bottom: 22px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: #34d399;
+    background: rgba(16, 185, 129, 0.16);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    border-radius: 9999px;
+}
+
+.completed-builds-showcase {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.showcase-chip {
+    font-size: 13px;
+    font-weight: 800;
+    color: #34d399;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    padding: 6px 14px;
+    border-radius: 8px;
+}
+
 .try-again-btn {
     margin: 16px auto 0;
     display: inline-block;
 }
 
-/* Keyframe animations */
+/* ==================================================
+   ANIMATIONS & KEYFRAMES
+   ================================================== */
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -815,6 +1815,30 @@ body {
     }
 }
 
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.85);
+    }
+    60% {
+        opacity: 1;
+        transform: scale(1.04);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
 /* ==================================================
    RESPONSIVE DESIGN (TABLET & MOBILE)
    ================================================== */
@@ -822,8 +1846,8 @@ body {
 @media (max-width: 640px) {
     .game-container {
         width: 100%;
-        margin: 8px auto;
-        padding: 20px 14px;
+        margin: 6px auto;
+        padding: 18px 12px;
         border-radius: 16px;
     }
 
@@ -840,17 +1864,9 @@ body {
         gap: 8px;
     }
 
-    .preview-card {
-        padding: 10px 12px;
-    }
-
-    .rules-summary {
+    .world-items-row {
+        grid-template-columns: 1fr 1fr;
         gap: 6px;
-    }
-
-    .rule-chip {
-        font-size: 11px;
-        padding: 5px 8px;
     }
 
     .stats-bar {
@@ -876,35 +1892,12 @@ body {
         font-size: 16px;
     }
 
-    .house {
+    .house-canvas,
+    .car-canvas,
+    .rocket-canvas,
+    .robot-canvas {
         width: 100%;
         max-width: 320px;
-        height: 210px;
-    }
-
-    .roof {
-        left: 14%;
-        border-left-width: 104px;
-        border-right-width: 104px;
-        border-bottom-width: 64px;
-    }
-
-    .roof-trim {
-        left: 15%;
-        width: 70%;
-    }
-
-    .attic-window {
-        bottom: 148px;
-    }
-
-    .chimney {
-        right: 25%;
-        bottom: 160px;
-    }
-
-    .smoke {
-        right: 25%;
-        bottom: 200px;
+        height: 200px;
     }
 }

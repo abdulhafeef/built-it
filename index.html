@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="BUILD IT! — A technical interview preparation game. Answer questions across 3 levels to build your dream engineering house brick by brick.">
+    <meta name="description" content="BUILD IT! V3 — Level-Based Technical Learning Game. Answer engineering questions across House, Rocket, and Robot builds piece by piece!">
     <title>BUILD IT! — Technical Interview Challenge</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -14,36 +14,40 @@
 
         <!-- Welcome / Start Screen -->
         <div id="start-screen">
-            <div class="brand-pill">CAMPUS TO TECH CAREER</div>
+            <div class="brand-pill">CAMPUS TO TECH CAREER • V3</div>
             <h1 class="game-title">BUILD IT!</h1>
-            <p class="tagline">Technical Interview Challenge</p>
+            <p class="tagline">Level-Based Technical Learning Game</p>
             <p class="game-desc">
-                Prepare for technical interviews by testing your engineering knowledge. Every correct answer places a new piece of your house. Complete all 3 levels to finish the build!
+                Learn programming, logic, and systems step-by-step through interactive construction! Every correct answer adds a piece to your build. Complete each level to unlock the next checkpoint!
             </p>
 
+            <!-- Level Preview Grid -->
             <div class="level-preview-grid">
                 <div class="preview-card">
                     <span class="preview-badge badge-l1">LEVEL 1</span>
-                    <h3>Beginner</h3>
-                    <p>Python Basics, Data Types & Syntax</p>
+                    <h3>🏠 House</h3>
+                    <p>Python Basics, Variables & Print</p>
                 </div>
                 <div class="preview-card">
                     <span class="preview-badge badge-l2">LEVEL 2</span>
-                    <h3>Intermediate</h3>
-                    <p>Data Structures, OOP, DBMS & SQL</p>
+                    <h3>🚀 Rocket</h3>
+                    <p>Functions, Loops & Core Concepts</p>
                 </div>
                 <div class="preview-card">
                     <span class="preview-badge badge-l3">LEVEL 3</span>
-                    <h3>Advanced</h3>
-                    <p>Operating Systems, Networks, Git & AI</p>
+                    <h3>🤖 Robot</h3>
+                    <p>Basic Structures & OOP Logic</p>
                 </div>
             </div>
 
+            <!-- Rules Summary Chips -->
             <div class="rules-summary">
-                <span class="rule-chip">🎯 15 Questions (5 / Level)</span>
-                <span class="rule-chip">❤️ 3 Lives</span>
-                <span class="rule-chip">💡 3 Hints Shared</span>
-                <span class="rule-chip">🧱 15 House Pieces</span>
+                <span class="rule-chip">🎯 10 Questions / Level</span>
+                <span class="rule-chip">🧱 10 Pieces per Build</span>
+                <span class="rule-chip">⭐ +10 XP per Correct</span>
+                <span class="rule-chip">❤️ 3 Lives per Level</span>
+                <span class="rule-chip">💾 Level Checkpoints</span>
+                <span class="rule-chip">💡 3 Hints / Level</span>
             </div>
 
             <button id="start-button" class="btn-action primary-btn">START GAME</button>
@@ -52,21 +56,60 @@
         <!-- Main Game Screen -->
         <div id="game-screen" style="display: none;">
 
+            <!-- Build World Progression Header -->
+            <div id="build-world-bar" class="build-world-bar" aria-label="Build World Progression">
+                <div class="world-title-label">BUILD WORLD & CHECKPOINTS</div>
+                <div class="world-items-row">
+                    <div id="world-item-house" class="world-item active">
+                        <span class="world-icon">🏠</span>
+                        <div class="world-info">
+                            <span class="world-name">L1: House</span>
+                            <span class="world-status">In Progress</span>
+                        </div>
+                    </div>
+                    <div id="world-item-rocket" class="world-item locked">
+                        <span class="world-icon">🚀</span>
+                        <div class="world-info">
+                            <span class="world-name">L2: Rocket</span>
+                            <span class="world-status">🔒 Locked</span>
+                        </div>
+                    </div>
+                    <div id="world-item-robot" class="world-item locked">
+                        <span class="world-icon">🤖</span>
+                        <div class="world-info">
+                            <span class="world-name">L3: Robot</span>
+                            <span class="world-status">🔒 Locked</span>
+                        </div>
+                    </div>
+                    <div id="world-item-car" class="world-item future">
+                        <span class="world-icon">🚗</span>
+                        <div class="world-info">
+                            <span class="world-name">L4: Car</span>
+                            <span class="world-status">🔒 Coming later</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Header / Status Bar -->
             <header class="game-header">
                 <div class="header-top">
-                    <span id="level-indicator" class="level-indicator level-1">LEVEL 1 — BEGINNER</span>
-                    <span id="question-progress" class="question-progress">Question 1 / 5</span>
+                    <span id="level-indicator" class="level-indicator level-1">LEVEL 1 — 🏠 HOUSE</span>
+                    <span id="question-progress" class="question-progress">Question 1 / 10</span>
                 </div>
 
                 <div class="stats-bar">
                     <div class="stat-item">
-                        <span class="stat-label">SCORE</span>
-                        <span id="score" class="stat-value">Score: 0</span>
+                        <span class="stat-label">TOTAL XP</span>
+                        <span id="score" class="stat-value">⭐ 0 XP</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-label">LIVES</span>
-                        <span id="lives" class="stat-value">Lives: ❤️ ❤️ ❤️</span>
+                        <span class="stat-label">STREAK</span>
+                        <span id="streak" class="stat-value">🔥 0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">LEVEL LIVES</span>
+                        <span id="lives" class="stat-value">❤️ ❤️ ❤️</span>
                     </div>
                     <div class="stat-item stat-hint">
                         <span class="stat-label">ASSISTANCE</span>
@@ -75,80 +118,163 @@
                 </div>
             </header>
 
-            <!-- House Builder -->
-            <div id="house-builder" aria-label="House building progress">
+            <!-- Streak Milestone Notification Banner -->
+            <div id="streak-banner" class="streak-banner" style="display: none;"></div>
+
+            <!-- Visual Builder Stage -->
+            <div id="builder-stage" class="builder-stage" aria-label="Building progress">
                 <div class="builder-header">
-                    <span class="builder-title">🏠 BUILD YOUR HOUSE</span>
-                    <span id="build-progress" class="build-progress">House progress: 0 / 15</span>
+                    <span id="builder-title" class="builder-title">🏠 BUILD YOUR HOUSE</span>
+                    <span id="build-progress" class="build-progress">Progress: 0 / 10</span>
                 </div>
 
-                <div id="house" class="house">
-                    <div class="house-piece foundation" data-piece="foundation"></div>
-                    <div class="house-piece walls" data-piece="walls"></div>
-                    <div class="house-piece door" data-piece="door"></div>
-                    <div class="house-piece door-knob" data-piece="door-knob"></div>
-                    <div class="house-piece window window-left" data-piece="window-left"></div>
-                    <div class="house-piece window window-right" data-piece="window-right"></div>
-                    <div class="house-piece roof" data-piece="roof"></div>
-                    <div class="house-piece roof-trim" data-piece="roof-trim"></div>
-                    <div class="house-piece attic-window" data-piece="attic-window"></div>
-                    <div class="house-piece chimney" data-piece="chimney"></div>
-                    <div class="house-piece smoke" data-piece="smoke"></div>
-                    <div class="house-piece door-steps" data-piece="door-steps"></div>
-                    <div class="house-piece pathway" data-piece="pathway"></div>
-                    <div class="house-piece garden-fence" data-piece="garden-fence"></div>
-                    <div class="house-piece garden-flowers" data-piece="garden-flowers"></div>
+                <div class="progress-bar-track">
+                    <div id="build-progress-bar" class="progress-bar-fill" style="width: 0%;"></div>
                 </div>
+
+                <!-- Scene 1: House (10 pieces) -->
+                <div id="house-scene" class="build-scene active">
+                    <div class="house-canvas">
+                        <div class="house-piece foundation-base" data-piece="0"></div>
+                        <div class="house-piece foundation-slab" data-piece="1"></div>
+                        <div class="house-piece walls-lower" data-piece="2"></div>
+                        <div class="house-piece walls-upper" data-piece="3"></div>
+                        <div class="house-piece door" data-piece="4"></div>
+                        <div class="house-piece window-left" data-piece="5"></div>
+                        <div class="house-piece window-right" data-piece="6"></div>
+                        <div class="house-piece roof-main" data-piece="7"></div>
+                        <div class="house-piece roof-trim" data-piece="8"></div>
+                        <div class="house-piece surroundings" data-piece="9"></div>
+                    </div>
+                </div>
+
+                <!-- Scene 2: Rocket (10 pieces) -->
+                <div id="rocket-scene" class="build-scene" style="display: none;">
+                    <div class="rocket-canvas">
+                        <div class="rocket-piece fuselage-lower" data-piece="0"></div>
+                        <div class="rocket-piece fuselage-upper" data-piece="1"></div>
+                        <div class="rocket-piece fin-left" data-piece="2"></div>
+                        <div class="rocket-piece fin-right" data-piece="3"></div>
+                        <div class="rocket-piece cockpit-window" data-piece="4"></div>
+                        <div class="rocket-piece engine-nozzle" data-piece="5"></div>
+                        <div class="rocket-piece thrusters" data-piece="6"></div>
+                        <div class="rocket-piece nose-cone" data-piece="7"></div>
+                        <div class="rocket-piece rocket-details" data-piece="8"></div>
+                        <div class="rocket-piece launch-effects" data-piece="9"></div>
+                    </div>
+                </div>
+
+                <!-- Scene 3: Robot (10 pieces) -->
+                <div id="robot-scene" class="build-scene" style="display: none;">
+                    <div class="robot-canvas">
+                        <div class="robot-piece robot-torso-base" data-piece="0"></div>
+                        <div class="robot-piece robot-chest-core" data-piece="1"></div>
+                        <div class="robot-piece robot-head-chassis" data-piece="2"></div>
+                        <div class="robot-piece robot-head-antenna" data-piece="3"></div>
+                        <div class="robot-piece robot-visor-eyes" data-piece="4"></div>
+                        <div class="robot-piece robot-arm-left" data-piece="5"></div>
+                        <div class="robot-piece robot-arm-right" data-piece="6"></div>
+                        <div class="robot-piece robot-legs" data-piece="7"></div>
+                        <div class="robot-piece robot-details" data-piece="8"></div>
+                        <div class="robot-piece robot-finishing" data-piece="9"></div>
+                    </div>
+                </div>
+
+                <!-- Scene 4: Car (Preserved for future extensible levels) -->
+                <div id="car-scene" class="build-scene" style="display: none;">
+                    <div class="car-canvas">
+                        <div class="car-piece chassis-frame" data-piece="0"></div>
+                        <div class="car-piece axles-suspension" data-piece="1"></div>
+                        <div class="car-piece body-lower" data-piece="2"></div>
+                        <div class="car-piece body-cabin" data-piece="3"></div>
+                        <div class="car-piece wheels" data-piece="4"></div>
+                        <div class="car-piece windshield" data-piece="5"></div>
+                        <div class="car-piece side-windows" data-piece="6"></div>
+                        <div class="car-piece headlights" data-piece="7"></div>
+                        <div class="car-piece taillights-grille" data-piece="8"></div>
+                        <div class="car-piece car-finishing" data-piece="9"></div>
+                    </div>
+                </div>
+
             </div>
 
             <!-- Question Card -->
             <div id="question-card" class="question-card">
                 <div class="question-header">
-                    <h2 id="question-number">Question 1</h2>
+                    <div class="question-meta-row">
+                        <h2 id="question-number">Question 1</h2>
+                        <span id="difficulty-badge" class="difficulty-badge badge-easy">VERY EASY</span>
+                    </div>
                 </div>
 
                 <p id="question-text">Loading question...</p>
 
+                <!-- Code block display for code questions -->
+                <div id="code-snippet-box" class="code-snippet-box" style="display: none;">
+                    <pre><code id="code-snippet-text"></code></pre>
+                </div>
+
                 <!-- Hint display container -->
                 <div id="hint-box" class="hint-box" style="display: none;"></div>
 
+                <!-- Answer buttons grid -->
                 <div class="answers-grid">
-                    <button id="correct-answer" class="answer-btn"></button>
-                    <button id="wrong-answer-1" class="answer-btn"></button>
-                    <button id="wrong-answer-2" class="answer-btn"></button>
-                    <button id="wrong-answer-3" class="answer-btn"></button>
+                    <button id="correct-answer" class="answer-btn" type="button"></button>
+                    <button id="wrong-answer-1" class="answer-btn" type="button"></button>
+                    <button id="wrong-answer-2" class="answer-btn" type="button"></button>
+                    <button id="wrong-answer-3" class="answer-btn" type="button"></button>
                 </div>
 
-                <div id="feedback" class="feedback"></div>
+                <!-- Result & Explanation Box (Shown after answering) -->
+                <div id="result-box" class="result-box" style="display: none;">
+                    <div class="result-header">
+                        <span id="result-status" class="result-status"></span>
+                        <span id="result-xp-tag" class="result-xp-tag"></span>
+                    </div>
+                    <div id="result-streak-tag" class="result-streak-tag" style="display: none;"></div>
+                    <div id="result-correct-answer" class="result-correct-answer" style="display: none;"></div>
+                    <p id="result-explanation" class="result-explanation"></p>
+                    <button id="continue-button" class="btn-action continue-btn" type="button">CONTINUE →</button>
+                </div>
+
+                <div id="feedback" class="feedback" style="display: none;"></div>
             </div>
 
-            <!-- Level Complete Card -->
+            <!-- Level Complete Card (Checkpoints) -->
             <div id="level-complete-card" class="state-card" style="display: none;">
-                <div class="state-icon">🎉</div>
+                <div class="state-icon" id="build-complete-icon">🎉</div>
                 <h3 id="level-complete-title">LEVEL COMPLETE!</h3>
+                <div id="build-complete-badge" class="complete-subtitle">CHECKPOINT REACHED</div>
                 <p id="level-complete-message">You completed all questions in this level.</p>
-                <button id="next-level-button" class="btn-action primary-btn">CONTINUE TO NEXT LEVEL</button>
+                <div id="build-complete-stats" class="final-stats"></div>
+                <div id="build-unlock-banner" class="unlock-banner"></div>
+                <button id="next-level-button" class="btn-action primary-btn">CONTINUE TO NEXT LEVEL →</button>
             </div>
 
-            <!-- Game Complete Card -->
+            <!-- Final Game Complete Card (All 3 Levels Done) -->
             <div id="game-complete-card" class="state-card" style="display: none;">
                 <div class="state-icon">🏆</div>
-                <h3>YOU BUILT IT!</h3>
-                <p class="complete-subtitle">Master Builder Certification</p>
-                <p id="game-complete-summary">You completed all 3 levels and finished constructing your engineering house!</p>
+                <h3>BUILD WORLD COMPLETE!</h3>
+                <p class="complete-subtitle">Master Technical Architect</p>
+                <p id="game-complete-summary">
+                    Incredible achievement! You conquered all 3 levels and constructed the House, Rocket, and Robot!
+                </p>
+                <div class="completed-builds-showcase">
+                    <span class="showcase-chip">🏠 Level 1: House ✓</span>
+                    <span class="showcase-chip">🚀 Level 2: Rocket ✓</span>
+                    <span class="showcase-chip">🤖 Level 3: Robot ✓</span>
+                </div>
                 <div id="final-stats" class="final-stats"></div>
             </div>
 
-            <!-- Game Over Card -->
+            <!-- Level Failed Card (Restarts only the current level) -->
             <div id="game-over-card" class="state-card" style="display: none;">
                 <div class="state-icon">💀</div>
-                <h3>GAME OVER</h3>
-                <p id="game-over-message">You ran out of lives before finishing the house.</p>
+                <h3 id="game-over-title">LEVEL FAILED</h3>
+                <p id="game-over-message">You ran out of lives on this level.</p>
                 <div id="game-over-stats" class="final-stats"></div>
+                <button id="try-again-button" class="btn-action try-again-btn">TRY AGAIN</button>
             </div>
-
-            <!-- Try Again Button (Shown on Game Over or Complete) -->
-            <button id="try-again-button" class="btn-action try-again-btn" style="display: none;">TRY AGAIN</button>
 
         </div>
 

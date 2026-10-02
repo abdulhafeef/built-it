@@ -1,14 +1,15 @@
 // ==================================================
-// BUILD IT! — V2 Game Engine
-// Technical Interview Preparation Game
+// BUILD IT! — V3 Level-Based Game Engine
+// Technical Learning Game with Checkpoint Progression
 // ==================================================
 
-// DOM Element References (Preserving all V1 identifiers)
+// DOM Element References
 const startButton = document.getElementById("start-button");
 const startScreen = document.getElementById("start-screen");
 const gameScreen = document.getElementById("game-screen");
 
 const scoreDisplay = document.getElementById("score");
+const streakDisplay = document.getElementById("streak");
 const livesDisplay = document.getElementById("lives");
 const tryAgainButton = document.getElementById("try-again-button");
 
@@ -16,14 +17,36 @@ const levelIndicator = document.getElementById("level-indicator");
 const questionProgress = document.getElementById("question-progress");
 const hintButton = document.getElementById("hint-button");
 const hintBox = document.getElementById("hint-box");
+const streakBanner = document.getElementById("streak-banner");
 
-const questionCard = document.getElementById("question-card");
-const questionNumber = document.getElementById("question-number");
-const questionText = document.getElementById("question-text");
-const feedback = document.getElementById("feedback");
+// Builder Stage & Scenes
+const builderTitle = document.getElementById("builder-title");
 const buildProgress = document.getElementById("build-progress");
+const buildProgressBar = document.getElementById("build-progress-bar");
+
+const houseScene = document.getElementById("house-scene");
+const rocketScene = document.getElementById("rocket-scene");
+const robotScene = document.getElementById("robot-scene");
+const carScene = document.getElementById("car-scene");
 
 const housePieces = document.querySelectorAll(".house-piece");
+const rocketPieces = document.querySelectorAll(".rocket-piece");
+const robotPieces = document.querySelectorAll(".robot-piece");
+
+// Build World Bar Items
+const worldItemHouse = document.getElementById("world-item-house");
+const worldItemRocket = document.getElementById("world-item-rocket");
+const worldItemRobot = document.getElementById("world-item-robot");
+const worldItemCar = document.getElementById("world-item-car");
+
+// Question Card & Inputs
+const questionCard = document.getElementById("question-card");
+const questionNumber = document.getElementById("question-number");
+const difficultyBadge = document.getElementById("difficulty-badge");
+const questionText = document.getElementById("question-text");
+const codeSnippetBox = document.getElementById("code-snippet-box");
+const codeSnippetText = document.getElementById("code-snippet-text");
+const feedback = document.getElementById("feedback");
 
 const correctAnswer = document.getElementById("correct-answer");
 const wrongAnswer1 = document.getElementById("wrong-answer-1");
@@ -37,10 +60,21 @@ const answerButtons = [
     wrongAnswer3
 ];
 
-// State Cards (Level Complete, Game Over, Game Complete)
+// Result & Continue Container
+const resultBox = document.getElementById("result-box");
+const resultStatus = document.getElementById("result-status");
+const resultXpTag = document.getElementById("result-xp-tag");
+const resultStreakTag = document.getElementById("result-streak-tag");
+const resultCorrectAnswer = document.getElementById("result-correct-answer");
+const resultExplanation = document.getElementById("result-explanation");
+const continueButton = document.getElementById("continue-button");
+
+// State Cards (Level Complete, Game Over / Level Failed, Game Complete)
 const levelCompleteCard = document.getElementById("level-complete-card");
 const levelCompleteTitle = document.getElementById("level-complete-title");
 const levelCompleteMessage = document.getElementById("level-complete-message");
+const buildCompleteStats = document.getElementById("build-complete-stats");
+const buildUnlockBanner = document.getElementById("build-unlock-banner");
 const nextLevelButton = document.getElementById("next-level-button");
 
 const gameOverCard = document.getElementById("game-over-card");
@@ -51,238 +85,521 @@ const gameCompleteCard = document.getElementById("game-complete-card");
 const finalStats = document.getElementById("final-stats");
 
 // ==================================================
-// GAME STATE
+// GAME STATE (Level Checkpoint System)
 // ==================================================
 
-let score = 0;
-let lives = 3;
-let hintsRemaining = 3;
+let currentBuildIndex = 0;              // 0 = House (L1), 1 = Rocket (L2), 2 = Robot (L3)
+let currentQuestionIndex = 0;           // 0 to 9 within the current level
+let buildPieces = [0, 0, 0];            // Pieces built for [House, Rocket, Robot]
+let completedLevels = [false, false, false]; // Checkpoint completion flags
+let checkpointXp = 0;                   // Permanent XP preserved from completed levels
+let totalXp = 0;                        // Active total XP
+let streak = 0;                         // Current consecutive correct streak
+let bestStreak = 0;                     // Best streak across the whole run
+let lives = 3;                          // Level-specific lives (always 3 per level!)
+let hintsRemaining = 3;                 // 3 hints per level attempt
 let hintUsedForCurrentQuestion = false;
-let currentQuestion = 0;
-let buildingProgress = 0;
-let answered = false;
+let isAnswerLocked = false;
 
 // ==================================================
-// QUESTION BANK (15 Questions: 5 per Level)
+// QUESTION BANK (Very Beginner-Friendly & Educational)
 // ==================================================
 
-const questions = [
-    // --------------------------------------------------
-    // LEVEL 1 — BEGINNER (Python Basics & Fundamentals)
-    // --------------------------------------------------
+// --------------------------------------------------
+// LEVEL 1: 🏠 HOUSE (Python Basics, Variables & Print)
+// --------------------------------------------------
+const houseQuestions = [
+    // Q1
     {
-        question: "Which of the following built-in functions returns the number of items in a Python list or string?",
-        options: [
-            "length()",
-            "len()",
-            "size()",
-            "count()"
-        ],
+        question: "In Python, which function is used to display text or numbers on the screen?",
+        options: ["show()", "print()", "display()", "write()"],
         correct: 1,
-        level: 1,
-        hint: "It is a short 3-letter built-in Python function."
+        explanation: "print() is Python's built-in function to output text and variable values to the screen.",
+        hint: "Think of putting words onto paper.",
+        type: "concept",
+        difficulty: "VERY EASY"
     },
+    // Q2
     {
-        question: "Which of these data types in Python is immutable (cannot be modified after creation)?",
-        options: [
-            "List",
-            "Dictionary",
-            "Tuple",
-            "Set"
-        ],
-        correct: 2,
-        level: 1,
-        hint: "It is defined with parentheses () and its elements cannot be reassigned."
-    },
-    {
-        question: "What is the output of the slicing expression 'DEVELOPER'[0:3] in Python?",
-        options: [
-            "'DEV'",
-            "'DEVE'",
-            "'EVE'",
-            "'DE'"
-        ],
+        question: "What will the following code output?",
+        code: "x = 5\nprint(x)",
+        options: ["5", "x", "5x", "None"],
         correct: 0,
-        level: 1,
-        hint: "Python slice [start:end] includes start index 0 and stops just before index 3."
+        explanation: "x is a variable holding the integer 5, so print(x) prints 5.",
+        hint: "The variable x stores the number 5.",
+        type: "code",
+        difficulty: "VERY EASY"
     },
+    // Q3
     {
-        question: "What is the result of evaluating 5 == '5' in Python?",
+        question: "What is the output of this simple calculation?",
+        code: "print(10 + 5)",
+        options: ["15", "105", "50", "Error"],
+        correct: 0,
+        explanation: "The + operator adds 10 and 5 together to produce 15.",
+        hint: "Simple arithmetic addition: 10 + 5.",
+        type: "code",
+        difficulty: "VERY EASY"
+    },
+    // Q4
+    {
+        question: "What does this string concatenation print?",
+        code: "a = 'Py'\nb = 'thon'\nprint(a + b)",
+        options: ["'Python'", "'Py thon'", "'Py+thon'", "Error"],
+        correct: 0,
+        explanation: "Adding two strings joins them end-to-end to form 'Python'.",
+        hint: "String concatenation links the two words together.",
+        type: "code",
+        difficulty: "VERY EASY"
+    },
+    // Q5
+    {
+        question: "What will len() return for this word?",
+        code: "word = 'code'\nprint(len(word))",
+        options: ["4", "3", "5", "Error"],
+        correct: 0,
+        explanation: "len() counts the number of characters in 'code', which is 4.",
+        hint: "Count the letters: c - o - d - e.",
+        type: "code",
+        difficulty: "VERY EASY"
+    },
+    // Q6
+    {
+        question: "What is the output of accessing the first item in this list?",
+        code: "fruits = ['apple', 'banana', 'cherry']\nprint(fruits[0])",
+        options: ["'apple'", "'banana'", "'cherry'", "IndexError"],
+        correct: 0,
+        explanation: "Python uses 0-based indexing, so fruits[0] refers to the first item: 'apple'.",
+        hint: "Python list indices start counting from 0.",
+        type: "code",
+        difficulty: "VERY EASY"
+    },
+    // Q7
+    {
+        question: "What will this if condition print?",
+        code: "score = 80\nif score >= 50:\n    print('Pass')\nelse:\n    print('Fail')",
+        options: ["'Pass'", "'Fail'", "None", "Error"],
+        correct: 0,
+        explanation: "80 is greater than or equal to 50, so the condition is True and 'Pass' is printed.",
+        hint: "Is 80 greater than or equal to 50?",
+        type: "code",
+        difficulty: "VERY EASY"
+    },
+    // Q8
+    {
+        question: "How many times does this loop print 'Hello'?",
+        code: "for i in range(3):\n    print('Hello')",
+        options: ["3 times", "2 times", "4 times", "1 time"],
+        correct: 0,
+        explanation: "range(3) produces 0, 1, and 2, executing the loop body exactly 3 times.",
+        hint: "range(3) runs for numbers 0, 1, and 2.",
+        type: "code",
+        difficulty: "VERY EASY"
+    },
+    // Q9
+    {
+        question: "What is the result of evaluating 10 > 20 in Python?",
+        options: ["False", "True", "None", "Error"],
+        correct: 0,
+        explanation: "10 is not greater than 20, so the expression evaluates to False.",
+        hint: "Ask yourself: is 10 bigger than 20?",
+        type: "concept",
+        difficulty: "VERY EASY"
+    },
+    // Q10
+    {
+        question: "What is the value of x after this code runs?",
+        code: "x = 10\nx = x + 5\nprint(x)",
+        options: ["15", "10", "5", "20"],
+        correct: 0,
+        explanation: "x starts at 10, then adding 5 gives 15, which is assigned back to x.",
+        hint: "Calculate 10 + 5 to find the new value of x.",
+        type: "code",
+        difficulty: "VERY EASY"
+    }
+];
+
+// --------------------------------------------------
+// LEVEL 2: 🚀 ROCKET (Functions, Loops & Core Concepts)
+// --------------------------------------------------
+const rocketQuestions = [
+    // Q1
+    {
+        question: "Which symbol is used to write a single-line comment in Python?",
+        options: ["#", "//", "/*", "--"],
+        correct: 0,
+        explanation: "The # symbol denotes a comment in Python; everything after it on that line is ignored.",
+        hint: "Also known as the hash, number sign, or pound symbol.",
+        type: "concept",
+        difficulty: "VERY EASY"
+    },
+    // Q2
+    {
+        question: "What will this list look like after calling append()?",
+        code: "nums = [1, 2]\nnums.append(3)\nprint(nums)",
+        options: ["[1, 2, 3]", "[3, 1, 2]", "[1, 2]", "[3]"],
+        correct: 0,
+        explanation: "append(3) adds 3 to the very end of the list, resulting in [1, 2, 3].",
+        hint: "append places an element at the end of the list.",
+        type: "code",
+        difficulty: "VERY EASY"
+    },
+    // Q3
+    {
+        question: "What will this string method output?",
+        code: "text = 'hello'\nprint(text.upper())",
+        options: ["'HELLO'", "'hello'", "'Hello'", "Error"],
+        correct: 0,
+        explanation: "upper() converts all lowercase letters in the string to uppercase: 'HELLO'.",
+        hint: "upper converts text to CAPITAL letters.",
+        type: "code",
+        difficulty: "VERY EASY"
+    },
+    // Q4
+    {
+        question: "Which keyword is used to define a new function in Python?",
+        options: ["def", "function", "func", "create"],
+        correct: 0,
+        explanation: "The def keyword (short for define) is used to create user-defined functions.",
+        hint: "A short 3-letter keyword starting with 'd'.",
+        type: "concept",
+        difficulty: "VERY EASY"
+    },
+    // Q5
+    {
+        question: "What will this function call print?",
+        code: "def double(n):\n    return n * 2\n\nprint(double(4))",
+        options: ["8", "4", "2", "16"],
+        correct: 0,
+        explanation: "Passing 4 to double(n) multiplies 4 by 2 and returns 8.",
+        hint: "Multiply 4 by 2.",
+        type: "code",
+        difficulty: "VERY EASY"
+    },
+    // Q6
+    {
+        question: "What is the output of evaluating True and False in Python?",
+        options: ["False", "True", "None", "Error"],
+        correct: 0,
+        explanation: "The 'and' operator requires both sides to be True; since one side is False, it returns False.",
+        hint: "For 'and' to be True, both operands must be True.",
+        type: "concept",
+        difficulty: "VERY EASY"
+    },
+    // Q7
+    {
+        question: "How do you access the value of 'age' from this dictionary?",
+        code: "user = {'name': 'Sam', 'age': 21}\nprint(user['age'])",
+        options: ["21", "'Sam'", "'age'", "KeyError"],
+        correct: 0,
+        explanation: "user['age'] looks up the key 'age' in the dictionary and returns its value: 21.",
+        hint: "The key 'age' is paired with the number 21.",
+        type: "code",
+        difficulty: "VERY EASY"
+    },
+    // Q8
+    {
+        question: "What is the final value of total after this loop runs?",
+        code: "total = 0\nfor n in [1, 2, 3]:\n    total = total + n\nprint(total)",
+        options: ["6", "3", "5", "0"],
+        correct: 0,
+        explanation: "total accumulates each number: 0 + 1 + 2 + 3 = 6.",
+        hint: "Add up 1 + 2 + 3.",
+        type: "code",
+        difficulty: "VERY EASY"
+    },
+    // Q9
+    {
+        question: "In computer science, what is a step-by-step procedure for solving a problem called?",
+        options: ["Algorithm", "Hardware", "Compiler", "Bandwidth"],
+        correct: 0,
+        explanation: "An algorithm is a finite, well-defined sequence of steps to solve a problem or complete a task.",
+        hint: "The fundamental recipe or instruction sequence in programming.",
+        type: "concept",
+        difficulty: "VERY EASY"
+    },
+    // Q10
+    {
+        question: "What will happen when you try to run this code?",
+        code: "x = 10\nif x > 5\n    print('Greater')",
         options: [
-            "True",
+            "SyntaxError (missing colon : after condition)",
+            "It prints 'Greater' normally",
             "TypeError",
-            "None",
-            "False"
-        ],
-        correct: 3,
-        level: 1,
-        hint: "Python is strongly typed and does not automatically coerce an integer to match a string."
-    },
-    {
-        question: "What is the average time complexity of accessing an element in an array by its index?",
-        options: [
-            "O(n)",
-            "O(log n)",
-            "O(1)",
-            "O(n²)"
-        ],
-        correct: 2,
-        level: 1,
-        hint: "Direct memory calculation allows constant time access."
-    },
-
-    // --------------------------------------------------
-    // LEVEL 2 — INTERMEDIATE (DS, OOP, DBMS, SQL)
-    // --------------------------------------------------
-    {
-        question: "Which data structure operates on a Last In, First Out (LIFO) principle?",
-        options: [
-            "Queue",
-            "Stack",
-            "Linked List",
-            "Binary Tree"
-        ],
-        correct: 1,
-        level: 2,
-        hint: "Think about a stack of cafeteria trays: the last tray put on top is the first taken off."
-    },
-    {
-        question: "Which OOP concept bundles data and methods together while restricting direct access to object internals?",
-        options: [
-            "Inheritance",
-            "Polymorphism",
-            "Abstraction",
-            "Encapsulation"
-        ],
-        correct: 3,
-        level: 2,
-        hint: "Think of a protective capsule that hides internal state behind getters and setters."
-    },
-    {
-        question: "Which SQL clause is used to filter records after an aggregate function like COUNT() or AVG()?",
-        options: [
-            "WHERE",
-            "ORDER BY",
-            "HAVING",
-            "GROUP BY"
-        ],
-        correct: 2,
-        level: 2,
-        hint: "WHERE filters rows before grouping; this clause filters grouped results after aggregation."
-    },
-    {
-        question: "Which data structure is typically used to implement Breadth-First Search (BFS) on a graph?",
-        options: [
-            "Queue",
-            "Stack",
-            "Priority Queue",
-            "Hash Table"
+            "It prints None"
         ],
         correct: 0,
-        level: 2,
-        hint: "BFS explores neighbors level-by-level in First-In, First-Out (FIFO) order."
-    },
-    {
-        question: "In database transaction ACID properties, what does 'Atomicity' guarantee?",
-        options: [
-            "Data remains consistent after system crashes",
-            "Concurrent transactions do not interfere",
-            "All operations succeed completely or none are applied",
-            "Committed changes survive future system crashes"
-        ],
-        correct: 2,
-        level: 2,
-        hint: "It represents the 'all-or-nothing' rule for database transactions."
-    },
+        explanation: "In Python, if statements must end with a colon (:). Missing it raises a SyntaxError.",
+        hint: "Notice what punctuation is missing at the end of the line 'if x > 5'.",
+        type: "code",
+        difficulty: "VERY EASY"
+    }
+];
 
-    // --------------------------------------------------
-    // LEVEL 3 — ADVANCED (OS, Networks, Git, AI)
-    // --------------------------------------------------
+// --------------------------------------------------
+// LEVEL 3: 🤖 ROBOT (Basic Structures, OOP & Logic)
+// --------------------------------------------------
+const robotQuestions = [
+    // Q1
     {
-        question: "What condition occurs when two or more processes are blocked indefinitely waiting for resources held by each other?",
-        options: [
-            "Starvation",
-            "Race Condition",
-            "Thrashing",
-            "Deadlock"
-        ],
-        correct: 3,
-        level: 3,
-        hint: "Neither process can proceed, creating a permanent circular wait standstill."
-    },
-    {
-        question: "Which OSI model layer manages end-to-end communication, flow control, and protocols like TCP and UDP?",
-        options: [
-            "Network Layer",
-            "Transport Layer",
-            "Data Link Layer",
-            "Session Layer"
-        ],
-        correct: 1,
-        level: 3,
-        hint: "Layer 4 is responsible for reliable or best-effort segment delivery between hosts."
-    },
-    {
-        question: "Which Git command applies the changes from a single specific commit into your current branch without merging?",
-        options: [
-            "git merge",
-            "git rebase",
-            "git checkout",
-            "git cherry-pick"
-        ],
-        correct: 3,
-        level: 3,
-        hint: "Think about picking one specific fruit from another branch."
-    },
-    {
-        question: "What problem occurs when a machine learning model learns training data noise and performs poorly on unseen test data?",
-        options: [
-            "Overfitting",
-            "Underfitting",
-            "Data Drift",
-            "Vanishing Gradient"
-        ],
+        question: "In Python, which data structure is written with parentheses () and cannot be changed after creation?",
+        options: ["Tuple", "List", "Dictionary", "Set"],
         correct: 0,
-        level: 3,
-        hint: "High accuracy on training samples, but low generalizability on validation data."
+        explanation: "Tuples are immutable sequences created with () whose elements cannot be modified.",
+        hint: "Unlike lists, this collection type is immutable.",
+        type: "concept",
+        difficulty: "VERY EASY"
     },
+    // Q2
     {
-        question: "Which CPU scheduling algorithm assigns each process a small fixed time slice (quantum) in cyclic order?",
-        options: [
-            "First-Come, First-Served",
-            "Shortest Job First",
-            "Round Robin",
-            "Priority Scheduling"
-        ],
-        correct: 2,
-        level: 3,
-        hint: "It guarantees fair time-sharing by rotating through the ready queue."
+        question: "What is the output of accessing the last item using negative index -1?",
+        code: "items = ['pen', 'book', 'laptop']\nprint(items[-1])",
+        options: ["'laptop'", "'pen'", "'book'", "IndexError"],
+        correct: 0,
+        explanation: "Index -1 in Python accesses the very last item in a list: 'laptop'.",
+        hint: "Negative indexing counts backward from the end.",
+        type: "code",
+        difficulty: "VERY EASY"
+    },
+    // Q3
+    {
+        question: "What will this list slice print?",
+        code: "letters = ['a', 'b', 'c', 'd']\nprint(letters[0:2])",
+        options: ["['a', 'b']", "['a', 'b', 'c']", "['b', 'c']", "['a']"],
+        correct: 0,
+        explanation: "letters[0:2] extracts items at index 0 and 1, stopping before index 2: ['a', 'b'].",
+        hint: "Includes index 0 and 1, stops right before index 2.",
+        type: "code",
+        difficulty: "VERY EASY"
+    },
+    // Q4
+    {
+        question: "In Object-Oriented Programming, what is a blueprint used to create objects called?",
+        options: ["Class", "Method", "Variable", "Module"],
+        correct: 0,
+        explanation: "A Class is a blueprint or template from which individual object instances are created.",
+        hint: "You define a 'class' to produce instances (objects).",
+        type: "concept",
+        difficulty: "VERY EASY"
+    },
+    // Q5
+    {
+        question: "What will this simple class output when greeted?",
+        code: "class Robot:\n    def say_hi(self):\n        return 'Beep Boop'\n\nr = Robot()\nprint(r.say_hi())",
+        options: ["'Beep Boop'", "None", "Robot", "Error"],
+        correct: 0,
+        explanation: "r is an instance of Robot, and calling r.say_hi() returns 'Beep Boop'.",
+        hint: "Calling the method say_hi() returns the robot's greeting.",
+        type: "code",
+        difficulty: "VERY EASY"
+    },
+    // Q6
+    {
+        question: "Which data structure follows the First-In, First-Out (FIFO) principle?",
+        options: ["Queue", "Stack", "Binary Tree", "Hash Table"],
+        correct: 0,
+        explanation: "A Queue operates on FIFO (First-In, First-Out), just like a real line of people waiting.",
+        hint: "Think of waiting in a line or queue: the first person to arrive is served first.",
+        type: "concept",
+        difficulty: "VERY EASY"
+    },
+    // Q7
+    {
+        question: "What will len() return for this dictionary?",
+        code: "car = {'brand': 'Ford', 'model': 'Mustang', 'year': 1964}\nprint(len(car))",
+        options: ["3", "6", "1", "Error"],
+        correct: 0,
+        explanation: "len() on a dictionary returns the number of key-value pairs, which is 3.",
+        hint: "Count the keys: brand, model, year.",
+        type: "code",
+        difficulty: "VERY EASY"
+    },
+    // Q8
+    {
+        question: "Which Git command is used to save a snapshot of staged changes into project history?",
+        options: ["git commit", "git push", "git init", "git clone"],
+        correct: 0,
+        explanation: "git commit creates a permanent snapshot of your staged changes in the local repository.",
+        hint: "You 'commit' your changes with a message.",
+        type: "concept",
+        difficulty: "VERY EASY"
+    },
+    // Q9
+    {
+        question: "What is the output of this simple while loop?",
+        code: "count = 1\nwhile count < 3:\n    count = count + 1\nprint(count)",
+        options: ["3", "2", "1", "4"],
+        correct: 0,
+        explanation: "count starts at 1, increments to 2, increments to 3, and loop stops because 3 < 3 is False.",
+        hint: "Trace each step: 1 -> 2 -> 3, then it stops.",
+        type: "code",
+        difficulty: "VERY EASY"
+    },
+    // Q10
+    {
+        question: "What will this function return for check_number(12)?",
+        code: "def check_number(n):\n    if n % 2 == 0:\n        return 'Even'\n    return 'Odd'\n\nprint(check_number(12))",
+        options: ["'Even'", "'Odd'", "None", "Error"],
+        correct: 0,
+        explanation: "12 % 2 is 0 (no remainder), so the if condition matches and returns 'Even'.",
+        hint: "Is 12 an even or odd number?",
+        type: "code",
+        difficulty: "VERY EASY"
     }
 ];
 
 // ==================================================
-// HOUSE BUILDING LOGIC (15 Pieces)
+// LEVEL CONFIGURATIONS (Flexible & Extensible)
+// ==================================================
+
+const BUILDS = [
+    {
+        id: "house",
+        levelNumber: 1,
+        name: "House",
+        icon: "🏠",
+        title: "🏠 BUILD YOUR HOUSE",
+        topicName: "LEVEL 1 — 🏠 HOUSE",
+        questions: houseQuestions,
+        pieces: housePieces,
+        sceneElement: houseScene,
+        completionTitle: "🏆 LEVEL 1 COMPLETE!",
+        completionDesc: "You completed Level 1 and established your first permanent checkpoint!",
+        unlockNext: "🔓 LEVEL 2 UNLOCKED: 🚀 ROCKET"
+    },
+    {
+        id: "rocket",
+        levelNumber: 2,
+        name: "Rocket",
+        icon: "🚀",
+        title: "🚀 BUILD YOUR ROCKET",
+        topicName: "LEVEL 2 — 🚀 ROCKET",
+        questions: rocketQuestions,
+        pieces: rocketPieces,
+        sceneElement: rocketScene,
+        completionTitle: "🏆 LEVEL 2 COMPLETE!",
+        completionDesc: "You completed Level 2 and reached the orbital checkpoint!",
+        unlockNext: "🔓 LEVEL 3 UNLOCKED: 🤖 ROBOT"
+    },
+    {
+        id: "robot",
+        levelNumber: 3,
+        name: "Robot",
+        icon: "🤖",
+        title: "🤖 BUILD YOUR ROBOT",
+        topicName: "LEVEL 3 — 🤖 ROBOT",
+        questions: robotQuestions,
+        pieces: robotPieces,
+        sceneElement: robotScene,
+        completionTitle: "🏆 LEVEL 3 COMPLETE!",
+        completionDesc: "You conquered Level 3 and completed the entire Build World!",
+        unlockNext: "🏆 BUILD WORLD MASTERED!"
+    }
+];
+
+// ==================================================
+// BUILD PROGRESSION & SCENE MANAGEMENT
 // ==================================================
 
 function updateBuilding() {
-    housePieces.forEach(function (piece, index) {
-        piece.classList.toggle("built", index < buildingProgress);
+    const build = BUILDS[currentBuildIndex];
+    const piecesBuilt = buildPieces[currentBuildIndex];
+
+    build.pieces.forEach(function (piece, index) {
+        piece.classList.toggle("built", index < piecesBuilt);
     });
 
-    buildProgress.textContent =
-        "House progress: " + buildingProgress + " / " + questions.length;
-}
-
-function resetBuilding() {
-    buildingProgress = 0;
-    updateBuilding();
+    buildProgress.textContent = build.icon + " " + piecesBuilt + " / 10";
+    const percent = (piecesBuilt / 10) * 100;
+    buildProgressBar.style.width = percent + "%";
 }
 
 function buildNextPiece() {
-    if (buildingProgress < housePieces.length) {
-        buildingProgress = buildingProgress + 1;
+    if (buildPieces[currentBuildIndex] < 10) {
+        buildPieces[currentBuildIndex] = buildPieces[currentBuildIndex] + 1;
         updateBuilding();
     }
+}
+
+function switchScene(targetIndex) {
+    BUILDS.forEach(function (b, idx) {
+        if (idx === targetIndex) {
+            b.sceneElement.style.display = "block";
+            b.sceneElement.classList.add("active");
+        } else {
+            b.sceneElement.style.display = "none";
+            b.sceneElement.classList.remove("active");
+        }
+    });
+
+    if (carScene) {
+        carScene.style.display = "none";
+    }
+
+    builderTitle.textContent = BUILDS[targetIndex].title;
+    updateBuilding();
+}
+
+function updateBuildWorldBar() {
+    // Level 1: House
+    if (completedLevels[0]) {
+        worldItemHouse.className = "world-item completed";
+        worldItemHouse.querySelector(".world-status").textContent = "✅ Completed";
+    } else if (currentBuildIndex === 0) {
+        worldItemHouse.className = "world-item active";
+        worldItemHouse.querySelector(".world-status").textContent = "In Progress (" + buildPieces[0] + "/10)";
+    } else {
+        worldItemHouse.className = "world-item";
+        worldItemHouse.querySelector(".world-status").textContent = "Available";
+    }
+
+    // Level 2: Rocket
+    if (completedLevels[1]) {
+        worldItemRocket.className = "world-item completed";
+        worldItemRocket.querySelector(".world-status").textContent = "✅ Completed";
+    } else if (currentBuildIndex === 1) {
+        worldItemRocket.className = "world-item active";
+        worldItemRocket.querySelector(".world-status").textContent = "In Progress (" + buildPieces[1] + "/10)";
+    } else if (completedLevels[0]) {
+        worldItemRocket.className = "world-item";
+        worldItemRocket.querySelector(".world-status").textContent = "🔓 Unlocked";
+    } else {
+        worldItemRocket.className = "world-item locked";
+        worldItemRocket.querySelector(".world-status").textContent = "🔒 Locked";
+    }
+
+    // Level 3: Robot
+    if (completedLevels[2]) {
+        worldItemRobot.className = "world-item completed";
+        worldItemRobot.querySelector(".world-status").textContent = "✅ Completed";
+    } else if (currentBuildIndex === 2) {
+        worldItemRobot.className = "world-item active";
+        worldItemRobot.querySelector(".world-status").textContent = "In Progress (" + buildPieces[2] + "/10)";
+    } else if (completedLevels[1]) {
+        worldItemRobot.className = "world-item";
+        worldItemRobot.querySelector(".world-status").textContent = "🔓 Unlocked";
+    } else {
+        worldItemRobot.className = "world-item locked";
+        worldItemRobot.querySelector(".world-status").textContent = "🔒 Locked";
+    }
+
+    // Level 4: Car (extensible future level)
+    if (worldItemCar) {
+        worldItemCar.className = "world-item future";
+        worldItemCar.querySelector(".world-status").textContent = "🔒 Coming later";
+    }
+}
+
+// ==================================================
+// LIVES DISPLAY HELPER
+// ==================================================
+
+function updateLivesDisplay() {
+    let livesText = "";
+    for (let i = 0; i < 3; i++) {
+        livesText += (i < lives) ? "❤️ " : "🖤 ";
+    }
+    livesDisplay.textContent = livesText.trim();
 }
 
 // ==================================================
@@ -302,228 +619,385 @@ function updateHintDisplay() {
 }
 
 hintButton.addEventListener("click", function () {
-    // Cannot use hints if none left, player died, or already answered
-    if (hintsRemaining <= 0 || lives <= 0 || answered) {
+    if (hintsRemaining <= 0 || lives <= 0 || isAnswerLocked) {
         return;
     }
 
-    const question = questions[currentQuestion];
+    const build = BUILDS[currentBuildIndex];
+    const question = build.questions[currentQuestionIndex];
 
-    // Only deduct 1 hint if not already revealed for this question
     if (!hintUsedForCurrentQuestion) {
         hintsRemaining = Math.max(0, hintsRemaining - 1);
         hintUsedForCurrentQuestion = true;
         updateHintDisplay();
     }
 
-    // Display the question hint
-    hintBox.textContent = "💡 Hint: " + question.hint;
+    hintBox.textContent = "💡 Clue: " + question.hint;
     hintBox.style.display = "block";
+    hintButton.disabled = true;
 });
+
+// ==================================================
+// STREAK & MILESTONE NOTIFICATIONS
+// ==================================================
+
+function checkStreakMilestone(currentStreak) {
+    let message = "";
+    if (currentStreak === 3) {
+        message = "🔥 3 IN A ROW! ON FIRE!";
+    } else if (currentStreak === 5) {
+        message = "⚡ 5 STREAK! UNSTOPPABLE!";
+    } else if (currentStreak === 10) {
+        message = "🌟 10 STREAK! PERFECT RUN!";
+    }
+
+    if (message) {
+        streakBanner.textContent = message;
+        streakBanner.style.display = "block";
+        setTimeout(function () {
+            streakBanner.style.display = "none";
+        }, 2200);
+    }
+}
 
 // ==================================================
 // QUESTION LOADING & UI UPDATES
 // ==================================================
 
-function getLevelTitle(level) {
-    if (level === 1) return "LEVEL 1 — BEGINNER";
-    if (level === 2) return "LEVEL 2 — INTERMEDIATE";
-    return "LEVEL 3 — ADVANCED";
-}
-
 function loadQuestion() {
-    const question = questions[currentQuestion];
+    const build = BUILDS[currentBuildIndex];
+    const question = build.questions[currentQuestionIndex];
 
-    // Update level indicator & color theme
-    levelIndicator.textContent = getLevelTitle(question.level);
-    levelIndicator.className = "level-indicator level-" + question.level;
+    // Header level indicator & question progress
+    levelIndicator.textContent = build.topicName;
+    levelIndicator.className = "level-indicator level-" + build.levelNumber;
+    questionProgress.textContent = "Question " + (currentQuestionIndex + 1) + " / 10";
 
-    // Progress within current 5-question level
-    const questionInLevel = (currentQuestion % 5) + 1;
-    questionProgress.textContent = "Question " + questionInLevel + " / 5";
+    // Question number & difficulty badge
+    questionNumber.textContent = "Question " + (currentQuestionIndex + 1) + " (" + build.name + ")";
+    difficultyBadge.textContent = question.difficulty;
+    difficultyBadge.className = "difficulty-badge badge-easy";
 
-    questionNumber.textContent = "Question " + (currentQuestion + 1) + " (Level " + question.level + ")";
+    // Question text
     questionText.textContent = question.question;
 
-    const optionPrefixes = ["A", "B", "C", "D"];
+    // Code snippet display
+    if (question.code) {
+        codeSnippetText.textContent = question.code;
+        codeSnippetBox.style.display = "block";
+    } else {
+        codeSnippetText.textContent = "";
+        codeSnippetBox.style.display = "none";
+    }
+
+    // Populate answer buttons
+    const prefixes = ["A", "B", "C", "D"];
     answerButtons.forEach(function (button, index) {
-        button.textContent = optionPrefixes[index] + ". " + question.options[index];
+        button.textContent = prefixes[index] + ". " + question.options[index];
         button.disabled = false;
-        button.style.display = "block";
+        button.style.display = "flex";
         button.className = "answer-btn";
     });
 
-    // Reset feedback
-    feedback.textContent = "";
-    feedback.className = "feedback";
-
-    // Reset hint state for the new question
+    // Reset hint state for current question
     hintUsedForCurrentQuestion = false;
     hintBox.textContent = "";
     hintBox.style.display = "none";
     updateHintDisplay();
 
+    // Reset result box
+    resultBox.style.display = "none";
+    resultBox.className = "result-box";
+    resultStreakTag.style.display = "none";
+    resultCorrectAnswer.style.display = "none";
+    continueButton.textContent = "CONTINUE →";
+
     // Unlock answers
-    answered = false;
+    isAnswerLocked = false;
+    updateBuildWorldBar();
+    updateBuilding();
 }
 
 // ==================================================
-// ANSWER HANDLING & LEVEL PROGRESSION
+// ANSWER HANDLING & LOCKING
 // ==================================================
 
 function handleAnswer(selectedIndex) {
-    if (answered) {
+    if (isAnswerLocked) {
         return;
     }
 
-    // Lock answer immediately
-    answered = true;
-
-    // Disable all answer buttons to prevent multiple clicks
-    answerButtons.forEach(function (button) {
-        button.disabled = true;
+    // Immediately lock all answer buttons to prevent multiple clicks
+    isAnswerLocked = true;
+    answerButtons.forEach(function (btn) {
+        btn.disabled = true;
     });
 
-    const question = questions[currentQuestion];
+    const build = BUILDS[currentBuildIndex];
+    const question = build.questions[currentQuestionIndex];
+    const isCorrect = (selectedIndex === question.correct);
 
-    if (selectedIndex === question.correct) {
-        score = score + 10;
-        scoreDisplay.textContent = "Score: " + score;
+    if (isCorrect) {
+        // Correct answer: +10 XP, +1 streak, build exactly 1 piece
+        totalXp = totalXp + 10;
+        scoreDisplay.textContent = "⭐ " + totalXp + " XP";
 
-        // Build exactly one piece on correct answer
+        streak = streak + 1;
+        if (streak > bestStreak) {
+            bestStreak = streak;
+        }
+        streakDisplay.textContent = "🔥 " + streak;
+        checkStreakMilestone(streak);
+
         buildNextPiece();
 
         answerButtons[selectedIndex].classList.add("btn-correct");
-        feedback.textContent = "Correct! 🎉 House piece built! 🧱";
-        feedback.className = "feedback feedback-correct";
+
+        // Populate Result Box
+        resultBox.className = "result-box result-correct";
+        resultStatus.textContent = "✅ CORRECT!";
+        resultXpTag.textContent = "+10 XP";
+
+        if (streak > 1) {
+            resultStreakTag.textContent = "🔥 STREAK " + streak;
+            resultStreakTag.style.display = "inline-block";
+        } else {
+            resultStreakTag.style.display = "none";
+        }
+
+        resultCorrectAnswer.style.display = "none";
+        resultExplanation.textContent = question.explanation;
+
     } else {
-        lives = lives - 1;
-        livesDisplay.textContent =
-            "Lives: " + (lives > 0 ? "❤️ ".repeat(lives) : "💔 0");
+        // Wrong answer: -1 life on current level, reset streak, build NOTHING
+        lives = Math.max(0, lives - 1);
+        streak = 0;
+        streakDisplay.textContent = "🔥 0";
+        updateLivesDisplay();
 
         answerButtons[selectedIndex].classList.add("btn-wrong");
-        // Highlight correct answer for learning
         answerButtons[question.correct].classList.add("btn-correct");
 
-        feedback.textContent = "Wrong answer ❌ No house piece built.";
-        feedback.className = "feedback feedback-wrong";
+        // Populate Result Box
+        resultBox.className = "result-box result-wrong";
+        resultStatus.textContent = "❌ NOT QUITE";
+        resultXpTag.textContent = "+0 XP";
+        resultStreakTag.style.display = "none";
 
+        resultCorrectAnswer.textContent = "Correct answer: " + question.options[question.correct];
+        resultCorrectAnswer.style.display = "block";
+        resultExplanation.textContent = question.explanation;
+
+        // If lives reach 0, update continue button text
         if (lives === 0) {
-            setTimeout(function () {
-                showGameOver();
-            }, 1000);
-            return;
+            continueButton.textContent = "SEE RESULTS 💀";
         }
     }
 
-    // Progression timer
-    setTimeout(function () {
-        // Clear option feedback styles
-        answerButtons.forEach(function (button) {
-            button.classList.remove("btn-correct", "btn-wrong");
-        });
-
-        // Check for level completion or game completion
-        // Level 1 completes after question index 4 (5 questions)
-        // Level 2 completes after question index 9 (5 questions)
-        // Level 3 completes after question index 14 (5 questions)
-        if (currentQuestion === 4) {
-            showLevelComplete(1);
-        } else if (currentQuestion === 9) {
-            showLevelComplete(2);
-        } else if (currentQuestion === 14) {
-            showGameComplete();
-        } else {
-            currentQuestion = currentQuestion + 1;
-            loadQuestion();
-        }
-    }, 1200);
+    resultBox.style.display = "block";
+    updateBuildWorldBar();
 }
 
 // ==================================================
-// STATE SCREENS (LEVEL COMPLETE, GAME COMPLETE, GAME OVER)
+// CONTINUE BUTTON HANDLER (Manual Progression)
 // ==================================================
 
-function showLevelComplete(completedLevel) {
-    questionCard.style.display = "none";
-    levelCompleteCard.style.display = "block";
+continueButton.addEventListener("click", function () {
+    // If lives hit 0, trigger Level Failed
+    if (lives === 0) {
+        showLevelFailed();
+        return;
+    }
 
-    if (completedLevel === 1) {
-        levelCompleteTitle.textContent = "🎉 LEVEL 1 COMPLETE!";
-        levelCompleteMessage.textContent =
-            "Awesome work! You mastered Python fundamentals. Your house foundation, walls, and ground windows are now in place. Ready for Intermediate topics?";
-        nextLevelButton.textContent = "CONTINUE TO LEVEL 2";
-    } else if (completedLevel === 2) {
-        levelCompleteTitle.textContent = "🎉 LEVEL 2 COMPLETE!";
-        levelCompleteMessage.textContent =
-            "Fantastic progress! You tackled Data Structures, OOP, and DBMS. Your house now has a roof and chimney. Ready for Advanced systems questions?";
-        nextLevelButton.textContent = "CONTINUE TO LEVEL 3";
+    // If more questions remain in the level, advance to next question
+    if (currentQuestionIndex < 9) {
+        currentQuestionIndex = currentQuestionIndex + 1;
+        loadQuestion();
+    } else {
+        // Final question of level reached and player survived!
+        completeCurrentLevel();
+    }
+});
+
+// ==================================================
+// LEVEL COMPLETION (Checkpoint Reached)
+// ==================================================
+
+function completeCurrentLevel() {
+    const build = BUILDS[currentBuildIndex];
+
+    // Mark current level as completed checkpoint
+    completedLevels[currentBuildIndex] = true;
+
+    // Save checkpoint XP permanently
+    checkpointXp = totalXp;
+
+    updateBuildWorldBar();
+
+    if (currentBuildIndex < 2) {
+        // Level 1 or Level 2 Complete -> Show Checkpoint screen
+        questionCard.style.display = "none";
+        levelCompleteCard.style.display = "block";
+
+        levelCompleteTitle.textContent = build.completionTitle;
+        levelCompleteMessage.textContent = build.completionDesc;
+
+        buildCompleteStats.innerHTML =
+            "<p>⭐ <strong>Total XP:</strong> " + totalXp + " points</p>" +
+            "<p>🔥 <strong>Best Streak:</strong> " + bestStreak + " in a row</p>" +
+            "<p>" + build.icon + " <strong>" + build.name + " Pieces:</strong> " + buildPieces[currentBuildIndex] + " / 10 pieces built</p>" +
+            "<p>❤️ <strong>Lives Remaining:</strong> " + lives + " / 3</p>";
+
+        buildUnlockBanner.textContent = build.unlockNext;
+        nextLevelButton.textContent = "CONTINUE TO LEVEL " + (currentBuildIndex + 2) + " →";
+    } else {
+        // Level 3 Complete (All levels conquered!) -> Final Victory Screen
+        showGameComplete();
     }
 }
 
 nextLevelButton.addEventListener("click", function () {
     levelCompleteCard.style.display = "none";
     questionCard.style.display = "block";
-    currentQuestion = currentQuestion + 1;
+
+    // Advance to next level
+    currentBuildIndex = currentBuildIndex + 1;
+    currentQuestionIndex = 0;
+
+    // Each new level gets fresh 3 lives & fresh 3 hints!
+    lives = 3;
+    hintsRemaining = 3;
+    streak = 0;
+
+    updateLivesDisplay();
+    updateHintDisplay();
+    switchScene(currentBuildIndex);
+    updateBuildWorldBar();
     loadQuestion();
 });
 
+// ==================================================
+// LEVEL FAILED SCREEN (Restarts ONLY the Current Level)
+// ==================================================
+
+function showLevelFailed() {
+    questionCard.style.display = "none";
+    levelCompleteCard.style.display = "none";
+    gameOverCard.style.display = "block";
+    tryAgainButton.style.display = "inline-block";
+    hintButton.disabled = true;
+
+    const build = BUILDS[currentBuildIndex];
+    const gameOverTitle = document.getElementById("game-over-title");
+    if (gameOverTitle) {
+        gameOverTitle.textContent = "💀 LEVEL " + build.levelNumber + " FAILED";
+    }
+
+    gameOverMessage.textContent = "You ran out of lives on Level " + build.levelNumber + " (" + build.name + ").";
+
+    gameOverStats.innerHTML =
+        "<p>" + build.icon + " <strong>Level:</strong> Level " + build.levelNumber + " — " + build.name + "</p>" +
+        "<p>📍 <strong>Stopped At:</strong> Question " + (currentQuestionIndex + 1) + " / 10</p>" +
+        "<p>🧱 <strong>Pieces Built:</strong> " + buildPieces[currentBuildIndex] + " / 10</p>" +
+        "<p>⭐ <strong>Saved Checkpoint XP:</strong> " + checkpointXp + " XP</p>" +
+        "<p><em>Completed checkpoints remain saved! Only this level will restart.</em></p>";
+}
+
+// When TRY AGAIN is clicked on a failed level:
+tryAgainButton.addEventListener("click", function () {
+    // Restart ONLY the current level!
+    // Player does NOT go back to Level 1!
+    currentQuestionIndex = 0;
+    buildPieces[currentBuildIndex] = 0; // Reset only this level's build pieces
+    lives = 3;                         // Fresh 3 lives for retry!
+    hintsRemaining = 3;                // Reset hints for retry!
+    streak = 0;
+    totalXp = checkpointXp;            // Restore XP from previously completed checkpoints
+
+    // Update displays
+    scoreDisplay.textContent = "⭐ " + totalXp + " XP";
+    streakDisplay.textContent = "🔥 0";
+    updateLivesDisplay();
+    updateHintDisplay();
+
+    // Reset visual pieces for only the current level scene
+    BUILDS[currentBuildIndex].pieces.forEach(function (p) {
+        p.classList.remove("built");
+    });
+
+    // Reset UI visibility
+    gameOverCard.style.display = "none";
+    tryAgainButton.style.display = "none";
+    questionCard.style.display = "block";
+
+    switchScene(currentBuildIndex);
+    updateBuildWorldBar();
+    loadQuestion();
+});
+
+// ==================================================
+// FINAL GAME COMPLETE (All 3 Levels Conquered)
+// ==================================================
+
 function showGameComplete() {
     questionCard.style.display = "none";
+    levelCompleteCard.style.display = "none";
     gameCompleteCard.style.display = "block";
-    tryAgainButton.style.display = "block";
+    tryAgainButton.style.display = "inline-block";
+    tryAgainButton.textContent = "PLAY AGAIN";
     hintButton.disabled = true;
 
     finalStats.innerHTML =
-        "<p>🏆 <strong>Final Score:</strong> " + score + " / " + (questions.length * 10) + " points</p>" +
-        "<p>❤️ <strong>Lives Remaining:</strong> " + lives + " / 3</p>" +
-        "<p>💡 <strong>Hints Remaining:</strong> " + hintsRemaining + " / 3</p>" +
-        "<p>🏡 <strong>House Construction:</strong> " + buildingProgress + " / " + questions.length + " pieces built!</p>";
-}
+        "<p>🏆 <strong>Final Score:</strong> " + totalXp + " / 300 XP</p>" +
+        "<p>🔥 <strong>Best Streak:</strong> " + bestStreak + " consecutive correct</p>" +
+        "<p>🧱 <strong>Total Construction:</strong> " +
+        (buildPieces[0] + buildPieces[1] + buildPieces[2]) + " / 30 total pieces built</p>" +
+        "<p>❤️ <strong>Level 3 Lives Left:</strong> " + lives + " / 3</p>";
 
-function showGameOver() {
-    questionCard.style.display = "none";
-    gameOverCard.style.display = "block";
-    tryAgainButton.style.display = "block";
-    hintButton.disabled = true;
-
-    gameOverStats.innerHTML =
-        "<p><strong>Final Score:</strong> " + score + " points</p>" +
-        "<p><strong>House Pieces Built:</strong> " + buildingProgress + " / " + questions.length + "</p>" +
-        "<p><strong>Progress:</strong> Stopped at " + getLevelTitle(questions[currentQuestion].level) + "</p>";
+    updateBuildWorldBar();
 }
 
 // ==================================================
-// RESET & INITIALIZATION
+// FULL GAME RESET (From Start Screen)
 // ==================================================
 
-function resetGame() {
-    score = 0;
+function startNewGame() {
+    currentBuildIndex = 0;
+    currentQuestionIndex = 0;
+    buildPieces = [0, 0, 0];
+    completedLevels = [false, false, false];
+    checkpointXp = 0;
+    totalXp = 0;
+    streak = 0;
+    bestStreak = 0;
     lives = 3;
     hintsRemaining = 3;
     hintUsedForCurrentQuestion = false;
-    currentQuestion = 0;
-    buildingProgress = 0;
-    answered = false;
+    isAnswerLocked = false;
 
-    scoreDisplay.textContent = "Score: 0";
-    livesDisplay.textContent = "Lives: ❤️ ❤️ ❤️";
-
+    scoreDisplay.textContent = "⭐ 0 XP";
+    streakDisplay.textContent = "🔥 0";
+    updateLivesDisplay();
     updateHintDisplay();
+
     hintBox.textContent = "";
     hintBox.style.display = "none";
+    streakBanner.style.display = "none";
 
-    feedback.textContent = "";
-    feedback.className = "feedback";
+    // Clear all piece built styles
+    housePieces.forEach(function (p) { p.classList.remove("built"); });
+    rocketPieces.forEach(function (p) { p.classList.remove("built"); });
+    robotPieces.forEach(function (p) { p.classList.remove("built"); });
 
-    // Reset card visibility
+    // Reset screen cards visibility
     levelCompleteCard.style.display = "none";
     gameOverCard.style.display = "none";
     gameCompleteCard.style.display = "none";
-    questionCard.style.display = "block";
     tryAgainButton.style.display = "none";
+    questionCard.style.display = "block";
 
-    resetBuilding();
+    switchScene(0);
+    updateBuildWorldBar();
     loadQuestion();
 }
 
@@ -538,13 +1012,10 @@ answerButtons.forEach(function (button, index) {
 startButton.addEventListener("click", function () {
     startScreen.style.display = "none";
     gameScreen.style.display = "block";
-    resetGame();
+    startNewGame();
 });
 
-// Bind Try Again Button
-tryAgainButton.addEventListener("click", function () {
-    resetGame();
-});
-
-// Initialize on page load
-resetBuilding();
+// Initial Setup on load
+switchScene(0);
+updateBuilding();
+updateBuildWorldBar();
