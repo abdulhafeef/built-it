@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>BUILD IT!</title>
-
+    <meta name="description" content="BUILD IT! — A technical interview preparation game. Answer questions across 3 levels to build your dream engineering house brick by brick.">
+    <title>BUILD IT! — Technical Interview Challenge</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -13,39 +12,144 @@
 
     <div class="game-container">
 
-        <h1>BUILD IT!</h1>
+        <!-- Welcome / Start Screen -->
+        <div id="start-screen">
+            <div class="brand-pill">CAMPUS TO TECH CAREER</div>
+            <h1 class="game-title">BUILD IT!</h1>
+            <p class="tagline">Technical Interview Challenge</p>
+            <p class="game-desc">
+                Prepare for technical interviews by testing your engineering knowledge. Every correct answer places a new piece of your house. Complete all 3 levels to finish the build!
+            </p>
 
-        <p>Tech Interview Challenge</p>
+            <div class="level-preview-grid">
+                <div class="preview-card">
+                    <span class="preview-badge badge-l1">LEVEL 1</span>
+                    <h3>Beginner</h3>
+                    <p>Python Basics, Data Types & Syntax</p>
+                </div>
+                <div class="preview-card">
+                    <span class="preview-badge badge-l2">LEVEL 2</span>
+                    <h3>Intermediate</h3>
+                    <p>Data Structures, OOP, DBMS & SQL</p>
+                </div>
+                <div class="preview-card">
+                    <span class="preview-badge badge-l3">LEVEL 3</span>
+                    <h3>Advanced</h3>
+                    <p>Operating Systems, Networks, Git & AI</p>
+                </div>
+            </div>
 
-        <button id="start-button">START GAME</button>
+            <div class="rules-summary">
+                <span class="rule-chip">🎯 15 Questions (5 / Level)</span>
+                <span class="rule-chip">❤️ 3 Lives</span>
+                <span class="rule-chip">💡 3 Hints Shared</span>
+                <span class="rule-chip">🧱 15 House Pieces</span>
+            </div>
 
-        <div id="game-screen">
-            <p id="score">Score: 0</p>
-            <p id="lives">Lives: ❤️ ❤️ ❤️</p>
+            <button id="start-button" class="btn-action primary-btn">START GAME</button>
+        </div>
 
+        <!-- Main Game Screen -->
+        <div id="game-screen" style="display: none;">
+
+            <!-- Header / Status Bar -->
+            <header class="game-header">
+                <div class="header-top">
+                    <span id="level-indicator" class="level-indicator level-1">LEVEL 1 — BEGINNER</span>
+                    <span id="question-progress" class="question-progress">Question 1 / 5</span>
+                </div>
+
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-label">SCORE</span>
+                        <span id="score" class="stat-value">Score: 0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">LIVES</span>
+                        <span id="lives" class="stat-value">Lives: ❤️ ❤️ ❤️</span>
+                    </div>
+                    <div class="stat-item stat-hint">
+                        <span class="stat-label">ASSISTANCE</span>
+                        <button id="hint-button" class="hint-button" type="button">💡 Hint (3 left)</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- House Builder -->
             <div id="house-builder" aria-label="House building progress">
-                <p class="builder-title">🏠 BUILD YOUR HOUSE</p>
+                <div class="builder-header">
+                    <span class="builder-title">🏠 BUILD YOUR HOUSE</span>
+                    <span id="build-progress" class="build-progress">House progress: 0 / 15</span>
+                </div>
+
                 <div id="house" class="house">
                     <div class="house-piece foundation" data-piece="foundation"></div>
                     <div class="house-piece walls" data-piece="walls"></div>
                     <div class="house-piece door" data-piece="door"></div>
+                    <div class="house-piece door-knob" data-piece="door-knob"></div>
                     <div class="house-piece window window-left" data-piece="window-left"></div>
                     <div class="house-piece window window-right" data-piece="window-right"></div>
                     <div class="house-piece roof" data-piece="roof"></div>
+                    <div class="house-piece roof-trim" data-piece="roof-trim"></div>
+                    <div class="house-piece attic-window" data-piece="attic-window"></div>
+                    <div class="house-piece chimney" data-piece="chimney"></div>
+                    <div class="house-piece smoke" data-piece="smoke"></div>
+                    <div class="house-piece door-steps" data-piece="door-steps"></div>
+                    <div class="house-piece pathway" data-piece="pathway"></div>
+                    <div class="house-piece garden-fence" data-piece="garden-fence"></div>
+                    <div class="house-piece garden-flowers" data-piece="garden-flowers"></div>
                 </div>
-                <p id="build-progress">House progress: 0 / 2</p>
             </div>
 
-            <h2 id="question-number">Question 1</h2>
-            <p id="question-text">What is the correct way to print something in Python?</p>
+            <!-- Question Card -->
+            <div id="question-card" class="question-card">
+                <div class="question-header">
+                    <h2 id="question-number">Question 1</h2>
+                </div>
 
-            <button id="correct-answer">print("Hello")</button>
-            <button id="wrong-answer-1">echo "Hello"</button>
-            <button id="wrong-answer-2">printf("Hello")</button>
-            <button id="wrong-answer-3">console.log("Hello")</button>
+                <p id="question-text">Loading question...</p>
 
-            <div id="feedback"></div>
-            <button id="try-again-button">TRY AGAIN</button>
+                <!-- Hint display container -->
+                <div id="hint-box" class="hint-box" style="display: none;"></div>
+
+                <div class="answers-grid">
+                    <button id="correct-answer" class="answer-btn"></button>
+                    <button id="wrong-answer-1" class="answer-btn"></button>
+                    <button id="wrong-answer-2" class="answer-btn"></button>
+                    <button id="wrong-answer-3" class="answer-btn"></button>
+                </div>
+
+                <div id="feedback" class="feedback"></div>
+            </div>
+
+            <!-- Level Complete Card -->
+            <div id="level-complete-card" class="state-card" style="display: none;">
+                <div class="state-icon">🎉</div>
+                <h3 id="level-complete-title">LEVEL COMPLETE!</h3>
+                <p id="level-complete-message">You completed all questions in this level.</p>
+                <button id="next-level-button" class="btn-action primary-btn">CONTINUE TO NEXT LEVEL</button>
+            </div>
+
+            <!-- Game Complete Card -->
+            <div id="game-complete-card" class="state-card" style="display: none;">
+                <div class="state-icon">🏆</div>
+                <h3>YOU BUILT IT!</h3>
+                <p class="complete-subtitle">Master Builder Certification</p>
+                <p id="game-complete-summary">You completed all 3 levels and finished constructing your engineering house!</p>
+                <div id="final-stats" class="final-stats"></div>
+            </div>
+
+            <!-- Game Over Card -->
+            <div id="game-over-card" class="state-card" style="display: none;">
+                <div class="state-icon">💀</div>
+                <h3>GAME OVER</h3>
+                <p id="game-over-message">You ran out of lives before finishing the house.</p>
+                <div id="game-over-stats" class="final-stats"></div>
+            </div>
+
+            <!-- Try Again Button (Shown on Game Over or Complete) -->
+            <button id="try-again-button" class="btn-action try-again-btn" style="display: none;">TRY AGAIN</button>
+
         </div>
 
     </div>

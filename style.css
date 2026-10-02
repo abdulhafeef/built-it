@@ -1,106 +1,388 @@
+/* ==================================================
+   BUILD IT! — V2 Design System & Game Styles
+   Vanilla CSS — Clean, Modern, Game-like Aesthetics
+   ================================================== */
+
+:root {
+    --bg-dark: #090d16;
+    --card-bg: rgba(30, 41, 59, 0.92);
+    --border-color: rgba(148, 163, 184, 0.18);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --accent-blue: #38bdf8;
+    --accent-indigo: #6366f1;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --btn-bg: #1e293b;
+    --btn-border: #334155;
+    --btn-hover: #334155;
+}
+
+* {
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0f172a;
-    color: white;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: radial-gradient(circle at 50% 10%, #1e1b4b 0%, #0f172a 45%, #090d16 100%);
+    color: var(--text-primary);
     text-align: center;
+    padding: 24px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
 }
 
-h1 {
-    margin-top: 80px;
-    font-size: 48px;
-}
-
-p {
-    font-size: 20px;
-}
+/* ==================================================
+   MAIN CONTAINER
+   ================================================== */
 
 .game-container {
-    width: 90%;
-    max-width: 700px;
-    margin: 80px auto;
-    padding: 40px;
-    background: #1e293b;
-    border-radius: 20px;
-    box-sizing: border-box;
-}
-
-#start-button {
-    margin-top: 30px;
-    padding: 14px 30px;
-    font-size: 18px;
-    font-weight: bold;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-#game-screen {
-    display: none;
-}
-
-#game-screen h2 {
-    font-size: 28px;
-    margin-bottom: 20px;
-}
-
-#game-screen > p:not(#score) {
-    font-size: 24px;
-    font-weight: 500;
-    margin-bottom: 30px;
-}
-
-#game-screen button {
-    display: block;
-    width: 80%;
-    max-width: 550px;
+    width: 100%;
+    max-width: 720px;
     margin: 16px auto;
-    padding: 18px 20px;
-    font-size: 20px;
-    font-weight: 500;
-    color: white;
-    background: #334155;
-    border: 2px solid #475569;
+    padding: 32px 28px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(16px);
+}
+
+/* ==================================================
+   START SCREEN
+   ================================================== */
+
+.brand-pill {
+    display: inline-block;
+    padding: 5px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 9999px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+}
+
+.game-title {
+    margin: 0 0 8px;
+    font-size: 46px;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #ffffff 20%, #38bdf8 60%, #818cf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 4px 20px rgba(56, 189, 248, 0.25);
+}
+
+.tagline {
+    margin: 0 0 16px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #cbd5e1;
+    letter-spacing: 0.5px;
+}
+
+.game-desc {
+    margin: 0 auto 24px;
+    max-width: 540px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+/* Level Preview Cards on Start Screen */
+.level-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 20px 0 24px;
+}
+
+.preview-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 14px;
+    padding: 14px 10px;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.preview-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+.preview-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+}
+
+.badge-l1 {
+    background: rgba(16, 185, 129, 0.18);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.badge-l2 {
+    background: rgba(59, 130, 246, 0.18);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.badge-l3 {
+    background: rgba(168, 85, 247, 0.18);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.35);
+}
+
+.preview-card h3 {
+    margin: 4px 0 4px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #f1f5f9;
+}
+
+.preview-card p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--text-secondary);
+}
+
+/* Rules summary chips */
+.rules-summary {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 28px;
+}
+
+.rule-chip {
+    font-size: 12px;
+    font-weight: 600;
+    color: #e2e8f0;
+    background: rgba(51, 65, 85, 0.6);
+    border: 1px solid rgba(100, 116, 139, 0.4);
+    padding: 6px 12px;
+    border-radius: 8px;
+}
+
+/* ==================================================
+   ACTION BUTTONS
+   ================================================== */
+
+.btn-action {
+    display: inline-block;
+    padding: 15px 36px;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+    border: none;
     border-radius: 12px;
     cursor: pointer;
-    transition: 0.2s;
-    box-sizing: border-box;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
+    transition: all 0.2s ease;
 }
 
-#game-screen button:hover:not(:disabled) {
-    background: #475569;
+.btn-action:hover {
+    background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);
     transform: translateY(-2px);
+    box-shadow: 0 6px 22px rgba(37, 99, 235, 0.6);
 }
 
-#game-screen button:disabled {
-    cursor: not-allowed;
-    opacity: 0.7;
+.btn-action:active {
+    transform: translateY(0);
 }
+
+/* ==================================================
+   GAME SCREEN & HEADER
+   ================================================== */
+
+#game-screen {
+    width: 100%;
+}
+
+.game-header {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.level-indicator {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    transition: all 0.3s;
+}
+
+.level-indicator.level-1 {
+    background: rgba(16, 185, 129, 0.16);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.level-indicator.level-2 {
+    background: rgba(59, 130, 246, 0.16);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.level-indicator.level-3 {
+    background: rgba(168, 85, 247, 0.16);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.question-progress {
+    font-size: 13px;
+    font-weight: 700;
+    color: #94a3b8;
+    background: rgba(15, 23, 42, 0.6);
+    padding: 5px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.stats-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.stat-item {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 12px;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.stat-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #64748b;
+    margin-bottom: 2px;
+}
+
+.stat-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #f1f5f9;
+}
+
+/* Hint Button in Stats Bar */
+.hint-button {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fef08a;
+    background: rgba(245, 158, 11, 0.16);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    outline: none;
+}
+
+.hint-button:hover:not(:disabled) {
+    background: rgba(245, 158, 11, 0.3);
+    border-color: #f59e0b;
+    transform: translateY(-1px);
+}
+
+.hint-button:disabled,
+.hint-button.disabled {
+    background: rgba(51, 65, 85, 0.4);
+    border-color: rgba(100, 116, 139, 0.3);
+    color: #64748b;
+    cursor: not-allowed;
+    transform: none;
+    opacity: 0.75;
+}
+
+/* ==================================================
+   HOUSE BUILDER SCENE
+   ================================================== */
 
 #house-builder {
-    margin: 25px auto 35px;
-    padding: 18px 12px 14px;
-    max-width: 560px;
-    background: #0f172a;
-    border: 2px solid #334155;
-    border-radius: 16px;
+    margin: 0 auto 24px;
+    padding: 16px;
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid var(--btn-border);
+    border-radius: 18px;
     box-sizing: border-box;
+}
+
+.builder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 0 4px;
 }
 
 .builder-title {
-    margin: 0 0 10px;
-    font-size: 18px;
-    font-weight: bold;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: #e2e8f0;
+}
+
+.build-progress {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.1);
+    padding: 3px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(56, 189, 248, 0.25);
 }
 
 .house {
     position: relative;
-    width: min(90%, 360px);
+    width: min(100%, 360px);
     height: 230px;
     margin: 0 auto;
     overflow: hidden;
-    border-radius: 12px;
-    background: linear-gradient(#7dd3fc 0 68%, #86efac 68% 100%);
+    border-radius: 14px;
+    background: linear-gradient(180deg, #38bdf8 0%, #7dd3fc 45%, #bae6fd 68%, #4ade80 68%, #22c55e 100%);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.25),
+                0 6px 16px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(148, 163, 184, 0.2);
 }
 
 .house::after {
@@ -109,16 +391,17 @@ p {
     left: 0;
     right: 0;
     bottom: 0;
-    height: 10px;
-    background: #65a30d;
+    height: 8px;
+    background: #16a34a;
 }
 
+/* House Pieces Base Styling */
 .house-piece {
     position: absolute;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.35s ease, transform 0.35s ease;
-    transform: translateY(12px) scale(0.96);
+    transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: translateY(12px) scale(0.94);
 }
 
 .house-piece.built {
@@ -127,111 +410,501 @@ p {
     transform: translateY(0) scale(1);
 }
 
+/* 1. Foundation */
 .foundation {
-    left: 18%;
+    left: 19%;
     bottom: 24px;
-    width: 64%;
-    height: 18px;
-    background: #78716c;
+    width: 62%;
+    height: 16px;
+    background: #64748b;
+    border: 2px solid #475569;
     border-radius: 3px;
+    z-index: 2;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
 }
 
+/* 2. Main Walls */
 .walls {
     left: 24%;
-    bottom: 42px;
+    bottom: 40px;
     width: 52%;
-    height: 105px;
-    background: #f8fafc;
-    border: 5px solid #cbd5e1;
+    height: 104px;
+    background: #fffbeb;
+    border: 4px solid #cbd5e1;
     box-sizing: border-box;
+    z-index: 3;
+    box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.04);
 }
 
+/* 3. Door */
 .door {
     left: 44%;
-    bottom: 42px;
-    width: 14%;
-    height: 62px;
-    background: #92400e;
+    bottom: 40px;
+    width: 13%;
+    height: 56px;
+    background: #78350f;
+    border: 2px solid #451a03;
     border-radius: 5px 5px 0 0;
+    z-index: 4;
 }
 
+/* 4. Door Knob */
+.door-knob {
+    left: 53.5%;
+    bottom: 64px;
+    width: 5px;
+    height: 5px;
+    background: #fde047;
+    border: 1px solid #b45309;
+    border-radius: 50%;
+    z-index: 5;
+    box-shadow: 0 0 3px #fde047;
+}
+
+/* 5 & 6. Windows */
 .window {
-    bottom: 92px;
-    width: 34px;
-    height: 34px;
-    background: #38bdf8;
-    border: 5px solid #64748b;
+    bottom: 82px;
+    width: 32px;
+    height: 32px;
+    background-color: #38bdf8;
+    border: 3px solid #cbd5e1;
+    border-radius: 4px;
     box-sizing: border-box;
+    z-index: 4;
+    background-image: linear-gradient(#cbd5e1, #cbd5e1), linear-gradient(#cbd5e1, #cbd5e1);
+    background-size: 100% 2px, 2px 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: inset 1px 1px 4px rgba(255, 255, 255, 0.6);
 }
 
 .window-left {
-    left: 29%;
+    left: 28%;
 }
 
 .window-right {
-    right: 29%;
+    right: 28%;
 }
 
+/* 7. Triangular Roof */
 .roof {
-    left: 19%;
-    bottom: 142px;
+    left: 17%;
+    bottom: 144px;
     width: 0;
     height: 0;
-    border-left: 112px solid transparent;
-    border-right: 112px solid transparent;
-    border-bottom: 70px solid #b91c1c;
+    border-left: 118px solid transparent;
+    border-right: 118px solid transparent;
+    border-bottom: 70px solid #dc2626;
+    z-index: 6;
+    filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.25));
 }
 
-#build-progress {
-    margin: 10px 0 0;
-    font-size: 16px;
-    color: #cbd5e1;
+/* 8. Roof Eaves Trim */
+.roof-trim {
+    left: 18%;
+    bottom: 140px;
+    width: 64%;
+    height: 6px;
+    background: #b91c1c;
+    border-radius: 3px;
+    z-index: 7;
 }
 
-#feedback {
-    margin-top: 25px;
-    font-size: 22px;
-    font-weight: bold;
-    min-height: 30px;
+/* 9. Attic Window in Roof Gable */
+.attic-window {
+    left: calc(50% - 13px);
+    bottom: 154px;
+    width: 26px;
+    height: 26px;
+    background-color: #e0f2fe;
+    border: 3px solid #fef08a;
+    border-radius: 50%;
+    z-index: 8;
+    box-sizing: border-box;
+    background-image: linear-gradient(#fef08a, #fef08a), linear-gradient(#fef08a, #fef08a);
+    background-size: 100% 2px, 2px 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-shadow: 0 0 5px rgba(254, 240, 138, 0.5);
 }
 
-#game-screen #try-again-button {
-    display: none;
-    margin-top: 25px;
-    padding: 14px 30px;
+/* 10. Brick Chimney */
+.chimney {
+    right: 28%;
+    bottom: 170px;
+    width: 20px;
+    height: 40px;
+    background: #991b1b;
+    border: 2px solid #7f1d1d;
+    border-radius: 2px 2px 0 0;
+    z-index: 5;
+}
+
+/* 11. Chimney Smoke */
+.smoke {
+    right: 28%;
+    bottom: 214px;
+    width: 14px;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    z-index: 9;
+    box-shadow: -8px -6px 0 2px rgba(255, 255, 255, 0.7),
+                -16px -12px 0 4px rgba(255, 255, 255, 0.45);
+}
+
+/* 12. Door Steps */
+.door-steps {
+    left: 41%;
+    bottom: 16px;
+    width: 18%;
+    height: 8px;
+    background: #94a3b8;
+    border: 1px solid #475569;
+    border-radius: 2px;
+    z-index: 3;
+}
+
+/* 13. Pathway */
+.pathway {
+    left: 43%;
+    bottom: 0;
+    width: 14%;
+    height: 16px;
+    background: #d6d3d1;
+    border-left: 2px dashed #a8a29e;
+    border-right: 2px dashed #a8a29e;
+    z-index: 2;
+}
+
+/* 14. Garden Picket Fence */
+.garden-fence {
+    left: 4%;
+    bottom: 20px;
+    width: 16%;
+    height: 18px;
+    background: repeating-linear-gradient(90deg, #f8fafc, #f8fafc 5px, transparent 5px, transparent 9px);
+    border-top: 2px solid #e2e8f0;
+    z-index: 3;
+}
+
+.garden-fence::after {
+    content: "";
+    position: absolute;
+    left: 480%;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(90deg, #f8fafc, #f8fafc 5px, transparent 5px, transparent 9px);
+    border-top: 2px solid #e2e8f0;
+}
+
+/* 15. Garden Flowers & Porch Lantern */
+.garden-flowers {
+    left: 22%;
+    bottom: 18px;
+    width: 56%;
+    height: 10px;
+    z-index: 4;
+    background: radial-gradient(circle 3px at 15% 50%, #f43f5e 98%, transparent),
+                radial-gradient(circle 3px at 30% 50%, #fbbf24 98%, transparent),
+                radial-gradient(circle 3px at 70% 50%, #a855f7 98%, transparent),
+                radial-gradient(circle 3px at 85% 50%, #ec4899 98%, transparent);
+}
+
+.garden-flowers::after {
+    content: "💡";
+    position: absolute;
+    left: 45%;
+    bottom: 60px;
+    font-size: 11px;
+    filter: drop-shadow(0 0 6px #fde047);
+}
+
+/* ==================================================
+   QUESTION CARD & ANSWERS
+   ================================================== */
+
+.question-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    padding: 24px 20px;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.question-header h2 {
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--accent-blue);
+    text-transform: uppercase;
+}
+
+#question-text {
+    margin: 0 0 20px;
     font-size: 18px;
-    font-weight: bold;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #f8fafc;
 }
 
-@media (max-width: 600px) {
+/* Hint Display Box */
+.hint-box {
+    background: rgba(245, 158, 11, 0.12);
+    border-left: 4px solid var(--accent-amber);
+    color: #fef3c7;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 0 0 20px;
+    font-size: 14px;
+    line-height: 1.5;
+    animation: fadeIn 0.25s ease-out;
+}
+
+/* Answers Grid */
+.answers-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.answer-btn {
+    width: 100%;
+    margin: 0;
+    padding: 14px 16px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-align: left;
+    color: #f1f5f9;
+    background: #1e293b;
+    border: 2px solid #334155;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+}
+
+.answer-btn:hover:not(:disabled) {
+    background: #334155;
+    border-color: #60a5fa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.answer-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.85;
+}
+
+/* Answer button feedback states */
+.answer-btn.btn-correct {
+    background: #064e3b !important;
+    border-color: #10b981 !important;
+    color: #ecfdf5 !important;
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.45) !important;
+}
+
+.answer-btn.btn-wrong {
+    background: #7f1d1d !important;
+    border-color: #ef4444 !important;
+    color: #fee2e2 !important;
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.45) !important;
+}
+
+/* Feedback message */
+.feedback {
+    margin-top: 18px;
+    font-size: 17px;
+    font-weight: 700;
+    min-height: 26px;
+    text-align: center;
+}
+
+.feedback-correct {
+    color: #34d399;
+}
+
+.feedback-wrong {
+    color: #f87171;
+}
+
+/* ==================================================
+   STATE CARDS (LEVEL COMPLETE, GAME OVER, COMPLETE)
+   ================================================== */
+
+.state-card {
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid var(--border-color);
+    border-radius: 18px;
+    padding: 32px 24px;
+    margin-bottom: 20px;
+    text-align: center;
+    animation: fadeIn 0.35s ease-out;
+}
+
+.state-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.state-card h3 {
+    margin: 0 0 10px;
+    font-size: 26px;
+    font-weight: 800;
+    color: #f8fafc;
+}
+
+.complete-subtitle {
+    margin: -6px 0 16px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #fbbf24;
+    text-transform: uppercase;
+}
+
+.state-card p {
+    margin: 0 auto 20px;
+    max-width: 500px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.final-stats {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 0 auto 24px;
+    max-width: 420px;
+    text-align: left;
+}
+
+.final-stats p {
+    margin: 6px 0;
+    font-size: 14px;
+    color: #e2e8f0;
+}
+
+.final-stats strong {
+    color: #38bdf8;
+}
+
+.try-again-btn {
+    margin: 16px auto 0;
+    display: inline-block;
+}
+
+/* Keyframe animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================================================
+   RESPONSIVE DESIGN (TABLET & MOBILE)
+   ================================================== */
+
+@media (max-width: 640px) {
     .game-container {
-        width: 94%;
-        margin: 30px auto;
-        padding: 24px 16px;
-    }
-
-    h1 {
-        margin-top: 20px;
-        font-size: 38px;
-    }
-
-    #game-screen button {
         width: 100%;
-        font-size: 18px;
-        padding: 16px;
+        margin: 8px auto;
+        padding: 20px 14px;
+        border-radius: 16px;
+    }
+
+    .game-title {
+        font-size: 34px;
+    }
+
+    .tagline {
+        font-size: 15px;
+    }
+
+    .level-preview-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .preview-card {
+        padding: 10px 12px;
+    }
+
+    .rules-summary {
+        gap: 6px;
+    }
+
+    .rule-chip {
+        font-size: 11px;
+        padding: 5px 8px;
+    }
+
+    .stats-bar {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .stat-item.stat-hint {
+        grid-column: span 2;
+    }
+
+    .answers-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .answer-btn {
+        padding: 12px 14px;
+        font-size: 14px;
+    }
+
+    #question-text {
+        font-size: 16px;
     }
 
     .house {
+        width: 100%;
+        max-width: 320px;
         height: 210px;
     }
 
     .roof {
-        left: 16%;
-        border-left-width: 92px;
-        border-right-width: 92px;
-        border-bottom-width: 60px;
+        left: 14%;
+        border-left-width: 104px;
+        border-right-width: 104px;
+        border-bottom-width: 64px;
+    }
+
+    .roof-trim {
+        left: 15%;
+        width: 70%;
+    }
+
+    .attic-window {
+        bottom: 148px;
+    }
+
+    .chimney {
+        right: 25%;
+        bottom: 160px;
+    }
+
+    .smoke {
+        right: 25%;
+        bottom: 200px;
     }
 }
