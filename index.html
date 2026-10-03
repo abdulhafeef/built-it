@@ -13,6 +13,17 @@
     <div class="game-container">
 
         <!-- ============================================== -->
+        <!-- 0. TOP UTILITY BAR (Sound Toggle & Toasts)     -->
+        <!-- ============================================== -->
+        <div class="game-top-bar">
+            <div id="toast-container" class="toast-container" aria-live="polite"></div>
+            <button id="sound-toggle-btn" class="sound-toggle-btn" type="button" aria-label="Toggle game sound">
+                <span id="sound-toggle-icon" class="sound-icon">🔊</span>
+                <span id="sound-toggle-label" class="sound-label">Sound ON</span>
+            </button>
+        </div>
+
+        <!-- ============================================== -->
         <!-- 1. START / MENU SCREEN                         -->
         <!-- ============================================== -->
         <div id="start-screen" class="start-screen">
@@ -117,12 +128,28 @@
                         <span class="map-chip-label">BEST STREAK</span>
                         <span id="map-streak-val" class="map-chip-val">🔥 0</span>
                     </div>
+                    <div class="map-stat-chip chip-daily-streak">
+                        <span class="map-chip-label">DAILY STREAK</span>
+                        <span id="map-daily-streak-val" class="map-chip-val">🔥 START TODAY</span>
+                        <span id="map-daily-best-val" class="map-chip-sub">Best: 0</span>
+                    </div>
                 </div>
             </div>
 
             <!-- Dynamic Progression Journey Container (Generated from BUILDS in script.js) -->
             <div id="world-map-journey" class="world-map-journey" aria-label="Progression Journey Path">
                 <!-- Dynamically rendered via renderWorldMap() in script.js -->
+            </div>
+
+            <!-- Achievements & Rewards Section -->
+            <div class="world-achievements-section">
+                <div class="achievements-header">
+                    <span class="achievements-title">🏆 ACHIEVEMENTS & REWARDS</span>
+                    <span id="achievements-count-badge" class="achievements-count-badge">0 / 12 UNLOCKED</span>
+                </div>
+                <div id="world-achievements-grid" class="achievements-grid">
+                    <!-- Dynamically rendered via script.js -->
+                </div>
             </div>
 
             <!-- World Map Footer Actions -->
@@ -327,6 +354,9 @@
                 </div>
                 <div class="state-icon" id="build-complete-icon">🎉</div>
                 <h3 id="level-complete-title">LEVEL COMPLETE!</h3>
+                <div id="perfect-level-banner" class="perfect-level-banner" style="display: none;">
+                    ⭐ PERFECT LEVEL! 10 / 10 Correct
+                </div>
                 <div id="build-complete-badge" class="complete-subtitle">BUILD COMPLETED!</div>
                 <p id="level-complete-message">You completed all questions in this level.</p>
                 <div id="build-complete-stats" class="final-stats"></div>
@@ -349,6 +379,7 @@
                     <!-- Dynamic showcase cards generated from BUILDS in script.js -->
                 </div>
                 <div id="final-stats" class="final-stats"></div>
+                <div id="final-achievements-showcase" class="final-achievements-showcase"></div>
                 <div class="victory-actions">
                     <button id="play-again-button" class="btn-action primary-btn play-again-btn">PLAY AGAIN (START FROM LEVEL 1) ↺</button>
                 </div>

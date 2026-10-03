@@ -96,6 +96,18 @@ const completedBuildsShowcase = document.getElementById("completed-builds-showca
 const finalStats = document.getElementById("final-stats");
 const playAgainButton = document.getElementById("play-again-button");
 
+// Sound, Toast & Achievements Elements
+const soundToggleBtn = document.getElementById("sound-toggle-btn");
+const soundToggleIcon = document.getElementById("sound-toggle-icon");
+const soundToggleLabel = document.getElementById("sound-toggle-label");
+const toastContainer = document.getElementById("toast-container");
+const mapDailyStreakVal = document.getElementById("map-daily-streak-val");
+const mapDailyBestVal = document.getElementById("map-daily-best-val");
+const achievementsCountBadge = document.getElementById("achievements-count-badge");
+const worldAchievementsGrid = document.getElementById("world-achievements-grid");
+const perfectLevelBanner = document.getElementById("perfect-level-banner");
+const finalAchievementsShowcase = document.getElementById("final-achievements-showcase");
+
 // ==================================================
 // QUESTION BANK (Very Beginner-Friendly & Educational)
 // ==================================================
@@ -540,10 +552,987 @@ let lives = 3;                                              // Level-specific li
 let hintsRemaining = 1;                                     // Strictly 1 hint per level attempt
 let hintUsedForCurrentQuestion = false;
 let isAnswerLocked = false;
+let levelMistakes = 0;                                      // Mistakes in current level attempt
+let sessionQuestionsAnswered = 0;                           // Total questions answered in current session
+let lastUnlockedBuildIndex = -1;                            // Tracks newly unlocked build for animation
+const unlockedAchievements = new Set();                     // IDs of achievements unlocked this run
+const unlockedRewards = new Set();                          // IDs of rewards unlocked this run
+
+// Extended tracking metrics for V6.3 True Achievements & Rewards
+let totalQuestionsAttempted = 0;                             // Total questions attempted (correct or wrong) across session
+let totalCorrectAnswers = 0;                                 // Total questions answered correctly across session
+let outputAttempts = 0;                                      // Total output challenges attempted
+let outputCorrect = 0;                                       // Total correct predict-the-output challenges
+let bugAttempts = 0;                                         // Total bug challenges attempted
+let bugCorrect = 0;                                          // Total correct find-the-bug challenges
+const attemptsByType = { mcq: 0, output: 0, "code-choice": 0, bug: 0 };
+const correctByType = { mcq: 0, output: 0, "code-choice": 0, bug: 0 };
+const flawlessLevels = new Set();                            // Build indices completed with 10/10 correct, 0 hints, and 3 lives
+const levelCorrectHistory = [];                              // History of correct answers per completed level
+let minLivesInLevel = 3;                                      // Lowest life count experienced in current level attempt
+let reachedOneLifeInLevel = false;                            // Whether player reached 1 life in this level attempt
+let levelUsedHint = false;                                    // Whether hint was activated in current level attempt
+let levelFinal5Correct = true;                                // Whether questions in the final 5 were all answered correctly
+let levelFinal3Correct = true;                                // Whether questions in the final 3 were all answered correctly
 
 // ==================================================
-// BUILD PROGRESSION & SCENE MANAGEMENT
+// ACHIEVEMENT SYSTEM VERSION MIGRATION (V6.3)
 // ==================================================
+
+const ACHIEVEMENT_SYSTEM_VERSION = 3;
+const ACHIEVEMENT_VERSION_KEY = "built_it_achievement_version";
+
+function checkAchievementVersionMigration() {
+    try {
+        const stored = localStorage.getItem(ACHIEVEMENT_VERSION_KEY);
+        const version = stored ? parseInt(stored, 10) : 0;
+        if (version < ACHIEVEMENT_SYSTEM_VERSION) {
+            // Reset only legacy achievement-related keys if any exist
+            localStorage.removeItem("built_it_unlocked_achievements");
+            localStorage.removeItem("built_it_unlocked_rewards");
+            localStorage.setItem(ACHIEVEMENT_VERSION_KEY, String(ACHIEVEMENT_SYSTEM_VERSION));
+            unlockedAchievements.clear();
+            unlockedRewards.clear();
+        }
+    } catch (e) {
+        // localStorage not available or sandboxed
+    }
+}
+
+checkAchievementVersionMigration();
+
+// ==================================================
+// AUDIO SYSTEM (Browser-Native Web Audio API)
+// ==================================================
+
+const SOUND_PRIORITIES = {
+    finalWorldCompleted: 10,
+    levelCompleted: 9,
+    achievement: 8,
+    reward: 7,
+    levelUnlocked: 6,
+    streak10: 5,
+    streak: 4,
+    gameOver: 4,
+    build: 3,
+    correct: 2,
+    wrong: 2,
+    click: 1
+};
+
+const AudioManager = {
+    enabled: true,
+    audioCtx: null,
+    lastSoundType: null,
+    lastSoundTime: 0,
+
+    init() {
+        if (!this.audioCtx) {
+            const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtxClass) {
+                this.audioCtx = new AudioCtxClass();
+            }
+        }
+        if (this.audioCtx && this.audioCtx.state === "suspended") {
+            this.audioCtx.resume();
+        }
+    },
+
+    toggle() {
+        this.enabled = !this.enabled;
+        if (this.enabled) {
+            this.init();
+            this.playSound("click");
+        }
+        if (soundToggleIcon && soundToggleLabel && soundToggleBtn) {
+            soundToggleIcon.textContent = this.enabled ? "🔊" : "🔇";
+            soundToggleLabel.textContent = this.enabled ? "Sound ON" : "Sound OFF";
+            soundToggleBtn.classList.toggle("is-muted", !this.enabled);
+        }
+    },
+
+    playSound(type) {
+        if (!this.enabled) return;
+        try {
+            this.init();
+            if (!this.audioCtx) return;
+            const now = this.audioCtx.currentTime;
+
+            // Audio priority & throttle check (prevents audio clutter when sounds fire concurrently)
+            const priority = SOUND_PRIORITIES[type] || 1;
+            const lastPriority = SOUND_PRIORITIES[this.lastSoundType] || 0;
+            const timeSinceLast = (now - this.lastSoundTime);
+
+            if (timeSinceLast < 0.05 && priority < lastPriority) {
+                // Ignore lower priority sound that collides within 50ms of a higher priority sound
+                return;
+            }
+
+            this.lastSoundType = type;
+            this.lastSoundTime = now;
+
+            if (type === "click") {
+                const osc = this.audioCtx.createOscillator();
+                const gain = this.audioCtx.createGain();
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(650, now);
+                osc.frequency.exponentialRampToValueAtTime(850, now + 0.04);
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+                osc.connect(gain);
+                gain.connect(this.audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.045);
+            } else if (type === "correct") {
+                // Two upbeat ascending chime notes (D5, A5)
+                const notes = [587.33, 880];
+                notes.forEach(function (freq, i) {
+                    const noteTime = now + (i * 0.08);
+                    const osc = AudioManager.audioCtx.createOscillator();
+                    const gain = AudioManager.audioCtx.createGain();
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(freq, noteTime);
+                    gain.gain.setValueAtTime(0.12, noteTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.14);
+                    osc.connect(gain);
+                    gain.connect(AudioManager.audioCtx.destination);
+                    osc.start(noteTime);
+                    osc.stop(noteTime + 0.15);
+                });
+            } else if (type === "wrong") {
+                // Distinct descending dual-tone error buzz (A3 220Hz -> E3 165Hz)
+                // Rich sawtooth harmonics audible on all laptop, tablet, and mobile speakers
+                const notes = [
+                    { freq: 220.0, timeOffset: 0.00, dur: 0.11, gain: 0.16 },
+                    { freq: 164.81, timeOffset: 0.10, dur: 0.16, gain: 0.16 }
+                ];
+                notes.forEach(function (n) {
+                    const noteTime = now + n.timeOffset;
+                    const osc = AudioManager.audioCtx.createOscillator();
+                    const gain = AudioManager.audioCtx.createGain();
+                    osc.type = "sawtooth";
+                    osc.frequency.setValueAtTime(n.freq, noteTime);
+                    osc.frequency.linearRampToValueAtTime(n.freq * 0.88, noteTime + n.dur);
+                    gain.gain.setValueAtTime(n.gain, noteTime);
+                    gain.gain.linearRampToValueAtTime(0.001, noteTime + n.dur);
+                    osc.connect(gain);
+                    gain.connect(AudioManager.audioCtx.destination);
+                    osc.start(noteTime);
+                    osc.stop(noteTime + n.dur + 0.01);
+                });
+            } else if (type === "build") {
+                // Snappy mechanical click / construction tap
+                const osc = this.audioCtx.createOscillator();
+                const gain = this.audioCtx.createGain();
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(480, now);
+                osc.frequency.exponentialRampToValueAtTime(220, now + 0.08);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+                osc.connect(gain);
+                gain.connect(this.audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.085);
+            } else if (type === "streak") {
+                // Bright 3-note ascending arpeggio (C5, E5, G5)
+                const freqs = [523.25, 659.25, 783.99];
+                freqs.forEach(function (freq, idx) {
+                    const noteTime = now + (idx * 0.07);
+                    const osc = AudioManager.audioCtx.createOscillator();
+                    const gain = AudioManager.audioCtx.createGain();
+                    osc.type = "triangle";
+                    osc.frequency.setValueAtTime(freq, noteTime);
+                    gain.gain.setValueAtTime(0.12, noteTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.12);
+                    osc.connect(gain);
+                    gain.connect(AudioManager.audioCtx.destination);
+                    osc.start(noteTime);
+                    osc.stop(noteTime + 0.13);
+                });
+            } else if (type === "streak10") {
+                // Grand 4-note celebratory arpeggio with high sparkle (C5, E5, G5, C6)
+                const freqs = [523.25, 659.25, 783.99, 1046.5];
+                freqs.forEach(function (freq, idx) {
+                    const noteTime = now + (idx * 0.07);
+                    const osc = AudioManager.audioCtx.createOscillator();
+                    const gain = AudioManager.audioCtx.createGain();
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(freq, noteTime);
+                    gain.gain.setValueAtTime(0.15, noteTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.22);
+                    osc.connect(gain);
+                    gain.connect(AudioManager.audioCtx.destination);
+                    osc.start(noteTime);
+                    osc.stop(noteTime + 0.23);
+                });
+            } else if (type === "achievement") {
+                // Triumphant double-chime fanfare (F5, A5, C6)
+                const freqs = [698.46, 880.00, 1046.50];
+                freqs.forEach(function (freq, idx) {
+                    const noteTime = now + (idx * 0.09);
+                    const osc = AudioManager.audioCtx.createOscillator();
+                    const gain = AudioManager.audioCtx.createGain();
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(freq, noteTime);
+                    gain.gain.setValueAtTime(0.14, noteTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.25);
+                    osc.connect(gain);
+                    gain.connect(AudioManager.audioCtx.destination);
+                    osc.start(noteTime);
+                    osc.stop(noteTime + 0.26);
+                });
+            } else if (type === "reward") {
+                // Sparkling crystalline chime arpeggio (E5, G#5, B5, E6)
+                const freqs = [659.25, 830.61, 987.77, 1318.51];
+                freqs.forEach(function (freq, idx) {
+                    const noteTime = now + (idx * 0.07);
+                    const osc = AudioManager.audioCtx.createOscillator();
+                    const gain = AudioManager.audioCtx.createGain();
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(freq, noteTime);
+                    gain.gain.setValueAtTime(0.12, noteTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.28);
+                    osc.connect(gain);
+                    gain.connect(AudioManager.audioCtx.destination);
+                    osc.start(noteTime);
+                    osc.stop(noteTime + 0.29);
+                });
+            } else if (type === "levelCompleted") {
+                // Fanfare melody (C5, E5, G5, C6)
+                const freqs = [523.25, 659.25, 783.99, 1046.50];
+                freqs.forEach(function (freq, idx) {
+                    const noteTime = now + (idx * 0.1);
+                    const osc = AudioManager.audioCtx.createOscillator();
+                    const gain = AudioManager.audioCtx.createGain();
+                    osc.type = "triangle";
+                    osc.frequency.setValueAtTime(freq, noteTime);
+                    gain.gain.setValueAtTime(0.14, noteTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, noteTime + (idx === 3 ? 0.35 : 0.16));
+                    osc.connect(gain);
+                    gain.connect(AudioManager.audioCtx.destination);
+                    osc.start(noteTime);
+                    osc.stop(noteTime + (idx === 3 ? 0.36 : 0.17));
+                });
+            } else if (type === "levelUnlocked") {
+                // Inspiring ascending slide
+                const osc = this.audioCtx.createOscillator();
+                const gain = this.audioCtx.createGain();
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(587.33, now);
+                osc.frequency.exponentialRampToValueAtTime(1174.66, now + 0.28);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                osc.connect(gain);
+                gain.connect(this.audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.31);
+            } else if (type === "gameOver") {
+                // Melancholic descending notes
+                const freqs = [330.00, 293.66, 220.00];
+                freqs.forEach(function (freq, idx) {
+                    const noteTime = now + (idx * 0.13);
+                    const osc = AudioManager.audioCtx.createOscillator();
+                    const gain = AudioManager.audioCtx.createGain();
+                    osc.type = "sawtooth";
+                    osc.frequency.setValueAtTime(freq, noteTime);
+                    gain.gain.setValueAtTime(0.08, noteTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.18);
+                    osc.connect(gain);
+                    gain.connect(AudioManager.audioCtx.destination);
+                    osc.start(noteTime);
+                    osc.stop(noteTime + 0.19);
+                });
+            } else if (type === "finalWorldCompleted") {
+                // Grand victory chord arpeggio
+                const freqs = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+                freqs.forEach(function (freq, idx) {
+                    const noteTime = now + (idx * 0.12);
+                    const osc = AudioManager.audioCtx.createOscillator();
+                    const gain = AudioManager.audioCtx.createGain();
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(freq, noteTime);
+                    gain.gain.setValueAtTime(0.15, noteTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, noteTime + (idx === 4 ? 0.6 : 0.22));
+                    osc.connect(gain);
+                    gain.connect(AudioManager.audioCtx.destination);
+                    osc.start(noteTime);
+                    osc.stop(noteTime + (idx === 4 ? 0.62 : 0.23));
+                });
+            }
+        } catch (e) {
+            console.warn("Audio playback exception:", e);
+        }
+    }
+};
+
+// ==================================================
+// DAILY STREAK SYSTEM (LocalStorage Calendar Tracking)
+// ==================================================
+
+const DailyStreakManager = {
+    STORAGE_KEY: "built_it_daily_streak",
+
+    getTodayDateString() {
+        const d = new Date();
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return year + "-" + month + "-" + day;
+    },
+
+    getYesterdayDateString() {
+        const d = new Date();
+        d.setDate(d.getDate() - 1);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return year + "-" + month + "-" + day;
+    },
+
+    getData() {
+        try {
+            const raw = localStorage.getItem(this.STORAGE_KEY);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && typeof parsed === "object") {
+                    return {
+                        lastActiveDate: typeof parsed.lastActiveDate === "string" ? parsed.lastActiveDate : "",
+                        currentStreak: Number.isInteger(parsed.currentStreak) ? parsed.currentStreak : 0,
+                        bestStreak: Number.isInteger(parsed.bestStreak) ? parsed.bestStreak : 0
+                    };
+                }
+            }
+        } catch (e) {
+            // localStorage unavailable
+        }
+        return { lastActiveDate: "", currentStreak: 0, bestStreak: 0 };
+    },
+
+    saveData(data) {
+        try {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify({
+                lastActiveDate: data.lastActiveDate,
+                currentStreak: data.currentStreak,
+                bestStreak: data.bestStreak
+            }));
+        } catch (e) {
+            // ignore
+        }
+    },
+
+    checkMilestone(streakDays) {
+        if (streakDays === 3) {
+            showToast("streak", "🔥 3-DAY BUILDER", "3-Day Streak Reached!", "Earned the 3-Day Builder Badge!", "🔥");
+        } else if (streakDays === 7) {
+            showToast("streak", "🔥 7-DAY BUILDER", "7-Day Streak Reached!", "Unlocked 7-Day Flame Effect!", "🔥");
+        } else if (streakDays === 14) {
+            showToast("streak", "🔥 14-DAY BUILDER", "14-Day Streak Reached!", "Unlocked 14-Day Enhanced Flame!", "🔥");
+        } else if (streakDays === 30) {
+            showToast("streak", "🔥 30-DAY BUILDER", "30-Day Master Milestone!", "Unlocked Rare 30-Day Celebration!", "🔥");
+        }
+    },
+
+    recordActivity() {
+        const today = this.getTodayDateString();
+        const yesterday = this.getYesterdayDateString();
+        const data = this.getData();
+
+        if (data.lastActiveDate === today) {
+            this.updateUI();
+            return false;
+        }
+
+        if (data.lastActiveDate === yesterday) {
+            data.currentStreak += 1;
+            if (data.currentStreak > data.bestStreak) {
+                data.bestStreak = data.currentStreak;
+            }
+            data.lastActiveDate = today;
+            this.saveData(data);
+            showToast("streak", "DAILY STREAK", "🔥 DAILY STREAK +1!", data.currentStreak + " Days Active in a Row", "🔥");
+            this.checkMilestone(data.currentStreak);
+            AudioManager.playSound("streak");
+            this.updateUI();
+            return true;
+        } else {
+            data.currentStreak = 1;
+            if (data.currentStreak > data.bestStreak) {
+                data.bestStreak = data.currentStreak;
+            }
+            data.lastActiveDate = today;
+            this.saveData(data);
+            showToast("streak", "DAILY STREAK", "🔥 DAILY STREAK STARTED!", "1 Day Active! Keep it going tomorrow!", "🔥");
+            this.updateUI();
+            return true;
+        }
+    },
+
+    updateUI() {
+        const data = this.getData();
+        const streak = data.currentStreak;
+        if (mapDailyStreakVal) {
+            if (streak >= 30) {
+                mapDailyStreakVal.textContent = "🔥 30-DAY BUILDER";
+            } else if (streak >= 14) {
+                mapDailyStreakVal.textContent = "🔥 14-DAY BUILDER";
+            } else if (streak >= 7) {
+                mapDailyStreakVal.textContent = "🔥 7-DAY BUILDER";
+            } else if (streak >= 3) {
+                mapDailyStreakVal.textContent = "🔥 3-DAY BUILDER";
+            } else if (streak > 0) {
+                mapDailyStreakVal.textContent = "🔥 " + streak + (streak === 1 ? " DAY" : " DAYS");
+            } else {
+                mapDailyStreakVal.textContent = "🔥 START TODAY";
+            }
+        }
+        if (mapDailyBestVal) {
+            mapDailyBestVal.textContent = "Best: " + data.bestStreak;
+        }
+
+        const chip = document.querySelector(".chip-daily-streak");
+        if (chip) {
+            chip.classList.toggle("daily-badge-3", streak >= 3 && streak < 7);
+            chip.classList.toggle("daily-badge-7", streak >= 7 && streak < 14);
+            chip.classList.toggle("daily-badge-14", streak >= 14 && streak < 30);
+            chip.classList.toggle("daily-badge-30", streak >= 30);
+        }
+    }
+};
+
+// ==================================================
+// ACHIEVEMENTS & REWARDS DATA ARCHITECTURE (V6.2)
+// ==================================================
+
+const ACHIEVEMENTS = [
+    {
+        id: "first_build",
+        title: "FIRST BUILD",
+        rarity: "COMMON",
+        hidden: false,
+        icon: "🏠",
+        description: "Your first structure is complete.",
+        rewardId: "build_spark",
+        condition: "Complete Level 1.",
+        getProgressText: function (state) {
+            return (state.completedLevels && state.completedLevels[0]) ? "Completed" : "Not yet achieved";
+        }
+    },
+    {
+        id: "python_starter",
+        title: "PYTHON STARTER",
+        rarity: "UNCOMMON",
+        hidden: false,
+        icon: "🌱",
+        description: "You\'ve built your foundation. Now prove you understand it.",
+        rewardId: "starter_world_glow",
+        condition: "Complete Level 1 with at least 8/10 correct and no hint used.",
+        getProgressText: function (state) {
+            return (state.unlockedAchievements && state.unlockedAchievements.includes("python_starter")) ? "Completed" : "Not yet achieved";
+        }
+    },
+    {
+        id: "output_master",
+        title: "OUTPUT MASTER",
+        rarity: "UNCOMMON",
+        hidden: false,
+        icon: "⚡",
+        description: "Python does exactly what you expect... right?",
+        rewardId: "output_pulse",
+        condition: "Correctly answer at least 5 output challenges with at least 80% accuracy.",
+        getProgressText: function (state) {
+            return Math.min(5, state.outputCorrect || 0) + " / 5 correct";
+        }
+    },
+    {
+        id: "bug_hunter",
+        title: "BUG HUNTER",
+        rarity: "UNCOMMON",
+        hidden: false,
+        icon: "🔍",
+        description: "Something is wrong. Find it.",
+        rewardId: "bug_hunter_effect",
+        condition: "Correctly answer at least 5 bug challenges with at least 80% accuracy.",
+        getProgressText: function (state) {
+            return Math.min(5, state.bugCorrect || 0) + " / 5 correct";
+        }
+    },
+    {
+        id: "streak_builder",
+        title: "STREAK BUILDER",
+        rarity: "RARE",
+        hidden: false,
+        icon: "🔥",
+        description: "Don\'t break the chain.",
+        rewardId: "fire_streak",
+        condition: "Reach a 15-answer correct streak.",
+        getProgressText: function (state) {
+            return "Best: " + Math.min(15, state.bestStreak || 0) + " / 15";
+        }
+    },
+    {
+        id: "perfect_builder",
+        title: "PERFECT BUILDER",
+        rarity: "RARE",
+        hidden: false,
+        icon: "✨",
+        description: "Every answer. Every piece. Perfect.",
+        rewardId: "perfect_build",
+        condition: "Complete ONE entire level: 10/10 correct, 0 hints used, and all 3 lives preserved.",
+        getProgressText: function (state) {
+            return (state.unlockedAchievements && state.unlockedAchievements.includes("perfect_builder")) ? "Completed" : "Not yet achieved";
+        }
+    },
+    {
+        id: "clutch_builder",
+        title: "CLUTCH BUILDER",
+        rarity: "RARE",
+        hidden: false,
+        icon: "🛡️",
+        description: "One life left. Five questions. Finish the build.",
+        rewardId: "clutch_build_effect",
+        condition: "Reach 1 life, correctly answer the final 5 questions, and complete the level.",
+        getProgressText: function (state) {
+            return (state.unlockedAchievements && state.unlockedAchievements.includes("clutch_builder")) ? "Completed" : "Not yet achieved";
+        }
+    },
+    {
+        id: "explorer",
+        title: "EXPLORER",
+        rarity: "UNCOMMON",
+        hidden: false,
+        icon: "🧭",
+        description: "Different challenges. Same goal: become better at Python.",
+        rewardId: "explorer_glow",
+        condition: "Complete at least 2 challenge types with >= 80% accuracy and at least 3 correct each.",
+        getProgressText: function (state) {
+            return (state.unlockedAchievements && state.unlockedAchievements.includes("explorer")) ? "Completed" : "Not yet achieved";
+        }
+    },
+    {
+        id: "world_builder",
+        title: "WORLD BUILDER",
+        rarity: "UNCOMMON",
+        hidden: false,
+        icon: "🌍",
+        description: "Three structures. One growing world.",
+        rewardId: "world_builder_effect",
+        condition: "Complete all 3 current levels with at least 75% of all possible pieces built (>= 23 pieces).",
+        getProgressText: function (state) {
+            return Math.min(23, state.totalPiecesBuilt || 0) + " / 23 pieces";
+        }
+    },
+    {
+        id: "python_master",
+        title: "PYTHON MASTER",
+        rarity: "RARE",
+        hidden: false,
+        icon: "👑",
+        description: "Strong fundamentals across the whole world.",
+        rewardId: "python_master_aura",
+        condition: "Across all 3 levels: at least 27/30 correct, >= 90% accuracy, and >= 8 correct in every level.",
+        getProgressText: function (state) {
+            return Math.min(27, state.totalCorrectAnswers || 0) + " / 27 correct";
+        }
+    },
+    {
+        id: "flawless_world",
+        title: "FLAWLESS WORLD",
+        rarity: "LEGENDARY",
+        hidden: false,
+        icon: "🏆",
+        description: "Every answer. Every level. Every build. Flawless.",
+        rewardId: "golden_world",
+        condition: "Complete ALL 3 levels with 10/10 correct, 0 hints used, and 3 lives preserved in every level.",
+        getProgressText: function (state) {
+            return (state.unlockedAchievements && state.unlockedAchievements.includes("flawless_world")) ? "Completed" : "Not yet achieved";
+        }
+    },
+    {
+        id: "secret_last_spark",
+        title: "THE LAST SPARK",
+        rarity: "LEGENDARY",
+        hidden: true,
+        icon: "⚡",
+        description: "Even after using your last bit of help, you finished the build.",
+        rewardId: "last_spark_effect",
+        condition: "Reach 1 life, use a hint earlier, and correctly answer the final 3 questions without another mistake.",
+        getProgressText: function (state) {
+            return (state.unlockedAchievements && state.unlockedAchievements.includes("secret_last_spark")) ? "Completed" : "???";
+        }
+    }
+];
+
+const REWARDS = {
+    build_spark: {
+        id: "build_spark",
+        title: "Build Spark",
+        description: "A brilliant electrical spark aura surrounds the construction stage.",
+        cssClass: "effect-build-spark"
+    },
+    starter_world_glow: {
+        id: "starter_world_glow",
+        title: "Starter World Glow",
+        description: "Subtle radiant glow illuminates completed Build World checkpoints.",
+        cssClass: "effect-starter-glow"
+    },
+    output_pulse: {
+        id: "output_pulse",
+        title: "Output Pulse",
+        description: "High-voltage electric pulse on active streak indicators.",
+        cssClass: "effect-output-pulse"
+    },
+    bug_hunter_effect: {
+        id: "bug_hunter_effect",
+        title: "Bug Hunter Effect",
+        description: "Matrix emerald text aura radiates from the construction header.",
+        cssClass: "effect-bug-hunter"
+    },
+    fire_streak: {
+        id: "fire_streak",
+        title: "Fire Streak Effect",
+        description: "Blazing fire ember border glows on the active streak indicator.",
+        cssClass: "effect-fire-streak"
+    },
+    perfect_build: {
+        id: "perfect_build",
+        title: "Perfect Build Effect",
+        description: "Shimmering construction glow celebrating flawless level engineering.",
+        cssClass: "effect-perfect-build"
+    },
+    clutch_build_effect: {
+        id: "clutch_build_effect",
+        title: "Clutch Build Effect",
+        description: "Intense protective shield glow surrounding the builder stage.",
+        cssClass: "effect-clutch-build"
+    },
+    explorer_glow: {
+        id: "explorer_glow",
+        title: "Explorer Glow",
+        description: "Expeditionary cyan glow across the achievements and progression showcase.",
+        cssClass: "effect-explorer-glow"
+    },
+    world_builder_effect: {
+        id: "world_builder_effect",
+        title: "World Builder Effect",
+        description: "A cosmic ambient radial glow illuminates the Build World progression journey.",
+        cssClass: "effect-world-glow"
+    },
+    python_master_aura: {
+        id: "python_master_aura",
+        title: "Python Master Aura",
+        description: "Permanent sapphire mastery aura crowning the XP and score header.",
+        cssClass: "effect-python-aura"
+    },
+    golden_world: {
+        id: "golden_world",
+        title: "Golden World Effect",
+        description: "Aura of golden stardust illuminating the entire World Map screen.",
+        cssClass: "effect-golden-world"
+    },
+    last_spark_effect: {
+        id: "last_spark_effect",
+        title: "Last Spark Effect",
+        description: "Resilient golden lightning ember surrounds the construction stage.",
+        cssClass: "effect-last-spark"
+    }
+};
+
+// ==================================================
+// TOAST & VISUAL FEEDBACK HELPERS
+// ==================================================
+
+function showToast(type, tag, title, desc, icon) {
+    if (!toastContainer) return;
+
+    const item = document.createElement("div");
+    let typeClass = "";
+    if (type === "achievement") typeClass = " toast-achievement";
+    else if (type === "reward") typeClass = " toast-reward";
+    else if (type === "streak") typeClass = " toast-streak";
+
+    item.className = "toast-item" + typeClass;
+    item.innerHTML =
+        '<div class="toast-icon">' + (icon || "🏆") + '</div>' +
+        '<div class="toast-content">' +
+            '<span class="toast-tag">' + escapeHtml(tag || "NOTIFICATION") + '</span>' +
+            '<span class="toast-title">' + escapeHtml(title) + '</span>' +
+            (desc ? '<span class="toast-desc">' + escapeHtml(desc) + '</span>' : '') +
+        '</div>';
+
+    toastContainer.appendChild(item);
+
+    setTimeout(function () {
+        item.classList.add("toast-leave");
+        setTimeout(function () {
+            item.remove();
+        }, 320);
+    }, 3500);
+}
+
+function showFloatingXp(targetElement, text) {
+    if (!targetElement) return;
+    const pill = document.createElement("div");
+    pill.className = "floating-xp-pill";
+    pill.textContent = text || "+10 XP";
+
+    const rect = targetElement.getBoundingClientRect();
+    pill.style.position = "fixed";
+    pill.style.left = (rect.left + rect.width / 2) + "px";
+    pill.style.top = (rect.top + 6) + "px";
+
+    document.body.appendChild(pill);
+    setTimeout(function () {
+        pill.remove();
+    }, 850);
+}
+
+function unlockAchievement(id) {
+    if (unlockedAchievements.has(id)) return;
+    unlockedAchievements.add(id);
+
+    const ach = ACHIEVEMENTS.find(function (a) { return a.id === id; });
+    if (!ach) return;
+
+    AudioManager.playSound("achievement");
+    const rarityLabel = ach.rarity ? " • " + ach.rarity : "";
+    showToast("achievement", "🏆 ACHIEVEMENT UNLOCKED" + rarityLabel, ach.title, ach.description, ach.icon);
+
+    if (ach.rewardId) {
+        setTimeout(function () {
+            unlockReward(ach.rewardId);
+        }, 700);
+    }
+
+    renderAchievementsGrid();
+}
+
+function unlockReward(rewardId) {
+    if (unlockedRewards.has(rewardId)) return;
+    unlockedRewards.add(rewardId);
+
+    const reward = REWARDS[rewardId];
+    if (!reward) return;
+
+    if (reward.cssClass) {
+        document.body.classList.add(reward.cssClass);
+    }
+
+    AudioManager.playSound("reward");
+    showToast("reward", "🎁 REWARD UNLOCKED", reward.title, reward.description, "🎁");
+}
+
+function checkAchievements(trigger, payload) {
+    const totalPiecesBuilt = buildPieces.reduce(function (sum, count) {
+        return sum + count;
+    }, 0);
+
+    const totalPossiblePieces = BUILDS.reduce(function (sum, b) {
+        return sum + (b.pieces ? b.pieces.length : b.questions.length);
+    }, 0);
+
+    // --------------------------------------------------
+    // 5. STREAK BUILDER (15 consecutive correct answers)
+    // --------------------------------------------------
+    const currentStreakVal = Math.max(streak, bestStreak);
+    if (currentStreakVal >= 15) {
+        unlockAchievement("streak_builder");
+    }
+
+    // --------------------------------------------------
+    // 3. OUTPUT MASTER (>= 5 correct output challenges AND >= 80% accuracy)
+    // --------------------------------------------------
+    if (outputCorrect >= 5 && outputAttempts > 0 && (outputCorrect / outputAttempts) >= 0.8) {
+        unlockAchievement("output_master");
+    }
+
+    // --------------------------------------------------
+    // 4. BUG HUNTER (>= 5 correct bug challenges AND >= 80% accuracy)
+    // --------------------------------------------------
+    if (bugCorrect >= 5 && bugAttempts > 0 && (bugCorrect / bugAttempts) >= 0.8) {
+        unlockAchievement("bug_hunter");
+    }
+
+    // --------------------------------------------------
+    // 8. EXPLORER (at least 2 challenge types with >= 3 correct and >= 80% accuracy each)
+    // --------------------------------------------------
+    const challengeTypes = ["mcq", "output", "code-choice", "bug"];
+    let qualifyingCount = 0;
+    challengeTypes.forEach(function (t) {
+        const att = attemptsByType[t] || 0;
+        const corr = correctByType[t] || 0;
+        if (corr >= 3 && att > 0 && (corr / att) >= 0.8) {
+            qualifyingCount++;
+        }
+    });
+    if (qualifyingCount >= 2) {
+        unlockAchievement("explorer");
+    }
+
+    // --------------------------------------------------
+    // LEVEL COMPLETION CHECKS (TRIGGER: level_complete)
+    // --------------------------------------------------
+    if (trigger === "level_complete" && payload) {
+        const buildIdx = payload.buildIndex;
+
+        // 1. FIRST BUILD: Complete Level 1
+        if (buildIdx === 0) {
+            unlockAchievement("first_build");
+        }
+
+        // 2. PYTHON STARTER: Complete Level 1 with at least 8/10 correct and no hint used
+        if (buildIdx === 0 && payload.levelCorrect >= 8 && payload.noHint) {
+            unlockAchievement("python_starter");
+        }
+
+        // 6. PERFECT BUILDER: Complete ONE entire level: 10/10 correct, 0 hints used, and all 3 lives preserved (0 mistakes)
+        if (payload.isPerfect && payload.noHint && lives === 3) {
+            unlockAchievement("perfect_builder");
+        }
+
+        // 7. CLUTCH BUILDER: During level reached 1 life, answered final 5 questions correctly, completed level
+        if (minLivesInLevel === 1 && payload.final5Correct && lives >= 1) {
+            unlockAchievement("clutch_builder");
+        }
+
+        // 12. SECRET: THE LAST SPARK
+        // Reached 1 life, used hint earlier, answered final 3 correctly without another mistake (lives === 1)
+        if (minLivesInLevel === 1 && payload.usedHint && payload.final3Correct && lives === 1) {
+            unlockAchievement("secret_last_spark");
+        }
+
+        // 9. WORLD BUILDER: Complete all 3 current levels AND at least 75% pieces built (>= 23 pieces)
+        const allCompleted = (completedLevels.length >= BUILDS.length && completedLevels.every(Boolean));
+        const piecesThreshold = Math.ceil(totalPossiblePieces * 0.75); // 23 for 30
+        if (allCompleted && totalPiecesBuilt >= piecesThreshold) {
+            unlockAchievement("world_builder");
+        }
+
+        // 10. PYTHON MASTER: Across current 3 levels: >= 27/30 correct, >= 90% accuracy, and >= 8 correct in every level
+        const accuracyThreshold = totalQuestionsAttempted > 0 ? (totalCorrectAnswers / totalQuestionsAttempted) : 0;
+        const allLevelsMin8 = (levelCorrectHistory.length >= BUILDS.length && levelCorrectHistory.every(function (c) { return c >= 8; }));
+        if (allCompleted && totalCorrectAnswers >= 27 && accuracyThreshold >= 0.9 && allLevelsMin8) {
+            unlockAchievement("python_master");
+        }
+
+        // 11. FLAWLESS WORLD: Complete ALL 3 levels with 10/10 correct, 0 hints, and 3 lives preserved in each
+        if (flawlessLevels.size >= BUILDS.length) {
+            unlockAchievement("flawless_world");
+        }
+    }
+
+    if (trigger === "game_complete") {
+        const allCompleted = (completedLevels.length >= BUILDS.length && completedLevels.every(Boolean));
+        const piecesThreshold = Math.ceil(totalPossiblePieces * 0.75);
+        if (allCompleted && totalPiecesBuilt >= piecesThreshold) {
+            unlockAchievement("world_builder");
+        }
+        const accuracyThreshold = totalQuestionsAttempted > 0 ? (totalCorrectAnswers / totalQuestionsAttempted) : 0;
+        const allLevelsMin8 = (levelCorrectHistory.length >= BUILDS.length && levelCorrectHistory.every(function (c) { return c >= 8; }));
+        if (allCompleted && totalCorrectAnswers >= 27 && accuracyThreshold >= 0.9 && allLevelsMin8) {
+            unlockAchievement("python_master");
+        }
+        if (flawlessLevels.size >= BUILDS.length) {
+            unlockAchievement("flawless_world");
+        }
+    }
+}
+
+function renderAchievementsGrid() {
+    if (!worldAchievementsGrid) return;
+    if (achievementsCountBadge) {
+        achievementsCountBadge.textContent = unlockedAchievements.size + " / " + ACHIEVEMENTS.length + " UNLOCKED";
+    }
+
+    const totalPiecesBuilt = buildPieces.reduce(function (sum, count) {
+        return sum + count;
+    }, 0);
+
+    const currentState = {
+        totalPiecesBuilt: totalPiecesBuilt,
+        streak: streak,
+        bestStreak: bestStreak,
+        totalCorrectAnswers: totalCorrectAnswers,
+        outputCorrect: outputCorrect,
+        outputAttempts: outputAttempts,
+        bugCorrect: bugCorrect,
+        bugAttempts: bugAttempts,
+        attemptsByType: attemptsByType,
+        correctByType: correctByType,
+        completedLevels: completedLevels,
+        unlockedAchievements: Array.from(unlockedAchievements)
+    };
+
+    let html = "";
+    ACHIEVEMENTS.forEach(function (ach) {
+        const isUnlocked = unlockedAchievements.has(ach.id);
+        const reward = ach.rewardId ? REWARDS[ach.rewardId] : null;
+        const rarityClass = "rarity-" + (ach.rarity || "common").toLowerCase();
+
+        if (isUnlocked) {
+            html +=
+                '<div class="achievement-card unlocked ' + rarityClass + '" id="ach-card-' + ach.id + '">' +
+                    '<div class="ach-icon-wrap">' + ach.icon + '</div>' +
+                    '<div class="ach-info">' +
+                        '<div class="ach-title-row">' +
+                            '<span class="ach-name">' + escapeHtml(ach.title) + '</span>' +
+                            '<span class="ach-status-badge">UNLOCKED</span>' +
+                        '</div>' +
+                        '<div class="ach-badges-row">' +
+                            '<span class="ach-rarity-badge ' + rarityClass + '">' + escapeHtml(ach.rarity) + '</span>' +
+                        '</div>' +
+                        '<span class="ach-desc">' + escapeHtml(ach.description) + '</span>' +
+                        (reward ? '<span class="ach-reward-tag">🎁 Reward: ' + escapeHtml(reward.title) + '</span>' : '') +
+                    '</div>' +
+                '</div>';
+        } else if (ach.hidden) {
+            html +=
+                '<div class="achievement-card locked secret ' + rarityClass + '" id="ach-card-' + ach.id + '">' +
+                    '<div class="ach-icon-wrap">🔒</div>' +
+                    '<div class="ach-info">' +
+                        '<div class="ach-title-row">' +
+                            '<span class="ach-name">???</span>' +
+                            '<span class="ach-status-badge">SECRET</span>' +
+                        '</div>' +
+                        '<div class="ach-badges-row">' +
+                            '<span class="ach-rarity-badge ' + rarityClass + '">' + escapeHtml(ach.rarity) + '</span>' +
+                        '</div>' +
+                        '<span class="ach-desc">Secret achievement. Play to discover.</span>' +
+                        '<span class="ach-reward-tag">🎁 Mystery Reward</span>' +
+                    '</div>' +
+                '</div>';
+        } else {
+            const progressText = (typeof ach.getProgressText === "function") ? ach.getProgressText(currentState) : "";
+            const isProgressDone = (progressText === "Completed");
+            const isProgressPending = (!progressText || progressText === "Not yet achieved");
+            let progressHtml = "";
+            if (!isProgressPending && !isProgressDone) {
+                progressHtml = '<div class="ach-progress-row"><span class="ach-progress-badge">📊 ' + escapeHtml(progressText) + '</span></div>';
+            } else if (isProgressPending) {
+                progressHtml = '<div class="ach-progress-row"><span class="ach-progress-badge ach-status-pill">Not yet achieved</span></div>';
+            }
+
+            html +=
+                '<div class="achievement-card locked ' + rarityClass + '" id="ach-card-' + ach.id + '">' +
+                    '<div class="ach-icon-wrap">' + ach.icon + '</div>' +
+                    '<div class="ach-info">' +
+                        '<div class="ach-title-row">' +
+                            '<span class="ach-name">' + escapeHtml(ach.title) + '</span>' +
+                            '<span class="ach-status-badge">LOCKED</span>' +
+                        '</div>' +
+                        '<div class="ach-badges-row">' +
+                            '<span class="ach-rarity-badge ' + rarityClass + '">' + escapeHtml(ach.rarity) + '</span>' +
+                        '</div>' +
+                        '<span class="ach-desc">' + escapeHtml(ach.description) + '</span>' +
+                        progressHtml +
+                        (reward ? '<span class="ach-reward-tag">🎁 Reward: ' + escapeHtml(reward.title) + '</span>' : '') +
+                    '</div>' +
+                '</div>';
+        }
+    });
+
+    worldAchievementsGrid.innerHTML = html;
+}
+
 
 function updateBuilding(newlyBuiltIndex) {
     const build = BUILDS[currentBuildIndex];
@@ -589,6 +1578,7 @@ function buildNextPiece() {
         const newlyBuiltIndex = buildPieces[currentBuildIndex];
         buildPieces[currentBuildIndex] = newlyBuiltIndex + 1;
         updateBuilding(newlyBuiltIndex);
+        AudioManager.playSound("build");
     }
 }
 
@@ -739,8 +1729,9 @@ function renderWorldMap() {
         }
 
         // Build Node Card
+        const unlockPulseClass = (index === lastUnlockedBuildIndex) ? " node-unlock-pulse" : "";
         html += '<div class="map-node-wrapper">' +
-            '<div class="map-node-card ' + stateClass + '" id="map-node-' + build.id + '">' +
+            '<div class="map-node-card ' + stateClass + unlockPulseClass + '" id="map-node-' + build.id + '">' +
                 '<div class="node-header">' +
                     '<span class="node-level-tag">LEVEL ' + build.levelNumber + '</span>' +
                     '<span class="node-state-pill ' + stateClass + '">' + stateBadgeText + '</span>' +
@@ -794,9 +1785,14 @@ function renderWorldMap() {
     const nodeActionBtns = journeyContainer.querySelectorAll(".node-action-btn");
     nodeActionBtns.forEach(function (btn) {
         btn.addEventListener("click", function () {
+            AudioManager.playSound("click");
             enterGameplayFromMap();
         });
     });
+
+    lastUnlockedBuildIndex = -1;
+    DailyStreakManager.updateUI();
+    renderAchievementsGrid();
 }
 
 function enterGameplayFromMap() {
@@ -863,6 +1859,7 @@ function updateHintDisplay() {
 }
 
 hintButton.addEventListener("click", function () {
+    AudioManager.playSound("click");
     if (hintsRemaining <= 0 || lives <= 0 || isAnswerLocked) {
         return;
     }
@@ -873,6 +1870,7 @@ hintButton.addEventListener("click", function () {
     if (!hintUsedForCurrentQuestion && hintsRemaining > 0) {
         hintsRemaining = 0;
         hintUsedForCurrentQuestion = true;
+        levelUsedHint = true;
         updateHintDisplay();
     }
 
@@ -886,22 +1884,34 @@ hintButton.addEventListener("click", function () {
 // ==================================================
 
 function checkStreakMilestone(currentStreak) {
-    let message = "";
-    if (currentStreak === 3) {
-        message = "🔥 3 IN A ROW! ON FIRE!";
-    } else if (currentStreak === 5) {
-        message = "⚡ 5 STREAK! UNSTOPPABLE!";
-    } else if (currentStreak === 10) {
-        message = "🌟 10 STREAK! PERFECT RUN!";
+    if (currentStreak === 10) {
+        streakBanner.textContent = "🔥 10 STREAK! ON FIRE!";
+        streakBanner.style.display = "block";
+        showToast("streak", "STREAK MILESTONE", "🔥 10 STREAK!", "You're on fire! 10 challenges in a row!", "🔥");
+        setTimeout(function () {
+            AudioManager.playSound("streak");
+        }, 180);
+    } else if (currentStreak === 20) {
+        streakBanner.textContent = "⚡ 20 STREAK! UNSTOPPABLE!";
+        streakBanner.style.display = "block";
+        showToast("streak", "STREAK MILESTONE", "⚡ 20 STREAK!", "Unstoppable momentum! 20 in a row!", "⚡");
+        setTimeout(function () {
+            AudioManager.playSound("streak10");
+        }, 180);
+    } else if (currentStreak === 30) {
+        streakBanner.textContent = "👑 30 STREAK! PERFECT RUN!";
+        streakBanner.style.display = "block";
+        showToast("streak", "STREAK MILESTONE", "👑 30 STREAK!", "LEGENDARY PERFECT RUN! 30 in a row!", "👑");
+        setTimeout(function () {
+            AudioManager.playSound("streak10");
+        }, 180);
+    } else {
+        return;
     }
 
-    if (message) {
-        streakBanner.textContent = message;
-        streakBanner.style.display = "block";
-        setTimeout(function () {
-            streakBanner.style.display = "none";
-        }, 2200);
-    }
+    setTimeout(function () {
+        streakBanner.style.display = "none";
+    }, 2400);
 }
 
 // Helper to escape HTML characters in strings
@@ -1021,25 +2031,55 @@ function handleAnswer(selectedIndex) {
     const question = build.questions[currentQuestionIndex];
     const isCorrect = (selectedIndex === question.correct);
     const isFinalQuestion = (currentQuestionIndex === build.questions.length - 1);
+    const totalQuestions = build.questions.length;
+    const qType = question.type || "mcq";
+
+    sessionQuestionsAnswered++;
+    if (sessionQuestionsAnswered === 5) {
+        DailyStreakManager.recordActivity();
+    }
 
     const resultLifeTag = document.getElementById("result-life-tag");
     const resultPieceTag = document.getElementById("result-piece-tag");
 
+    totalQuestionsAttempted++;
+    attemptsByType[qType] = (attemptsByType[qType] || 0) + 1;
+    if (qType === "output") outputAttempts++;
+    else if (qType === "bug") bugAttempts++;
+
     if (isCorrect) {
+        // Track challenge types and correct answers
+        totalCorrectAnswers++;
+        correctByType[qType] = (correctByType[qType] || 0) + 1;
+        if (qType === "output") outputCorrect++;
+        else if (qType === "bug") bugCorrect++;
+
         // Correct answer: +10 XP, +1 streak, build exactly 1 piece
         totalXp = totalXp + 10;
         scoreDisplay.textContent = "⭐ " + totalXp + " XP";
+
+        showFloatingXp(answerButtons[selectedIndex], "+10 XP");
+        AudioManager.playSound("correct");
 
         streak = streak + 1;
         if (streak > bestStreak) {
             bestStreak = streak;
         }
         streakDisplay.textContent = "🔥 " + streak;
-        checkStreakMilestone(streak);
 
+        // Animate streak counter
+        const streakStat = document.querySelector(".stat-streak") || (streakDisplay ? streakDisplay.parentElement : null);
+        if (streakStat) {
+            streakStat.classList.remove("streak-pop");
+            void streakStat.offsetWidth;
+            streakStat.classList.add("streak-pop");
+        }
+
+        checkStreakMilestone(streak);
         buildNextPiece();
 
-        answerButtons[selectedIndex].classList.add("btn-correct");
+        answerButtons[selectedIndex].classList.add("btn-correct", "btn-pop");
+        checkAchievements("answer");
 
         // Populate Result Box
         resultBox.className = "result-box result-correct";
@@ -1075,13 +2115,32 @@ function handleAnswer(selectedIndex) {
 
     } else {
         // Wrong answer: -1 life on current level, reset streak, build NOTHING
+        levelMistakes++;
         lives = Math.max(0, lives - 1);
+        minLivesInLevel = Math.min(minLivesInLevel, lives);
+        if (lives === 1) reachedOneLifeInLevel = true;
         streak = 0;
+        if (currentQuestionIndex >= totalQuestions - 5) {
+            levelFinal5Correct = false;
+        }
+        if (currentQuestionIndex >= totalQuestions - 3) {
+            levelFinal3Correct = false;
+        }
         streakDisplay.textContent = "🔥 0";
         updateLivesDisplay();
 
-        answerButtons[selectedIndex].classList.add("btn-wrong");
+        AudioManager.playSound("wrong");
+
+        // Selected button shake and lives feedback
+        answerButtons[selectedIndex].classList.add("btn-wrong", "is-wrong-shake");
         answerButtons[question.correct].classList.add("btn-correct");
+
+        const livesStat = document.querySelector(".stat-lives") || (livesDisplay ? livesDisplay.parentElement : null);
+        if (livesStat) {
+            livesStat.classList.remove("lives-hit");
+            void livesStat.offsetWidth;
+            livesStat.classList.add("lives-hit");
+        }
 
         // Populate Result Box
         resultBox.className = "result-box result-wrong";
@@ -1128,6 +2187,7 @@ function handleAnswer(selectedIndex) {
 // ==================================================
 
 continueButton.addEventListener("click", function () {
+    AudioManager.playSound("click");
     // If lives hit 0, trigger Level Failed
     if (lives === 0) {
         showLevelFailed();
@@ -1157,6 +2217,36 @@ function completeCurrentLevel() {
 
     // Save checkpoint XP permanently
     checkpointXp = totalXp;
+
+    const levelCorrect = build.questions.length - levelMistakes;
+    levelCorrectHistory[currentBuildIndex] = levelCorrect;
+
+    // Check if level was completed with 0 mistakes and 3 lives -> Perfect Level
+    const isPerfect = (levelMistakes === 0 && lives === 3);
+    const noHint = !levelUsedHint;
+    if (isPerfect && noHint && lives === 3) {
+        flawlessLevels.add(currentBuildIndex);
+    }
+    if (perfectLevelBanner) {
+        perfectLevelBanner.style.display = isPerfect ? "inline-block" : "none";
+    }
+
+    AudioManager.playSound("levelCompleted");
+    showToast("", "CHECKPOINT CREATED", "✓ CHECKPOINT CREATED", "Level " + build.levelNumber + " Complete! Checkpoint secured.", "💾");
+
+    // Daily streak records activity on level completion
+    DailyStreakManager.recordActivity();
+
+    // Check level complete achievements
+    checkAchievements("level_complete", {
+        buildIndex: currentBuildIndex,
+        levelCorrect: levelCorrect,
+        isPerfect: isPerfect,
+        noHint: noHint,
+        usedHint: levelUsedHint,
+        final5Correct: levelFinal5Correct,
+        final3Correct: levelFinal3Correct
+    });
 
     updateBuildWorldBar();
 
@@ -1199,16 +2289,30 @@ function completeCurrentLevel() {
 }
 
 nextLevelButton.addEventListener("click", function () {
+    AudioManager.playSound("click");
     levelCompleteCard.style.display = "none";
 
     // Advance to next level
     currentBuildIndex = currentBuildIndex + 1;
     currentQuestionIndex = 0;
+    levelMistakes = 0;
+
+    // Unlock celebration
+    const nextBuild = BUILDS[currentBuildIndex];
+    AudioManager.playSound("levelUnlocked");
+    showToast("achievement", "NEW BUILD UNLOCKED", nextBuild.icon + " NEW BUILD UNLOCKED! " + nextBuild.name.toUpperCase(), nextBuild.description, "🔓");
+    lastUnlockedBuildIndex = currentBuildIndex;
 
     // Each new level gets fresh 3 lives & fresh 1 hint!
     lives = 3;
     hintsRemaining = 1;
     streak = 0;
+    levelMistakes = 0;
+    minLivesInLevel = 3;
+    reachedOneLifeInLevel = false;
+    levelUsedHint = false;
+    levelFinal5Correct = true;
+    levelFinal3Correct = true;
 
     updateLivesDisplay();
     updateHintDisplay();
@@ -1227,6 +2331,7 @@ nextLevelButton.addEventListener("click", function () {
 // ==================================================
 
 function showLevelFailed() {
+    AudioManager.playSound("gameOver");
     questionCard.style.display = "none";
     levelCompleteCard.style.display = "none";
     gameCompleteCard.style.display = "none";
@@ -1256,9 +2361,14 @@ function showLevelFailed() {
 
 // When TRY AGAIN is clicked on a failed level:
 tryAgainButton.addEventListener("click", function () {
-    // Restart ONLY the current level!
-    // Player does NOT go back to Level 1!
+    AudioManager.playSound("click");
     currentQuestionIndex = 0;
+    levelMistakes = 0;
+    minLivesInLevel = 3;
+    reachedOneLifeInLevel = false;
+    levelUsedHint = false;
+    levelFinal5Correct = true;
+    levelFinal3Correct = true;
     buildPieces[currentBuildIndex] = 0; // Reset only this level's build pieces
     lives = 3;                         // Fresh 3 lives for retry!
     hintsRemaining = 1;                // Reset hints for retry (strictly 1 hint)!
@@ -1294,11 +2404,15 @@ tryAgainButton.addEventListener("click", function () {
 // ==================================================
 
 function showGameComplete() {
+    AudioManager.playSound("finalWorldCompleted");
     questionCard.style.display = "none";
     levelCompleteCard.style.display = "none";
     gameOverCard.style.display = "none";
     gameCompleteCard.style.display = "block";
     hintButton.disabled = true;
+
+    // Check full world achievement
+    checkAchievements("game_complete");
 
     // Dynamically render completed builds showcase from BUILDS
     const showcaseContainer = completedBuildsShowcase || document.getElementById("completed-builds-showcase") || document.querySelector(".completed-builds-showcase");
@@ -1363,12 +2477,29 @@ function showGameComplete() {
             '<div class="mini-stat-card"><span class="m-label">CHECKPOINTS</span><span class="m-val">💾 ' + completedCount + ' / ' + BUILDS.length + ' Secured</span></div>' +
         '</div>';
 
+    // Render achievements showcase in victory screen
+    const finalAchShowcase = finalAchievementsShowcase || document.getElementById("final-achievements-showcase");
+    if (finalAchShowcase) {
+        let showcaseHtml = '<div class="final-achievements-title">🏆 ACHIEVEMENTS UNLOCKED THIS RUN (' + unlockedAchievements.size + ' / ' + ACHIEVEMENTS.length + ')</div><div class="final-ach-pills-row">';
+        ACHIEVEMENTS.forEach(function (ach) {
+            const isUnlocked = unlockedAchievements.has(ach.id);
+            if (isUnlocked) {
+                showcaseHtml += '<span class="final-ach-pill unlocked">' + ach.icon + ' ' + escapeHtml(ach.title) + '</span>';
+            } else {
+                showcaseHtml += '<span class="final-ach-pill">🔒 ???</span>';
+            }
+        });
+        showcaseHtml += '</div>';
+        finalAchShowcase.innerHTML = showcaseHtml;
+    }
+
     updateBuildWorldBar();
 }
 
 // Bind Play Again Button for Game Complete Screen
 if (playAgainButton) {
     playAgainButton.addEventListener("click", function () {
+        AudioManager.playSound("click");
         if (gameScreen) gameScreen.style.display = "none";
         if (startScreen) startScreen.style.display = "none";
         if (worldMapScreen) worldMapScreen.style.display = "block";
@@ -1383,6 +2514,55 @@ if (playAgainButton) {
 function startNewGame() {
     currentBuildIndex = 0;
     currentQuestionIndex = 0;
+    levelMistakes = 0;
+    sessionQuestionsAnswered = 0;
+    lastUnlockedBuildIndex = -1;
+    unlockedAchievements.clear();
+    unlockedRewards.clear();
+
+    // Reset extended V6.2 tracking counters
+    totalCorrectAnswers = 0;
+    correctOutputChallenges = 0;
+    correctBugChallenges = 0;
+    correctCodeChoiceChallenges = 0;
+    completedTypes.clear();
+    streakEncounteredTypes.clear();
+    perfectNoHintLevels.clear();
+    minLivesInLevel = 3;
+    reachedOneLifeInLevel = false;
+    levelUsedHint = false;
+    levelFinal5Correct = true;
+    levelFinal3Correct = true;
+
+    // Clear cosmetic reward classes from body
+    document.body.classList.remove(
+        "effect-build-spark",
+        "effect-world-glow",
+        "effect-architect-build",
+        "effect-starter-glow",
+        "effect-world-expansion",
+        "effect-world-completion",
+        "effect-output-pulse",
+        "effect-bug-hunter",
+        "effect-code-pulse",
+        "effect-focus-build",
+        "effect-fire-streak",
+        "effect-flame-burst",
+        "effect-master-flame",
+        "effect-perfect-build",
+        "effect-golden-build",
+        "effect-last-life",
+        "effect-clutch-build",
+        "effect-comeback-glow",
+        "effect-explorer-glow",
+        "effect-python-pulse",
+        "effect-python-aura",
+        "effect-golden-world",
+        "effect-survivor",
+        "effect-unbreakable",
+        "effect-celebration"
+    );
+
     buildPieces = new Array(BUILDS.length).fill(0);
     completedLevels = new Array(BUILDS.length).fill(false);
     checkpointXp = 0;
@@ -1393,6 +2573,10 @@ function startNewGame() {
     hintsRemaining = 1;                 // Exactly 1 hint
     hintUsedForCurrentQuestion = false;
     isAnswerLocked = false;
+
+    if (perfectLevelBanner) {
+        perfectLevelBanner.style.display = "none";
+    }
 
     scoreDisplay.textContent = "⭐ 0 XP";
     streakDisplay.textContent = "🔥 0";
@@ -1423,6 +2607,8 @@ function startNewGame() {
     updateBuildWorldBar();
     loadQuestion();
     renderWorldMap();
+    DailyStreakManager.updateUI();
+    renderAchievementsGrid();
 }
 
 // Bind Answer Buttons
@@ -1434,6 +2620,7 @@ answerButtons.forEach(function (button, index) {
 
 // Bind Start Button
 startButton.addEventListener("click", function () {
+    AudioManager.playSound("click");
     startScreen.style.display = "none";
     gameScreen.style.display = "none";
     worldMapScreen.style.display = "block";
@@ -1443,6 +2630,7 @@ startButton.addEventListener("click", function () {
 // Bind World Map Actions & Navigation
 if (mapBackBtn) {
     mapBackBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
         worldMapScreen.style.display = "none";
         startScreen.style.display = "block";
     });
@@ -1450,6 +2638,7 @@ if (mapBackBtn) {
 
 if (openWorldMapBtn) {
     openWorldMapBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
         openWorldMap();
     });
 }
@@ -1460,10 +2649,23 @@ if (buildWorldBar) {
             return;
         }
         if (e.target.closest(".world-item")) {
+            AudioManager.playSound("click");
             openWorldMap();
         }
     });
 }
+
+// Sound toggle button binding
+if (soundToggleBtn) {
+    soundToggleBtn.addEventListener("click", function () {
+        AudioManager.toggle();
+    });
+}
+
+// Generic audio unlock gesture for browsers
+document.addEventListener("click", function () {
+    AudioManager.init();
+}, { once: true });
 
 // Initial Setup on load
 switchScene(0);
@@ -1471,3 +2673,90 @@ updateBuilding(-1);
 updateBuildWorldBar();
 loadQuestion();
 renderWorldMap();
+DailyStreakManager.updateUI();
+renderAchievementsGrid();
+
+// Expose core game engine structures for inspection & testing
+window.BUILDS = BUILDS;
+window.AudioManager = AudioManager;
+window.DailyStreakManager = DailyStreakManager;
+window.ACHIEVEMENTS = ACHIEVEMENTS;
+window.REWARDS = REWARDS;
+window.getGameState = function () {
+    return {
+        currentBuildIndex: currentBuildIndex,
+        currentQuestionIndex: currentQuestionIndex,
+        buildPieces: buildPieces.slice(),
+        completedLevels: completedLevels.slice(),
+        totalXp: totalXp,
+        checkpointXp: checkpointXp,
+        streak: streak,
+        bestStreak: bestStreak,
+        lives: lives,
+        hintsRemaining: hintsRemaining,
+        levelMistakes: levelMistakes,
+        sessionQuestionsAnswered: sessionQuestionsAnswered,
+        totalQuestionsAttempted: totalQuestionsAttempted,
+        totalCorrectAnswers: totalCorrectAnswers,
+        outputAttempts: outputAttempts,
+        outputCorrect: outputCorrect,
+        bugAttempts: bugAttempts,
+        bugCorrect: bugCorrect,
+        attemptsByType: Object.assign({}, attemptsByType),
+        correctByType: Object.assign({}, correctByType),
+        flawlessLevelsCount: flawlessLevels.size,
+        levelCorrectHistory: levelCorrectHistory.slice(),
+        minLivesInLevel: minLivesInLevel,
+        reachedOneLifeInLevel: reachedOneLifeInLevel,
+        levelUsedHint: levelUsedHint,
+        levelFinal5Correct: levelFinal5Correct,
+        levelFinal3Correct: levelFinal3Correct,
+        unlockedAchievements: Array.from(unlockedAchievements),
+        unlockedRewards: Array.from(unlockedRewards)
+    };
+};
+window.checkAchievements = checkAchievements;
+window.unlockAchievement = unlockAchievement;
+window.unlockReward = unlockReward;
+window.checkAchievementVersionMigration = checkAchievementVersionMigration;
+window.flawlessLevels = flawlessLevels;
+window.setGameTestState = function (state) {
+    if (state.streak !== undefined) streak = state.streak;
+    if (state.bestStreak !== undefined) bestStreak = state.bestStreak;
+    if (state.lives !== undefined) lives = state.lives;
+    if (state.totalPiecesBuilt !== undefined) {
+        buildPieces[0] = state.totalPiecesBuilt;
+    }
+    if (state.totalQuestionsAttempted !== undefined) totalQuestionsAttempted = state.totalQuestionsAttempted;
+    if (state.totalCorrectAnswers !== undefined) totalCorrectAnswers = state.totalCorrectAnswers;
+    if (state.outputAttempts !== undefined) outputAttempts = state.outputAttempts;
+    if (state.outputCorrect !== undefined) outputCorrect = state.outputCorrect;
+    if (state.bugAttempts !== undefined) bugAttempts = state.bugAttempts;
+    if (state.bugCorrect !== undefined) bugCorrect = state.bugCorrect;
+    if (state.attemptsByType !== undefined) {
+        Object.assign(attemptsByType, state.attemptsByType);
+    }
+    if (state.correctByType !== undefined) {
+        Object.assign(correctByType, state.correctByType);
+    }
+    if (state.flawlessLevels !== undefined) {
+        flawlessLevels.clear();
+        state.flawlessLevels.forEach(function (idx) { flawlessLevels.add(idx); });
+    }
+    if (state.levelCorrectHistory !== undefined) {
+        levelCorrectHistory.length = 0;
+        state.levelCorrectHistory.forEach(function (c) { levelCorrectHistory.push(c); });
+    }
+    if (state.minLivesInLevel !== undefined) minLivesInLevel = state.minLivesInLevel;
+    if (state.reachedOneLifeInLevel !== undefined) reachedOneLifeInLevel = state.reachedOneLifeInLevel;
+    if (state.levelUsedHint !== undefined) levelUsedHint = state.levelUsedHint;
+    if (state.levelFinal5Correct !== undefined) levelFinal5Correct = state.levelFinal5Correct;
+    if (state.levelFinal3Correct !== undefined) levelFinal3Correct = state.levelFinal3Correct;
+    if (state.buildPieces !== undefined) buildPieces = state.buildPieces.slice();
+    if (state.completedLevels !== undefined) completedLevels = state.completedLevels.slice();
+    if (state.unlockedAchievements !== undefined) {
+        unlockedAchievements.clear();
+        state.unlockedAchievements.forEach(function (id) { unlockedAchievements.add(id); });
+    }
+};
+
