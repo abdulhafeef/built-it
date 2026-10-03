@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="BUILD IT! V3 — Level-Based Technical Learning Game. Answer engineering questions across House, Rocket, and Robot builds piece by piece!">
-    <title>BUILD IT! — Technical Interview Challenge</title>
+    <meta name="description" content="BUILD IT! — Level-Based Technical Learning Game. Master programming concepts and build your House, Rocket, and Robot piece by piece!">
+    <title>BUILD IT! — Technical Learning Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -12,53 +12,96 @@
 
     <div class="game-container">
 
-        <!-- Welcome / Start Screen -->
-        <div id="start-screen">
-            <div class="brand-pill">CAMPUS TO TECH CAREER • V3</div>
+        <!-- ============================================== -->
+        <!-- 1. START / MENU SCREEN                         -->
+        <!-- ============================================== -->
+        <div id="start-screen" class="start-screen">
+            <div class="brand-pill">
+                <span class="pill-dot"></span>
+                <span>TECHNICAL LEARNING CHALLENGE • 3 LEVELS</span>
+            </div>
+            
             <h1 class="game-title">BUILD IT!</h1>
-            <p class="tagline">Level-Based Technical Learning Game</p>
+            <p class="tagline">Learn. Build. Level Up.</p>
             <p class="game-desc">
-                Learn programming, logic, and systems step-by-step through interactive construction! Every correct answer adds a piece to your build. Complete each level to unlock the next checkpoint!
+                Master programming, logic, and systems step-by-step through interactive construction! Every correct answer places a piece on your build. Conquer each level to reach permanent checkpoints!
             </p>
 
-            <!-- Level Preview Grid -->
-            <div class="level-preview-grid">
-                <div class="preview-card">
-                    <span class="preview-badge badge-l1">LEVEL 1</span>
-                    <h3>🏠 House</h3>
-                    <p>Python Basics, Variables & Print</p>
+            <!-- 3 Level Progression Roadmap -->
+            <div class="level-progression-wrapper">
+                <div class="progression-header">
+                    <span class="progression-title">BUILD WORLD ROADMAP</span>
+                    <span class="progression-subtitle">3 Progressive Milestones</span>
                 </div>
-                <div class="preview-card">
-                    <span class="preview-badge badge-l2">LEVEL 2</span>
-                    <h3>🚀 Rocket</h3>
-                    <p>Functions, Loops & Core Concepts</p>
-                </div>
-                <div class="preview-card">
-                    <span class="preview-badge badge-l3">LEVEL 3</span>
-                    <h3>🤖 Robot</h3>
-                    <p>Basic Structures & OOP Logic</p>
+                <div class="level-preview-grid">
+                    <div class="preview-card card-l1">
+                        <div class="card-step-badge badge-l1">LEVEL 1</div>
+                        <div class="preview-icon">🏠</div>
+                        <h3>House</h3>
+                        <p class="preview-topic">Python Basics, Variables & Print</p>
+                        <div class="preview-meta">
+                            <span>🎯 10 Questions</span>
+                            <span>🧱 10 Pieces</span>
+                        </div>
+                    </div>
+
+                    <div class="progression-arrow" aria-hidden="true">➔</div>
+
+                    <div class="preview-card card-l2">
+                        <div class="card-step-badge badge-l2">LEVEL 2</div>
+                        <div class="preview-icon">🚀</div>
+                        <h3>Rocket</h3>
+                        <p class="preview-topic">Functions, Loops & Core Concepts</p>
+                        <div class="preview-meta">
+                            <span>🎯 10 Questions</span>
+                            <span>🧱 10 Pieces</span>
+                        </div>
+                    </div>
+
+                    <div class="progression-arrow" aria-hidden="true">➔</div>
+
+                    <div class="preview-card card-l3">
+                        <div class="card-step-badge badge-l3">LEVEL 3</div>
+                        <div class="preview-icon">🤖</div>
+                        <h3>Robot</h3>
+                        <p class="preview-topic">Basic Structures & OOP Logic</p>
+                        <div class="preview-meta">
+                            <span>🎯 10 Questions</span>
+                            <span>🧱 10 Pieces</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Rules Summary Chips -->
             <div class="rules-summary">
-                <span class="rule-chip">🎯 10 Questions / Level</span>
-                <span class="rule-chip">🧱 10 Pieces per Build</span>
-                <span class="rule-chip">⭐ +10 XP per Correct</span>
-                <span class="rule-chip">❤️ 3 Lives per Level</span>
-                <span class="rule-chip">💾 Level Checkpoints</span>
-                <span class="rule-chip">💡 3 Hints / Level</span>
+                <span class="rule-chip"><span class="chip-icon">🎯</span> 10 Questions / Level</span>
+                <span class="rule-chip"><span class="chip-icon">🧱</span> 10 Pieces per Build</span>
+                <span class="rule-chip"><span class="chip-icon">⭐</span> +10 XP per Correct</span>
+                <span class="rule-chip"><span class="chip-icon">❤️</span> 3 Lives per Level</span>
+                <span class="rule-chip"><span class="chip-icon">💡</span> 1 Hint per Level</span>
+                <span class="rule-chip"><span class="chip-icon">💾</span> Level Checkpoints</span>
             </div>
 
-            <button id="start-button" class="btn-action primary-btn">START GAME</button>
+            <div class="start-action-row">
+                <button id="start-button" class="btn-action primary-btn btn-start">
+                    <span class="btn-start-text">START GAME</span>
+                    <span class="btn-start-icon">➔</span>
+                </button>
+            </div>
         </div>
 
-        <!-- Main Game Screen -->
+        <!-- ============================================== -->
+        <!-- 2. MAIN GAMEPLAY SCREEN                        -->
+        <!-- ============================================== -->
         <div id="game-screen" style="display: none;">
 
             <!-- Build World Progression Header -->
             <div id="build-world-bar" class="build-world-bar" aria-label="Build World Progression">
-                <div class="world-title-label">BUILD WORLD & CHECKPOINTS</div>
+                <div class="world-header-row">
+                    <span class="world-title-label">CHECKPOINT PROGRESSION</span>
+                    <span class="world-level-count">3 Levels</span>
+                </div>
                 <div class="world-items-row">
                     <div id="world-item-house" class="world-item active">
                         <span class="world-icon">🏠</span>
@@ -67,6 +110,7 @@
                             <span class="world-status">In Progress</span>
                         </div>
                     </div>
+                    <div class="world-divider" aria-hidden="true">➔</div>
                     <div id="world-item-rocket" class="world-item locked">
                         <span class="world-icon">🚀</span>
                         <div class="world-info">
@@ -74,6 +118,7 @@
                             <span class="world-status">🔒 Locked</span>
                         </div>
                     </div>
+                    <div class="world-divider" aria-hidden="true">➔</div>
                     <div id="world-item-robot" class="world-item locked">
                         <span class="world-icon">🤖</span>
                         <div class="world-info">
@@ -81,39 +126,36 @@
                             <span class="world-status">🔒 Locked</span>
                         </div>
                     </div>
-                    <div id="world-item-car" class="world-item future">
-                        <span class="world-icon">🚗</span>
-                        <div class="world-info">
-                            <span class="world-name">L4: Car</span>
-                            <span class="world-status">🔒 Coming later</span>
-                        </div>
-                    </div>
+                    <!-- Preserved hidden DOM element for backward compatibility with script queries -->
+                    <div id="world-item-car" class="world-item future" style="display: none;"></div>
                 </div>
             </div>
 
             <!-- Header / Status Bar -->
             <header class="game-header">
                 <div class="header-top">
-                    <span id="level-indicator" class="level-indicator level-1">LEVEL 1 — 🏠 HOUSE</span>
+                    <div class="level-badge-wrap">
+                        <span id="level-indicator" class="level-indicator level-1">LEVEL 1 — 🏠 HOUSE</span>
+                    </div>
                     <span id="question-progress" class="question-progress">Question 1 / 10</span>
                 </div>
 
                 <div class="stats-bar">
-                    <div class="stat-item">
+                    <div class="stat-item stat-xp">
                         <span class="stat-label">TOTAL XP</span>
                         <span id="score" class="stat-value">⭐ 0 XP</span>
                     </div>
-                    <div class="stat-item">
+                    <div class="stat-item stat-streak">
                         <span class="stat-label">STREAK</span>
                         <span id="streak" class="stat-value">🔥 0</span>
                     </div>
-                    <div class="stat-item">
+                    <div class="stat-item stat-lives">
                         <span class="stat-label">LEVEL LIVES</span>
                         <span id="lives" class="stat-value">❤️ ❤️ ❤️</span>
                     </div>
                     <div class="stat-item stat-hint">
                         <span class="stat-label">ASSISTANCE</span>
-                        <button id="hint-button" class="hint-button" type="button">💡 Hint (3 left)</button>
+                        <button id="hint-button" class="hint-button" type="button">💡 Hint (1 left)</button>
                     </div>
                 </div>
             </header>
@@ -125,7 +167,7 @@
             <div id="builder-stage" class="builder-stage" aria-label="Building progress">
                 <div class="builder-header">
                     <span id="builder-title" class="builder-title">🏠 BUILD YOUR HOUSE</span>
-                    <span id="build-progress" class="build-progress">Progress: 0 / 10</span>
+                    <span id="build-progress" class="build-progress">🏠 0 / 10 (0%)</span>
                 </div>
 
                 <div class="progress-bar-track">
@@ -180,7 +222,7 @@
                     </div>
                 </div>
 
-                <!-- Scene 4: Car (Preserved for future extensible levels) -->
+                <!-- Scene 4: Car (Preserved for backward compatibility) -->
                 <div id="car-scene" class="build-scene" style="display: none;">
                     <div class="car-canvas">
                         <div class="car-piece chassis-frame" data-piece="0"></div>
@@ -198,11 +240,11 @@
 
             </div>
 
-            <!-- Question Card -->
+            <!-- Question Card (Main Visual Focus) -->
             <div id="question-card" class="question-card">
                 <div class="question-header">
                     <div class="question-meta-row">
-                        <h2 id="question-number">Question 1</h2>
+                        <span id="question-number" class="question-badge">Question 1 / 10</span>
                         <span id="difficulty-badge" class="difficulty-badge badge-easy">VERY EASY</span>
                     </div>
                 </div>
@@ -211,6 +253,12 @@
 
                 <!-- Code block display for code questions -->
                 <div id="code-snippet-box" class="code-snippet-box" style="display: none;">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                        <span class="code-lang">Python</span>
+                    </div>
                     <pre><code id="code-snippet-text"></code></pre>
                 </div>
 
@@ -228,52 +276,97 @@
                 <!-- Result & Explanation Box (Shown after answering) -->
                 <div id="result-box" class="result-box" style="display: none;">
                     <div class="result-header">
-                        <span id="result-status" class="result-status"></span>
-                        <span id="result-xp-tag" class="result-xp-tag"></span>
+                        <div class="result-title-group">
+                            <span id="result-status" class="result-status"></span>
+                        </div>
+                        <div class="result-pills-row">
+                            <span id="result-xp-tag" class="result-pill xp-pill"></span>
+                            <span id="result-life-tag" class="result-pill life-pill" style="display: none;"></span>
+                            <span id="result-streak-tag" class="result-pill streak-pill" style="display: none;"></span>
+                            <span id="result-piece-tag" class="result-pill piece-pill" style="display: none;"></span>
+                        </div>
                     </div>
-                    <div id="result-streak-tag" class="result-streak-tag" style="display: none;"></div>
+
                     <div id="result-correct-answer" class="result-correct-answer" style="display: none;"></div>
-                    <p id="result-explanation" class="result-explanation"></p>
-                    <button id="continue-button" class="btn-action continue-btn" type="button">CONTINUE →</button>
+
+                    <div class="result-explanation-container">
+                        <span class="explanation-icon">💡</span>
+                        <p id="result-explanation" class="result-explanation"></p>
+                    </div>
+
+                    <button id="continue-button" class="btn-action continue-btn" type="button">CONTINUE ➔</button>
                 </div>
 
                 <div id="feedback" class="feedback" style="display: none;"></div>
             </div>
 
             <!-- Level Complete Card (Checkpoints) -->
-            <div id="level-complete-card" class="state-card" style="display: none;">
+            <div id="level-complete-card" class="state-card level-complete-card" style="display: none;">
+                <div class="state-badge-wrap">
+                    <span class="checkpoint-saved-badge">💾 CHECKPOINT SAVED</span>
+                </div>
                 <div class="state-icon" id="build-complete-icon">🎉</div>
                 <h3 id="level-complete-title">LEVEL COMPLETE!</h3>
-                <div id="build-complete-badge" class="complete-subtitle">CHECKPOINT REACHED</div>
+                <div id="build-complete-badge" class="complete-subtitle">BUILD COMPLETED!</div>
                 <p id="level-complete-message">You completed all questions in this level.</p>
                 <div id="build-complete-stats" class="final-stats"></div>
                 <div id="build-unlock-banner" class="unlock-banner"></div>
-                <button id="next-level-button" class="btn-action primary-btn">CONTINUE TO NEXT LEVEL →</button>
+                <button id="next-level-button" class="btn-action primary-btn next-level-btn">CONTINUE TO NEXT LEVEL ➔</button>
             </div>
 
             <!-- Final Game Complete Card (All 3 Levels Done) -->
-            <div id="game-complete-card" class="state-card" style="display: none;">
-                <div class="state-icon">🏆</div>
-                <h3>BUILD WORLD COMPLETE!</h3>
-                <p class="complete-subtitle">Master Technical Architect</p>
+            <div id="game-complete-card" class="state-card game-complete-card" style="display: none;">
+                <div class="state-badge-wrap">
+                    <span class="master-champion-badge">🏆 MASTER TECHNICAL ARCHITECT</span>
+                </div>
+                <div class="state-icon">👑</div>
+                <h3 class="victory-title">BUILD WORLD COMPLETE!</h3>
+                <p class="complete-subtitle">All 3 Levels Mastered</p>
                 <p id="game-complete-summary">
-                    Incredible achievement! You conquered all 3 levels and constructed the House, Rocket, and Robot!
+                    Incredible achievement! You conquered all 3 levels, solved engineering challenges, and successfully built the House, Rocket, and Robot!
                 </p>
                 <div class="completed-builds-showcase">
-                    <span class="showcase-chip">🏠 Level 1: House ✓</span>
-                    <span class="showcase-chip">🚀 Level 2: Rocket ✓</span>
-                    <span class="showcase-chip">🤖 Level 3: Robot ✓</span>
+                    <div class="showcase-card">
+                        <span class="showcase-icon">🏠</span>
+                        <div class="showcase-text">
+                            <span class="showcase-name">House — Complete</span>
+                            <span class="showcase-sub">Level 1 • 10/10 Pieces</span>
+                        </div>
+                        <span class="showcase-check">✓</span>
+                    </div>
+                    <div class="showcase-card">
+                        <span class="showcase-icon">🚀</span>
+                        <div class="showcase-text">
+                            <span class="showcase-name">Rocket — Complete</span>
+                            <span class="showcase-sub">Level 2 • 10/10 Pieces</span>
+                        </div>
+                        <span class="showcase-check">✓</span>
+                    </div>
+                    <div class="showcase-card">
+                        <span class="showcase-icon">🤖</span>
+                        <div class="showcase-text">
+                            <span class="showcase-name">Robot — Complete</span>
+                            <span class="showcase-sub">Level 3 • 10/10 Pieces</span>
+                        </div>
+                        <span class="showcase-check">✓</span>
+                    </div>
                 </div>
                 <div id="final-stats" class="final-stats"></div>
+                <div class="victory-actions">
+                    <button id="play-again-button" class="btn-action primary-btn play-again-btn">PLAY AGAIN (START FROM LEVEL 1) ↺</button>
+                </div>
             </div>
 
             <!-- Level Failed Card (Restarts only the current level) -->
-            <div id="game-over-card" class="state-card" style="display: none;">
+            <div id="game-over-card" class="state-card game-over-card" style="display: none;">
+                <div class="state-badge-wrap">
+                    <span class="checkpoint-safe-badge">💾 CHECKPOINTS PRESERVED</span>
+                </div>
                 <div class="state-icon">💀</div>
                 <h3 id="game-over-title">LEVEL FAILED</h3>
                 <p id="game-over-message">You ran out of lives on this level.</p>
                 <div id="game-over-stats" class="final-stats"></div>
-                <button id="try-again-button" class="btn-action try-again-btn">TRY AGAIN</button>
+                <button id="try-again-button" class="btn-action try-again-btn">TRY LEVEL AGAIN ↺</button>
             </div>
 
         </div>

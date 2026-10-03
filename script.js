@@ -83,6 +83,7 @@ const gameOverStats = document.getElementById("game-over-stats");
 
 const gameCompleteCard = document.getElementById("game-complete-card");
 const finalStats = document.getElementById("final-stats");
+const playAgainButton = document.getElementById("play-again-button");
 
 // ==================================================
 // GAME STATE (Level Checkpoint System)
@@ -97,7 +98,7 @@ let totalXp = 0;                        // Active total XP
 let streak = 0;                         // Current consecutive correct streak
 let bestStreak = 0;                     // Best streak across the whole run
 let lives = 3;                          // Level-specific lives (always 3 per level!)
-let hintsRemaining = 3;                 // 3 hints per level attempt
+let hintsRemaining = 1;                 // Strictly 1 hint per level attempt
 let hintUsedForCurrentQuestion = false;
 let isAnswerLocked = false;
 
@@ -501,23 +502,30 @@ const BUILDS = [
 // BUILD PROGRESSION & SCENE MANAGEMENT
 // ==================================================
 
-function updateBuilding() {
+function updateBuilding(newlyBuiltIndex) {
     const build = BUILDS[currentBuildIndex];
     const piecesBuilt = buildPieces[currentBuildIndex];
 
     build.pieces.forEach(function (piece, index) {
-        piece.classList.toggle("built", index < piecesBuilt);
+        const isBuilt = index < piecesBuilt;
+        piece.classList.toggle("built", isBuilt);
+        if (index === newlyBuiltIndex) {
+            piece.classList.remove("piece-pop");
+            void piece.offsetWidth; // Trigger reflow for animation restart
+            piece.classList.add("piece-pop");
+        }
     });
 
-    buildProgress.textContent = build.icon + " " + piecesBuilt + " / 10";
+    buildProgress.textContent = build.icon + " " + piecesBuilt + " / 10 (" + (piecesBuilt * 10) + "%)";
     const percent = (piecesBuilt / 10) * 100;
     buildProgressBar.style.width = percent + "%";
 }
 
 function buildNextPiece() {
     if (buildPieces[currentBuildIndex] < 10) {
-        buildPieces[currentBuildIndex] = buildPieces[currentBuildIndex] + 1;
-        updateBuilding();
+        const newlyBuiltIndex = buildPieces[currentBuildIndex];
+        buildPieces[currentBuildIndex] = newlyBuiltIndex + 1;
+        updateBuilding(newlyBuiltIndex);
     }
 }
 
@@ -537,7 +545,7 @@ function switchScene(targetIndex) {
     }
 
     builderTitle.textContent = BUILDS[targetIndex].title;
-    updateBuilding();
+    updateBuilding(-1);
 }
 
 function updateBuildWorldBar() {
@@ -583,10 +591,9 @@ function updateBuildWorldBar() {
         worldItemRobot.querySelector(".world-status").textContent = "🔒 Locked";
     }
 
-    // Level 4: Car (extensible future level)
+    // Level 4: Car (preserved if DOM node exists)
     if (worldItemCar) {
         worldItemCar.className = "world-item future";
-        worldItemCar.querySelector(".world-status").textContent = "🔒 Coming later";
     }
 }
 
@@ -603,17 +610,17 @@ function updateLivesDisplay() {
 }
 
 // ==================================================
-// HINT SYSTEM
+// HINT SYSTEM (Strictly 1 Hint Per Level)
 // ==================================================
 
 function updateHintDisplay() {
     if (hintsRemaining <= 0) {
         hintButton.disabled = true;
-        hintButton.textContent = "💡 No hints left";
+        hintButton.textContent = "💡 Hint Used";
         hintButton.classList.add("disabled");
     } else {
         hintButton.disabled = false;
-        hintButton.textContent = "💡 Hint (" + hintsRemaining + " left)";
+        hintButton.textContent = "💡 Hint (1 left)";
         hintButton.classList.remove("disabled");
     }
 }
@@ -626,8 +633,8 @@ hintButton.addEventListener("click", function () {
     const build = BUILDS[currentBuildIndex];
     const question = build.questions[currentQuestionIndex];
 
-    if (!hintUsedForCurrentQuestion) {
-        hintsRemaining = Math.max(0, hintsRemaining - 1);
+    if (!hintUsedForCurrentQuestion && hintsRemaining > 0) {
+        hintsRemaining = 0;
         hintUsedForCurrentQuestion = true;
         updateHintDisplay();
     }
@@ -660,6 +667,17 @@ function checkStreakMilestone(currentStreak) {
     }
 }
 
+// Helper to escape HTML characters in strings
+function escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 // ==================================================
 // QUESTION LOADING & UI UPDATES
 // ==================================================
@@ -674,7 +692,7 @@ function loadQuestion() {
     questionProgress.textContent = "Question " + (currentQuestionIndex + 1) + " / 10";
 
     // Question number & difficulty badge
-    questionNumber.textContent = "Question " + (currentQuestionIndex + 1) + " (" + build.name + ")";
+    questionNumber.textContent = "Question " + (currentQuestionIndex + 1) + " / 10 (" + build.name + ")";
     difficultyBadge.textContent = question.difficulty;
     difficultyBadge.className = "difficulty-badge badge-easy";
 
@@ -690,10 +708,10 @@ function loadQuestion() {
         codeSnippetBox.style.display = "none";
     }
 
-    // Populate answer buttons
+    // Populate answer buttons with distinct option badges
     const prefixes = ["A", "B", "C", "D"];
     answerButtons.forEach(function (button, index) {
-        button.textContent = prefixes[index] + ". " + question.options[index];
+        button.innerHTML = '<span class="ans-badge">' + prefixes[index] + '</span><span class="ans-text">' + escapeHtml(question.options[index]) + '</span>';
         button.disabled = false;
         button.style.display = "flex";
         button.className = "answer-btn";
@@ -710,12 +728,12 @@ function loadQuestion() {
     resultBox.className = "result-box";
     resultStreakTag.style.display = "none";
     resultCorrectAnswer.style.display = "none";
-    continueButton.textContent = "CONTINUE →";
+    continueButton.textContent = "CONTINUE ➔";
 
     // Unlock answers
     isAnswerLocked = false;
     updateBuildWorldBar();
-    updateBuilding();
+    updateBuilding(-1);
 }
 
 // ==================================================
@@ -737,6 +755,9 @@ function handleAnswer(selectedIndex) {
     const question = build.questions[currentQuestionIndex];
     const isCorrect = (selectedIndex === question.correct);
 
+    const resultLifeTag = document.getElementById("result-life-tag");
+    const resultPieceTag = document.getElementById("result-piece-tag");
+
     if (isCorrect) {
         // Correct answer: +10 XP, +1 streak, build exactly 1 piece
         totalXp = totalXp + 10;
@@ -755,18 +776,35 @@ function handleAnswer(selectedIndex) {
 
         // Populate Result Box
         resultBox.className = "result-box result-correct";
-        resultStatus.textContent = "✅ CORRECT!";
+        resultStatus.textContent = "✅ CORRECT ANSWER!";
         resultXpTag.textContent = "+10 XP";
+        resultXpTag.className = "result-pill xp-pill xp-earned";
+
+        if (resultLifeTag) {
+            resultLifeTag.style.display = "none";
+        }
+
+        if (resultPieceTag) {
+            resultPieceTag.textContent = "🧱 Piece Added to Build!";
+            resultPieceTag.style.display = "inline-flex";
+        }
 
         if (streak > 1) {
-            resultStreakTag.textContent = "🔥 STREAK " + streak;
-            resultStreakTag.style.display = "inline-block";
+            resultStreakTag.textContent = "🔥 Streak: " + streak + " in a row!";
+            resultStreakTag.style.display = "inline-flex";
         } else {
-            resultStreakTag.style.display = "none";
+            resultStreakTag.textContent = "🔥 Streak Started!";
+            resultStreakTag.style.display = "inline-flex";
         }
 
         resultCorrectAnswer.style.display = "none";
         resultExplanation.textContent = question.explanation;
+
+        if (currentQuestionIndex === 9) {
+            continueButton.textContent = "COMPLETE LEVEL " + build.levelNumber + " ➔";
+        } else {
+            continueButton.textContent = "CONTINUE ➔";
+        }
 
     } else {
         // Wrong answer: -1 life on current level, reset streak, build NOTHING
@@ -780,17 +818,33 @@ function handleAnswer(selectedIndex) {
 
         // Populate Result Box
         resultBox.className = "result-box result-wrong";
-        resultStatus.textContent = "❌ NOT QUITE";
+        resultStatus.textContent = "❌ INCORRECT";
         resultXpTag.textContent = "+0 XP";
-        resultStreakTag.style.display = "none";
+        resultXpTag.className = "result-pill xp-pill xp-zero";
 
-        resultCorrectAnswer.textContent = "Correct answer: " + question.options[question.correct];
+        if (resultLifeTag) {
+            resultLifeTag.textContent = "💔 -1 Life (" + lives + " left)";
+            resultLifeTag.style.display = "inline-flex";
+        }
+
+        if (resultPieceTag) {
+            resultPieceTag.style.display = "none";
+        }
+
+        resultStreakTag.textContent = "🔥 Streak Reset to 0";
+        resultStreakTag.style.display = "inline-flex";
+
+        resultCorrectAnswer.innerHTML = '<span class="correct-label">Correct answer:</span> <span class="correct-val">' + escapeHtml(question.options[question.correct]) + '</span>';
         resultCorrectAnswer.style.display = "block";
         resultExplanation.textContent = question.explanation;
 
         // If lives reach 0, update continue button text
         if (lives === 0) {
             continueButton.textContent = "SEE RESULTS 💀";
+        } else if (currentQuestionIndex === 9) {
+            continueButton.textContent = "COMPLETE LEVEL " + build.levelNumber + " ➔";
+        } else {
+            continueButton.textContent = "CONTINUE ➔";
         }
     }
 
@@ -839,17 +893,32 @@ function completeCurrentLevel() {
         questionCard.style.display = "none";
         levelCompleteCard.style.display = "block";
 
-        levelCompleteTitle.textContent = build.completionTitle;
-        levelCompleteMessage.textContent = build.completionDesc;
+        const nextBuild = BUILDS[currentBuildIndex + 1];
+
+        levelCompleteTitle.textContent = "LEVEL " + build.levelNumber + " COMPLETE!";
+        const completeBadge = document.getElementById("build-complete-badge");
+        if (completeBadge) {
+            completeBadge.textContent = build.icon + " " + build.name.toUpperCase() + " BUILT!";
+        }
+        levelCompleteMessage.textContent = "Outstanding work! You completed all 10 questions in Level " + build.levelNumber + " and established a permanent checkpoint!";
 
         buildCompleteStats.innerHTML =
-            "<p>⭐ <strong>Total XP:</strong> " + totalXp + " points</p>" +
-            "<p>🔥 <strong>Best Streak:</strong> " + bestStreak + " in a row</p>" +
-            "<p>" + build.icon + " <strong>" + build.name + " Pieces:</strong> " + buildPieces[currentBuildIndex] + " / 10 pieces built</p>" +
-            "<p>❤️ <strong>Lives Remaining:</strong> " + lives + " / 3</p>";
+            '<div class="stat-card-row">' +
+                '<div class="mini-stat-card"><span class="m-label">CHECKPOINT XP</span><span class="m-val">⭐ ' + totalXp + ' XP</span></div>' +
+                '<div class="mini-stat-card"><span class="m-label">PIECES BUILT</span><span class="m-val">🧱 ' + buildPieces[currentBuildIndex] + ' / 10</span></div>' +
+                '<div class="mini-stat-card"><span class="m-label">BEST STREAK</span><span class="m-val">🔥 ' + bestStreak + '</span></div>' +
+                '<div class="mini-stat-card"><span class="m-label">LIVES PRESERVED</span><span class="m-val">❤️ ' + lives + ' / 3</span></div>' +
+            '</div>';
 
-        buildUnlockBanner.textContent = build.unlockNext;
-        nextLevelButton.textContent = "CONTINUE TO LEVEL " + (currentBuildIndex + 2) + " →";
+        buildUnlockBanner.innerHTML =
+            '<div class="next-level-preview-box">' +
+                '<span class="next-level-tag">NEXT LEVEL</span>' +
+                '<div class="next-level-title">' + nextBuild.icon + ' Level ' + nextBuild.levelNumber + ': ' + nextBuild.name + '</div>' +
+                '<div class="next-level-desc">' + (nextBuild.levelNumber === 2 ? 'Functions, Loops & Core Concepts' : 'Basic Structures & OOP Logic') + '</div>' +
+                '<div class="next-level-perks">❤️ 3 Fresh Lives • 💡 1 Fresh Hint</div>' +
+            '</div>';
+
+        nextLevelButton.textContent = "CONTINUE TO LEVEL " + nextBuild.levelNumber + " (" + nextBuild.name.toUpperCase() + ") ➔";
     } else {
         // Level 3 Complete (All levels conquered!) -> Final Victory Screen
         showGameComplete();
@@ -864,9 +933,9 @@ nextLevelButton.addEventListener("click", function () {
     currentBuildIndex = currentBuildIndex + 1;
     currentQuestionIndex = 0;
 
-    // Each new level gets fresh 3 lives & fresh 3 hints!
+    // Each new level gets fresh 3 lives & fresh 1 hint!
     lives = 3;
-    hintsRemaining = 3;
+    hintsRemaining = 1;
     streak = 0;
 
     updateLivesDisplay();
@@ -883,6 +952,7 @@ nextLevelButton.addEventListener("click", function () {
 function showLevelFailed() {
     questionCard.style.display = "none";
     levelCompleteCard.style.display = "none";
+    gameCompleteCard.style.display = "none";
     gameOverCard.style.display = "block";
     tryAgainButton.style.display = "inline-block";
     hintButton.disabled = true;
@@ -896,11 +966,14 @@ function showLevelFailed() {
     gameOverMessage.textContent = "You ran out of lives on Level " + build.levelNumber + " (" + build.name + ").";
 
     gameOverStats.innerHTML =
-        "<p>" + build.icon + " <strong>Level:</strong> Level " + build.levelNumber + " — " + build.name + "</p>" +
-        "<p>📍 <strong>Stopped At:</strong> Question " + (currentQuestionIndex + 1) + " / 10</p>" +
-        "<p>🧱 <strong>Pieces Built:</strong> " + buildPieces[currentBuildIndex] + " / 10</p>" +
-        "<p>⭐ <strong>Saved Checkpoint XP:</strong> " + checkpointXp + " XP</p>" +
-        "<p><em>Completed checkpoints remain saved! Only this level will restart.</em></p>";
+        '<div class="stat-card-row">' +
+            '<div class="mini-stat-card"><span class="m-label">STOPPED AT</span><span class="m-val">Question ' + (currentQuestionIndex + 1) + ' / 10</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">PIECES BUILT</span><span class="m-val">🧱 ' + buildPieces[currentBuildIndex] + ' / 10</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">SAVED CHECKPOINT XP</span><span class="m-val">⭐ ' + checkpointXp + ' XP</span></div>' +
+        '</div>' +
+        '<p class="checkpoint-preserve-note">💾 <strong>Checkpoints are preserved!</strong> Previous completed levels remain saved. Only Level ' + build.levelNumber + ' will restart with 3 fresh lives and 1 hint.</p>';
+
+    tryAgainButton.textContent = "TRY LEVEL " + build.levelNumber + " AGAIN ↺";
 }
 
 // When TRY AGAIN is clicked on a failed level:
@@ -910,7 +983,7 @@ tryAgainButton.addEventListener("click", function () {
     currentQuestionIndex = 0;
     buildPieces[currentBuildIndex] = 0; // Reset only this level's build pieces
     lives = 3;                         // Fresh 3 lives for retry!
-    hintsRemaining = 3;                // Reset hints for retry!
+    hintsRemaining = 1;                // Reset hints for retry (strictly 1 hint)!
     streak = 0;
     totalXp = checkpointXp;            // Restore XP from previously completed checkpoints
 
@@ -923,6 +996,7 @@ tryAgainButton.addEventListener("click", function () {
     // Reset visual pieces for only the current level scene
     BUILDS[currentBuildIndex].pieces.forEach(function (p) {
         p.classList.remove("built");
+        p.classList.remove("piece-pop");
     });
 
     // Reset UI visibility
@@ -942,23 +1016,34 @@ tryAgainButton.addEventListener("click", function () {
 function showGameComplete() {
     questionCard.style.display = "none";
     levelCompleteCard.style.display = "none";
+    gameOverCard.style.display = "none";
     gameCompleteCard.style.display = "block";
-    tryAgainButton.style.display = "inline-block";
-    tryAgainButton.textContent = "PLAY AGAIN";
     hintButton.disabled = true;
 
     finalStats.innerHTML =
-        "<p>🏆 <strong>Final Score:</strong> " + totalXp + " / 300 XP</p>" +
-        "<p>🔥 <strong>Best Streak:</strong> " + bestStreak + " consecutive correct</p>" +
-        "<p>🧱 <strong>Total Construction:</strong> " +
-        (buildPieces[0] + buildPieces[1] + buildPieces[2]) + " / 30 total pieces built</p>" +
-        "<p>❤️ <strong>Level 3 Lives Left:</strong> " + lives + " / 3</p>";
+        '<div class="final-score-banner">' +
+            '<span class="score-title">TOTAL XP EARNED</span>' +
+            '<span class="score-number">⭐ ' + totalXp + ' / 300 XP</span>' +
+        '</div>' +
+        '<div class="stat-card-row">' +
+            '<div class="mini-stat-card"><span class="m-label">COMPLETED BUILDS</span><span class="m-val">3 / 3 Complete</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">TOTAL PIECES</span><span class="m-val">🧱 ' + (buildPieces[0] + buildPieces[1] + buildPieces[2]) + ' / 30</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">BEST STREAK</span><span class="m-val">🔥 ' + bestStreak + ' in a row</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">CHECKPOINTS</span><span class="m-val">💾 3 / 3 Secured</span></div>' +
+        '</div>';
 
     updateBuildWorldBar();
 }
 
+// Bind Play Again Button for Game Complete Screen
+if (playAgainButton) {
+    playAgainButton.addEventListener("click", function () {
+        startNewGame();
+    });
+}
+
 // ==================================================
-// FULL GAME RESET (From Start Screen)
+// FULL GAME RESET (From Start Screen or Play Again)
 // ==================================================
 
 function startNewGame() {
@@ -971,7 +1056,7 @@ function startNewGame() {
     streak = 0;
     bestStreak = 0;
     lives = 3;
-    hintsRemaining = 3;
+    hintsRemaining = 1;                 // Exactly 1 hint
     hintUsedForCurrentQuestion = false;
     isAnswerLocked = false;
 
@@ -985,9 +1070,9 @@ function startNewGame() {
     streakBanner.style.display = "none";
 
     // Clear all piece built styles
-    housePieces.forEach(function (p) { p.classList.remove("built"); });
-    rocketPieces.forEach(function (p) { p.classList.remove("built"); });
-    robotPieces.forEach(function (p) { p.classList.remove("built"); });
+    housePieces.forEach(function (p) { p.classList.remove("built", "piece-pop"); });
+    rocketPieces.forEach(function (p) { p.classList.remove("built", "piece-pop"); });
+    robotPieces.forEach(function (p) { p.classList.remove("built", "piece-pop"); });
 
     // Reset screen cards visibility
     levelCompleteCard.style.display = "none";
@@ -1017,5 +1102,5 @@ startButton.addEventListener("click", function () {
 
 // Initial Setup on load
 switchScene(0);
-updateBuilding();
+updateBuilding(-1);
 updateBuildWorldBar();
