@@ -38,7 +38,7 @@
                         <div class="card-step-badge badge-l1">LEVEL 1</div>
                         <div class="preview-icon">🏠</div>
                         <h3>House</h3>
-                        <p class="preview-topic">Python Basics, Variables & Print</p>
+                        <p class="preview-topic">Python Fundamentals, Variables & Print</p>
                         <div class="preview-meta">
                             <span>🎯 10 Questions</span>
                             <span>🧱 10 Pieces</span>
@@ -51,7 +51,7 @@
                         <div class="card-step-badge badge-l2">LEVEL 2</div>
                         <div class="preview-icon">🚀</div>
                         <h3>Rocket</h3>
-                        <p class="preview-topic">Functions, Loops & Core Concepts</p>
+                        <p class="preview-topic">Strings, Operators, Loops & Functions</p>
                         <div class="preview-meta">
                             <span>🎯 10 Questions</span>
                             <span>🧱 10 Pieces</span>
@@ -64,7 +64,7 @@
                         <div class="card-step-badge badge-l3">LEVEL 3</div>
                         <div class="preview-icon">🤖</div>
                         <h3>Robot</h3>
-                        <p class="preview-topic">Basic Structures & OOP Logic</p>
+                        <p class="preview-topic">Lists, Tuples, Dictionaries & Classes</p>
                         <div class="preview-meta">
                             <span>🎯 10 Questions</span>
                             <span>🧱 10 Pieces</span>
@@ -92,6 +92,48 @@
         </div>
 
         <!-- ============================================== -->
+        <!-- 1.5. BUILD WORLD PROGRESSION MAP SCREEN        -->
+        <!-- ============================================== -->
+        <div id="world-map-screen" class="world-map-screen" style="display: none;">
+            <div class="world-map-header">
+                <div class="brand-pill map-brand-pill">
+                    <span class="pill-dot"></span>
+                    <span>BUILD WORLD • PROGRESSION MAP</span>
+                </div>
+                <h2 class="map-title">BUILD WORLD</h2>
+                <p class="map-subtitle">Your Python learning journey physically builds a world.</p>
+
+                <!-- Map Stats Ribbon -->
+                <div class="map-stats-ribbon">
+                    <div class="map-stat-chip">
+                        <span class="map-chip-label">TOTAL XP</span>
+                        <span id="map-total-xp" class="map-chip-val">⭐ 0 XP</span>
+                    </div>
+                    <div class="map-stat-chip">
+                        <span class="map-chip-label">CHECKPOINTS</span>
+                        <span id="map-checkpoints-val" class="map-chip-val">💾 0 / 3 BUILT</span>
+                    </div>
+                    <div class="map-stat-chip">
+                        <span class="map-chip-label">BEST STREAK</span>
+                        <span id="map-streak-val" class="map-chip-val">🔥 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Progression Journey Container (Generated from BUILDS in script.js) -->
+            <div id="world-map-journey" class="world-map-journey" aria-label="Progression Journey Path">
+                <!-- Dynamically rendered via renderWorldMap() in script.js -->
+            </div>
+
+            <!-- World Map Footer Actions -->
+            <div class="map-footer-actions">
+                <button id="map-back-btn" class="map-secondary-btn" type="button">
+                    <span>← TITLE SCREEN</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
         <!-- 2. MAIN GAMEPLAY SCREEN                        -->
         <!-- ============================================== -->
         <div id="game-screen" style="display: none;">
@@ -100,6 +142,7 @@
             <div id="build-world-bar" class="build-world-bar" aria-label="Build World Progression">
                 <div class="world-header-row">
                     <span class="world-title-label">CHECKPOINT PROGRESSION</span>
+                    <button id="open-world-map-btn" class="open-map-btn" type="button" title="View Full World Map">🗺️ WORLD MAP</button>
                     <span class="world-level-count">3 Levels</span>
                 </div>
                 <div id="world-items-row" class="world-items-row">
@@ -221,6 +264,7 @@
                 <div class="question-header">
                     <div class="question-meta-row">
                         <span id="question-number" class="question-badge">Question 1 / 10</span>
+                        <span id="challenge-type-badge" class="challenge-type-badge type-mcq">🎯 CONCEPT</span>
                         <span id="difficulty-badge" class="difficulty-badge badge-easy">VERY EASY</span>
                     </div>
                 </div>
@@ -293,11 +337,11 @@
             <!-- Final Game Complete Card (All 3 Levels Done) -->
             <div id="game-complete-card" class="state-card game-complete-card" style="display: none;">
                 <div class="state-badge-wrap">
-                    <span class="master-champion-badge">🏆 MASTER TECHNICAL ARCHITECT</span>
+                    <span class="master-champion-badge">🏆 BUILD WORLD COMPLETED</span>
                 </div>
                 <div class="state-icon">👑</div>
                 <h3 class="victory-title">BUILD WORLD COMPLETE!</h3>
-                <p id="game-complete-subtitle" class="complete-subtitle">All 3 Levels Mastered</p>
+                <p id="game-complete-subtitle" class="complete-subtitle">All 3 Levels Completed</p>
                 <p id="game-complete-summary">
                     Incredible achievement! You conquered all 3 levels, solved engineering challenges, and successfully built the House, Rocket, and Robot!
                 </p>
