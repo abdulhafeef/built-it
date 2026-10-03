@@ -102,32 +102,8 @@
                     <span class="world-title-label">CHECKPOINT PROGRESSION</span>
                     <span class="world-level-count">3 Levels</span>
                 </div>
-                <div class="world-items-row">
-                    <div id="world-item-house" class="world-item active">
-                        <span class="world-icon">🏠</span>
-                        <div class="world-info">
-                            <span class="world-name">L1: House</span>
-                            <span class="world-status">In Progress</span>
-                        </div>
-                    </div>
-                    <div class="world-divider" aria-hidden="true">➔</div>
-                    <div id="world-item-rocket" class="world-item locked">
-                        <span class="world-icon">🚀</span>
-                        <div class="world-info">
-                            <span class="world-name">L2: Rocket</span>
-                            <span class="world-status">🔒 Locked</span>
-                        </div>
-                    </div>
-                    <div class="world-divider" aria-hidden="true">➔</div>
-                    <div id="world-item-robot" class="world-item locked">
-                        <span class="world-icon">🤖</span>
-                        <div class="world-info">
-                            <span class="world-name">L3: Robot</span>
-                            <span class="world-status">🔒 Locked</span>
-                        </div>
-                    </div>
-                    <!-- Preserved hidden DOM element for backward compatibility with script queries -->
-                    <div id="world-item-car" class="world-item future" style="display: none;"></div>
+                <div id="world-items-row" class="world-items-row">
+                    <!-- Dynamic build world items generated from BUILDS in script.js -->
                 </div>
             </div>
 
@@ -321,35 +297,12 @@
                 </div>
                 <div class="state-icon">👑</div>
                 <h3 class="victory-title">BUILD WORLD COMPLETE!</h3>
-                <p class="complete-subtitle">All 3 Levels Mastered</p>
+                <p id="game-complete-subtitle" class="complete-subtitle">All 3 Levels Mastered</p>
                 <p id="game-complete-summary">
                     Incredible achievement! You conquered all 3 levels, solved engineering challenges, and successfully built the House, Rocket, and Robot!
                 </p>
-                <div class="completed-builds-showcase">
-                    <div class="showcase-card">
-                        <span class="showcase-icon">🏠</span>
-                        <div class="showcase-text">
-                            <span class="showcase-name">House — Complete</span>
-                            <span class="showcase-sub">Level 1 • 10/10 Pieces</span>
-                        </div>
-                        <span class="showcase-check">✓</span>
-                    </div>
-                    <div class="showcase-card">
-                        <span class="showcase-icon">🚀</span>
-                        <div class="showcase-text">
-                            <span class="showcase-name">Rocket — Complete</span>
-                            <span class="showcase-sub">Level 2 • 10/10 Pieces</span>
-                        </div>
-                        <span class="showcase-check">✓</span>
-                    </div>
-                    <div class="showcase-card">
-                        <span class="showcase-icon">🤖</span>
-                        <div class="showcase-text">
-                            <span class="showcase-name">Robot — Complete</span>
-                            <span class="showcase-sub">Level 3 • 10/10 Pieces</span>
-                        </div>
-                        <span class="showcase-check">✓</span>
-                    </div>
+                <div id="completed-builds-showcase" class="completed-builds-showcase">
+                    <!-- Dynamic showcase cards generated from BUILDS in script.js -->
                 </div>
                 <div id="final-stats" class="final-stats"></div>
                 <div class="victory-actions">

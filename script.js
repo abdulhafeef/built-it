@@ -33,11 +33,8 @@ const housePieces = document.querySelectorAll(".house-piece");
 const rocketPieces = document.querySelectorAll(".rocket-piece");
 const robotPieces = document.querySelectorAll(".robot-piece");
 
-// Build World Bar Items
-const worldItemHouse = document.getElementById("world-item-house");
-const worldItemRocket = document.getElementById("world-item-rocket");
-const worldItemRobot = document.getElementById("world-item-robot");
-const worldItemCar = document.getElementById("world-item-car");
+// Build World Bar Container
+const worldItemsRow = document.getElementById("world-items-row");
 
 // Question Card & Inputs
 const questionCard = document.getElementById("question-card");
@@ -82,25 +79,9 @@ const gameOverMessage = document.getElementById("game-over-message");
 const gameOverStats = document.getElementById("game-over-stats");
 
 const gameCompleteCard = document.getElementById("game-complete-card");
+const completedBuildsShowcase = document.getElementById("completed-builds-showcase");
 const finalStats = document.getElementById("final-stats");
 const playAgainButton = document.getElementById("play-again-button");
-
-// ==================================================
-// GAME STATE (Level Checkpoint System)
-// ==================================================
-
-let currentBuildIndex = 0;              // 0 = House (L1), 1 = Rocket (L2), 2 = Robot (L3)
-let currentQuestionIndex = 0;           // 0 to 9 within the current level
-let buildPieces = [0, 0, 0];            // Pieces built for [House, Rocket, Robot]
-let completedLevels = [false, false, false]; // Checkpoint completion flags
-let checkpointXp = 0;                   // Permanent XP preserved from completed levels
-let totalXp = 0;                        // Active total XP
-let streak = 0;                         // Current consecutive correct streak
-let bestStreak = 0;                     // Best streak across the whole run
-let lives = 3;                          // Level-specific lives (always 3 per level!)
-let hintsRemaining = 1;                 // Strictly 1 hint per level attempt
-let hintUsedForCurrentQuestion = false;
-let isAnswerLocked = false;
 
 // ==================================================
 // QUESTION BANK (Very Beginner-Friendly & Educational)
@@ -461,6 +442,7 @@ const BUILDS = [
         icon: "🏠",
         title: "🏠 BUILD YOUR HOUSE",
         topicName: "LEVEL 1 — 🏠 HOUSE",
+        description: "Python Basics, Variables & Print",
         questions: houseQuestions,
         pieces: housePieces,
         sceneElement: houseScene,
@@ -475,6 +457,7 @@ const BUILDS = [
         icon: "🚀",
         title: "🚀 BUILD YOUR ROCKET",
         topicName: "LEVEL 2 — 🚀 ROCKET",
+        description: "Functions, Loops & Core Concepts",
         questions: rocketQuestions,
         pieces: rocketPieces,
         sceneElement: rocketScene,
@@ -489,6 +472,7 @@ const BUILDS = [
         icon: "🤖",
         title: "🤖 BUILD YOUR ROBOT",
         topicName: "LEVEL 3 — 🤖 ROBOT",
+        description: "Basic Structures & OOP Logic",
         questions: robotQuestions,
         pieces: robotPieces,
         sceneElement: robotScene,
@@ -499,30 +483,52 @@ const BUILDS = [
 ];
 
 // ==================================================
+// GAME STATE (Dynamic Checkpoint & Progression System)
+// ==================================================
+
+let currentBuildIndex = 0;                                  // Index in BUILDS (0 = House, 1 = Rocket, 2 = Robot...)
+let currentQuestionIndex = 0;                               // 0 to (build.questions.length - 1) within current level
+let buildPieces = new Array(BUILDS.length).fill(0);         // Dynamic pieces built per build
+let completedLevels = new Array(BUILDS.length).fill(false); // Dynamic checkpoint completion flags per build
+let checkpointXp = 0;                                       // Permanent XP preserved from completed levels
+let totalXp = 0;                                            // Active total XP
+let streak = 0;                                             // Current consecutive correct streak
+let bestStreak = 0;                                         // Best streak across the whole run
+let lives = 3;                                              // Level-specific lives (always 3 per level!)
+let hintsRemaining = 1;                                     // Strictly 1 hint per level attempt
+let hintUsedForCurrentQuestion = false;
+let isAnswerLocked = false;
+
+// ==================================================
 // BUILD PROGRESSION & SCENE MANAGEMENT
 // ==================================================
 
 function updateBuilding(newlyBuiltIndex) {
     const build = BUILDS[currentBuildIndex];
     const piecesBuilt = buildPieces[currentBuildIndex];
+    const totalPieces = build.pieces ? build.pieces.length : build.questions.length;
 
-    build.pieces.forEach(function (piece, index) {
-        const isBuilt = index < piecesBuilt;
-        piece.classList.toggle("built", isBuilt);
-        if (index === newlyBuiltIndex) {
-            piece.classList.remove("piece-pop");
-            void piece.offsetWidth; // Trigger reflow for animation restart
-            piece.classList.add("piece-pop");
-        }
-    });
+    if (build.pieces) {
+        build.pieces.forEach(function (piece, index) {
+            const isBuilt = index < piecesBuilt;
+            piece.classList.toggle("built", isBuilt);
+            if (index === newlyBuiltIndex) {
+                piece.classList.remove("piece-pop");
+                void piece.offsetWidth; // Trigger reflow for animation restart
+                piece.classList.add("piece-pop");
+            }
+        });
+    }
 
-    buildProgress.textContent = build.icon + " " + piecesBuilt + " / 10 (" + (piecesBuilt * 10) + "%)";
-    const percent = (piecesBuilt / 10) * 100;
+    const percent = totalPieces > 0 ? Math.round((piecesBuilt / totalPieces) * 100) : 0;
+    buildProgress.textContent = build.icon + " " + piecesBuilt + " / " + totalPieces + " (" + percent + "%)";
     buildProgressBar.style.width = percent + "%";
 }
 
 function buildNextPiece() {
-    if (buildPieces[currentBuildIndex] < 10) {
+    const build = BUILDS[currentBuildIndex];
+    const totalPieces = build.pieces ? build.pieces.length : build.questions.length;
+    if (buildPieces[currentBuildIndex] < totalPieces) {
         const newlyBuiltIndex = buildPieces[currentBuildIndex];
         buildPieces[currentBuildIndex] = newlyBuiltIndex + 1;
         updateBuilding(newlyBuiltIndex);
@@ -531,12 +537,14 @@ function buildNextPiece() {
 
 function switchScene(targetIndex) {
     BUILDS.forEach(function (b, idx) {
-        if (idx === targetIndex) {
-            b.sceneElement.style.display = "block";
-            b.sceneElement.classList.add("active");
-        } else {
-            b.sceneElement.style.display = "none";
-            b.sceneElement.classList.remove("active");
+        if (b.sceneElement) {
+            if (idx === targetIndex) {
+                b.sceneElement.style.display = "block";
+                b.sceneElement.classList.add("active");
+            } else {
+                b.sceneElement.style.display = "none";
+                b.sceneElement.classList.remove("active");
+            }
         }
     });
 
@@ -544,57 +552,58 @@ function switchScene(targetIndex) {
         carScene.style.display = "none";
     }
 
-    builderTitle.textContent = BUILDS[targetIndex].title;
+    if (BUILDS[targetIndex]) {
+        builderTitle.textContent = BUILDS[targetIndex].title;
+    }
     updateBuilding(-1);
 }
 
 function updateBuildWorldBar() {
-    // Level 1: House
-    if (completedLevels[0]) {
-        worldItemHouse.className = "world-item completed";
-        worldItemHouse.querySelector(".world-status").textContent = "✅ Completed";
-    } else if (currentBuildIndex === 0) {
-        worldItemHouse.className = "world-item active";
-        worldItemHouse.querySelector(".world-status").textContent = "In Progress (" + buildPieces[0] + "/10)";
-    } else {
-        worldItemHouse.className = "world-item";
-        worldItemHouse.querySelector(".world-status").textContent = "Available";
+    const container = worldItemsRow || document.getElementById("world-items-row");
+    if (!container) return;
+
+    const worldLevelCount = document.querySelector(".world-level-count");
+    if (worldLevelCount) {
+        worldLevelCount.textContent = BUILDS.length + " Levels";
     }
 
-    // Level 2: Rocket
-    if (completedLevels[1]) {
-        worldItemRocket.className = "world-item completed";
-        worldItemRocket.querySelector(".world-status").textContent = "✅ Completed";
-    } else if (currentBuildIndex === 1) {
-        worldItemRocket.className = "world-item active";
-        worldItemRocket.querySelector(".world-status").textContent = "In Progress (" + buildPieces[1] + "/10)";
-    } else if (completedLevels[0]) {
-        worldItemRocket.className = "world-item";
-        worldItemRocket.querySelector(".world-status").textContent = "🔓 Unlocked";
-    } else {
-        worldItemRocket.className = "world-item locked";
-        worldItemRocket.querySelector(".world-status").textContent = "🔒 Locked";
-    }
+    let html = "";
+    BUILDS.forEach(function (build, index) {
+        let statusClass = "locked";
+        let statusText = "🔒 Locked";
+        const totalPieces = build.pieces ? build.pieces.length : build.questions.length;
 
-    // Level 3: Robot
-    if (completedLevels[2]) {
-        worldItemRobot.className = "world-item completed";
-        worldItemRobot.querySelector(".world-status").textContent = "✅ Completed";
-    } else if (currentBuildIndex === 2) {
-        worldItemRobot.className = "world-item active";
-        worldItemRobot.querySelector(".world-status").textContent = "In Progress (" + buildPieces[2] + "/10)";
-    } else if (completedLevels[1]) {
-        worldItemRobot.className = "world-item";
-        worldItemRobot.querySelector(".world-status").textContent = "🔓 Unlocked";
-    } else {
-        worldItemRobot.className = "world-item locked";
-        worldItemRobot.querySelector(".world-status").textContent = "🔒 Locked";
-    }
+        if (completedLevels[index]) {
+            statusClass = "completed";
+            statusText = "✅ Completed";
+        } else if (currentBuildIndex === index) {
+            statusClass = "active";
+            statusText = "In Progress (" + buildPieces[index] + "/" + totalPieces + ")";
+        } else if (index === 0) {
+            statusClass = "";
+            statusText = "Available";
+        } else if (completedLevels[index - 1]) {
+            statusClass = "";
+            statusText = "🔓 Unlocked";
+        } else {
+            statusClass = "locked";
+            statusText = "🔒 Locked";
+        }
 
-    // Level 4: Car (preserved if DOM node exists)
-    if (worldItemCar) {
-        worldItemCar.className = "world-item future";
-    }
+        if (index > 0) {
+            html += '<div class="world-divider" aria-hidden="true">➔</div>';
+        }
+
+        html += '<div id="world-item-' + build.id + '" class="world-item ' + statusClass + '">' +
+            '<span class="world-icon">' + build.icon + '</span>' +
+            '<div class="world-info">' +
+                '<span class="world-name">L' + build.levelNumber + ': ' + escapeHtml(build.name) + '</span>' +
+                '<span class="world-status">' + statusText + '</span>' +
+            '</div>' +
+        '</div>';
+    });
+
+    container.innerHTML = html;
 }
 
 // ==================================================
@@ -685,14 +694,15 @@ function escapeHtml(str) {
 function loadQuestion() {
     const build = BUILDS[currentBuildIndex];
     const question = build.questions[currentQuestionIndex];
+    const totalQuestions = build.questions.length;
 
     // Header level indicator & question progress
     levelIndicator.textContent = build.topicName;
     levelIndicator.className = "level-indicator level-" + build.levelNumber;
-    questionProgress.textContent = "Question " + (currentQuestionIndex + 1) + " / 10";
+    questionProgress.textContent = "Question " + (currentQuestionIndex + 1) + " / " + totalQuestions;
 
     // Question number & difficulty badge
-    questionNumber.textContent = "Question " + (currentQuestionIndex + 1) + " / 10 (" + build.name + ")";
+    questionNumber.textContent = "Question " + (currentQuestionIndex + 1) + " / " + totalQuestions + " (" + build.name + ")";
     difficultyBadge.textContent = question.difficulty;
     difficultyBadge.className = "difficulty-badge badge-easy";
 
@@ -754,6 +764,7 @@ function handleAnswer(selectedIndex) {
     const build = BUILDS[currentBuildIndex];
     const question = build.questions[currentQuestionIndex];
     const isCorrect = (selectedIndex === question.correct);
+    const isFinalQuestion = (currentQuestionIndex === build.questions.length - 1);
 
     const resultLifeTag = document.getElementById("result-life-tag");
     const resultPieceTag = document.getElementById("result-piece-tag");
@@ -800,7 +811,7 @@ function handleAnswer(selectedIndex) {
         resultCorrectAnswer.style.display = "none";
         resultExplanation.textContent = question.explanation;
 
-        if (currentQuestionIndex === 9) {
+        if (isFinalQuestion) {
             continueButton.textContent = "COMPLETE LEVEL " + build.levelNumber + " ➔";
         } else {
             continueButton.textContent = "CONTINUE ➔";
@@ -841,7 +852,7 @@ function handleAnswer(selectedIndex) {
         // If lives reach 0, update continue button text
         if (lives === 0) {
             continueButton.textContent = "SEE RESULTS 💀";
-        } else if (currentQuestionIndex === 9) {
+        } else if (isFinalQuestion) {
             continueButton.textContent = "COMPLETE LEVEL " + build.levelNumber + " ➔";
         } else {
             continueButton.textContent = "CONTINUE ➔";
@@ -863,8 +874,9 @@ continueButton.addEventListener("click", function () {
         return;
     }
 
+    const build = BUILDS[currentBuildIndex];
     // If more questions remain in the level, advance to next question
-    if (currentQuestionIndex < 9) {
+    if (currentQuestionIndex < build.questions.length - 1) {
         currentQuestionIndex = currentQuestionIndex + 1;
         loadQuestion();
     } else {
@@ -888,24 +900,25 @@ function completeCurrentLevel() {
 
     updateBuildWorldBar();
 
-    if (currentBuildIndex < 2) {
-        // Level 1 or Level 2 Complete -> Show Checkpoint screen
+    if (currentBuildIndex < BUILDS.length - 1) {
+        // More levels remain -> Show Checkpoint screen
         questionCard.style.display = "none";
         levelCompleteCard.style.display = "block";
 
         const nextBuild = BUILDS[currentBuildIndex + 1];
+        const totalPieces = build.pieces ? build.pieces.length : build.questions.length;
 
         levelCompleteTitle.textContent = "LEVEL " + build.levelNumber + " COMPLETE!";
         const completeBadge = document.getElementById("build-complete-badge");
         if (completeBadge) {
             completeBadge.textContent = build.icon + " " + build.name.toUpperCase() + " BUILT!";
         }
-        levelCompleteMessage.textContent = "Outstanding work! You completed all 10 questions in Level " + build.levelNumber + " and established a permanent checkpoint!";
+        levelCompleteMessage.textContent = "Outstanding work! You completed all " + build.questions.length + " questions in Level " + build.levelNumber + " and established a permanent checkpoint!";
 
         buildCompleteStats.innerHTML =
             '<div class="stat-card-row">' +
                 '<div class="mini-stat-card"><span class="m-label">CHECKPOINT XP</span><span class="m-val">⭐ ' + totalXp + ' XP</span></div>' +
-                '<div class="mini-stat-card"><span class="m-label">PIECES BUILT</span><span class="m-val">🧱 ' + buildPieces[currentBuildIndex] + ' / 10</span></div>' +
+                '<div class="mini-stat-card"><span class="m-label">PIECES BUILT</span><span class="m-val">🧱 ' + buildPieces[currentBuildIndex] + ' / ' + totalPieces + '</span></div>' +
                 '<div class="mini-stat-card"><span class="m-label">BEST STREAK</span><span class="m-val">🔥 ' + bestStreak + '</span></div>' +
                 '<div class="mini-stat-card"><span class="m-label">LIVES PRESERVED</span><span class="m-val">❤️ ' + lives + ' / 3</span></div>' +
             '</div>';
@@ -914,13 +927,13 @@ function completeCurrentLevel() {
             '<div class="next-level-preview-box">' +
                 '<span class="next-level-tag">NEXT LEVEL</span>' +
                 '<div class="next-level-title">' + nextBuild.icon + ' Level ' + nextBuild.levelNumber + ': ' + nextBuild.name + '</div>' +
-                '<div class="next-level-desc">' + (nextBuild.levelNumber === 2 ? 'Functions, Loops & Core Concepts' : 'Basic Structures & OOP Logic') + '</div>' +
+                '<div class="next-level-desc">' + (nextBuild.description || "") + '</div>' +
                 '<div class="next-level-perks">❤️ 3 Fresh Lives • 💡 1 Fresh Hint</div>' +
             '</div>';
 
         nextLevelButton.textContent = "CONTINUE TO LEVEL " + nextBuild.levelNumber + " (" + nextBuild.name.toUpperCase() + ") ➔";
     } else {
-        // Level 3 Complete (All levels conquered!) -> Final Victory Screen
+        // Final level complete (All levels conquered!) -> Final Victory Screen
         showGameComplete();
     }
 }
@@ -958,6 +971,7 @@ function showLevelFailed() {
     hintButton.disabled = true;
 
     const build = BUILDS[currentBuildIndex];
+    const totalPieces = build.pieces ? build.pieces.length : build.questions.length;
     const gameOverTitle = document.getElementById("game-over-title");
     if (gameOverTitle) {
         gameOverTitle.textContent = "💀 LEVEL " + build.levelNumber + " FAILED";
@@ -967,8 +981,8 @@ function showLevelFailed() {
 
     gameOverStats.innerHTML =
         '<div class="stat-card-row">' +
-            '<div class="mini-stat-card"><span class="m-label">STOPPED AT</span><span class="m-val">Question ' + (currentQuestionIndex + 1) + ' / 10</span></div>' +
-            '<div class="mini-stat-card"><span class="m-label">PIECES BUILT</span><span class="m-val">🧱 ' + buildPieces[currentBuildIndex] + ' / 10</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">STOPPED AT</span><span class="m-val">Question ' + (currentQuestionIndex + 1) + ' / ' + build.questions.length + '</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">PIECES BUILT</span><span class="m-val">🧱 ' + buildPieces[currentBuildIndex] + ' / ' + totalPieces + '</span></div>' +
             '<div class="mini-stat-card"><span class="m-label">SAVED CHECKPOINT XP</span><span class="m-val">⭐ ' + checkpointXp + ' XP</span></div>' +
         '</div>' +
         '<p class="checkpoint-preserve-note">💾 <strong>Checkpoints are preserved!</strong> Previous completed levels remain saved. Only Level ' + build.levelNumber + ' will restart with 3 fresh lives and 1 hint.</p>';
@@ -994,10 +1008,12 @@ tryAgainButton.addEventListener("click", function () {
     updateHintDisplay();
 
     // Reset visual pieces for only the current level scene
-    BUILDS[currentBuildIndex].pieces.forEach(function (p) {
-        p.classList.remove("built");
-        p.classList.remove("piece-pop");
-    });
+    if (BUILDS[currentBuildIndex] && BUILDS[currentBuildIndex].pieces) {
+        BUILDS[currentBuildIndex].pieces.forEach(function (p) {
+            p.classList.remove("built");
+            p.classList.remove("piece-pop");
+        });
+    }
 
     // Reset UI visibility
     gameOverCard.style.display = "none";
@@ -1010,7 +1026,7 @@ tryAgainButton.addEventListener("click", function () {
 });
 
 // ==================================================
-// FINAL GAME COMPLETE (All 3 Levels Conquered)
+// FINAL GAME COMPLETE (All Levels Conquered)
 // ==================================================
 
 function showGameComplete() {
@@ -1020,16 +1036,67 @@ function showGameComplete() {
     gameCompleteCard.style.display = "block";
     hintButton.disabled = true;
 
+    // Dynamically render completed builds showcase from BUILDS
+    const showcaseContainer = completedBuildsShowcase || document.getElementById("completed-builds-showcase") || document.querySelector(".completed-builds-showcase");
+    if (showcaseContainer) {
+        let showcaseHtml = "";
+        BUILDS.forEach(function (build, index) {
+            const totalPieces = build.pieces ? build.pieces.length : build.questions.length;
+            const pieces = buildPieces[index] !== undefined ? buildPieces[index] : totalPieces;
+            showcaseHtml +=
+                '<div class="showcase-card">' +
+                    '<span class="showcase-icon">' + build.icon + '</span>' +
+                    '<div class="showcase-text">' +
+                        '<span class="showcase-name">' + escapeHtml(build.name) + ' — Complete</span>' +
+                        '<span class="showcase-sub">Level ' + build.levelNumber + ' • ' + pieces + '/' + totalPieces + ' Pieces</span>' +
+                    '</div>' +
+                    '<span class="showcase-check">✓</span>' +
+                '</div>';
+        });
+        showcaseContainer.innerHTML = showcaseHtml;
+    }
+
+    const completeSubtitle = document.getElementById("game-complete-subtitle") || gameCompleteCard.querySelector(".complete-subtitle");
+    if (completeSubtitle) {
+        completeSubtitle.textContent = "All " + BUILDS.length + " Levels Mastered";
+    }
+
+    const gameCompleteSummary = document.getElementById("game-complete-summary");
+    if (gameCompleteSummary) {
+        const buildNames = BUILDS.map(function (b) { return b.name; });
+        let namesText = "";
+        if (buildNames.length <= 2) {
+            namesText = buildNames.join(" and ");
+        } else {
+            namesText = buildNames.slice(0, -1).join(", ") + ", and " + buildNames[buildNames.length - 1];
+        }
+        gameCompleteSummary.textContent =
+            "Incredible achievement! You conquered all " + BUILDS.length +
+            " levels, solved engineering challenges, and successfully built the " +
+            namesText + "!";
+    }
+
+    const maxPossibleXp = BUILDS.reduce(function (sum, b) {
+        return sum + (b.questions.length * 10);
+    }, 0);
+    const totalPiecesBuilt = buildPieces.reduce(function (sum, count) {
+        return sum + count;
+    }, 0);
+    const maxPossiblePieces = BUILDS.reduce(function (sum, b) {
+        return sum + (b.pieces ? b.pieces.length : b.questions.length);
+    }, 0);
+    const completedCount = completedLevels.filter(Boolean).length;
+
     finalStats.innerHTML =
         '<div class="final-score-banner">' +
             '<span class="score-title">TOTAL XP EARNED</span>' +
-            '<span class="score-number">⭐ ' + totalXp + ' / 300 XP</span>' +
+            '<span class="score-number">⭐ ' + totalXp + ' / ' + maxPossibleXp + ' XP</span>' +
         '</div>' +
         '<div class="stat-card-row">' +
-            '<div class="mini-stat-card"><span class="m-label">COMPLETED BUILDS</span><span class="m-val">3 / 3 Complete</span></div>' +
-            '<div class="mini-stat-card"><span class="m-label">TOTAL PIECES</span><span class="m-val">🧱 ' + (buildPieces[0] + buildPieces[1] + buildPieces[2]) + ' / 30</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">COMPLETED BUILDS</span><span class="m-val">' + completedCount + ' / ' + BUILDS.length + ' Complete</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">TOTAL PIECES</span><span class="m-val">🧱 ' + totalPiecesBuilt + ' / ' + maxPossiblePieces + '</span></div>' +
             '<div class="mini-stat-card"><span class="m-label">BEST STREAK</span><span class="m-val">🔥 ' + bestStreak + ' in a row</span></div>' +
-            '<div class="mini-stat-card"><span class="m-label">CHECKPOINTS</span><span class="m-val">💾 3 / 3 Secured</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">CHECKPOINTS</span><span class="m-val">💾 ' + completedCount + ' / ' + BUILDS.length + ' Secured</span></div>' +
         '</div>';
 
     updateBuildWorldBar();
@@ -1049,8 +1116,8 @@ if (playAgainButton) {
 function startNewGame() {
     currentBuildIndex = 0;
     currentQuestionIndex = 0;
-    buildPieces = [0, 0, 0];
-    completedLevels = [false, false, false];
+    buildPieces = new Array(BUILDS.length).fill(0);
+    completedLevels = new Array(BUILDS.length).fill(false);
     checkpointXp = 0;
     totalXp = 0;
     streak = 0;
@@ -1070,9 +1137,13 @@ function startNewGame() {
     streakBanner.style.display = "none";
 
     // Clear all piece built styles
-    housePieces.forEach(function (p) { p.classList.remove("built", "piece-pop"); });
-    rocketPieces.forEach(function (p) { p.classList.remove("built", "piece-pop"); });
-    robotPieces.forEach(function (p) { p.classList.remove("built", "piece-pop"); });
+    BUILDS.forEach(function (b) {
+        if (b.pieces) {
+            b.pieces.forEach(function (p) {
+                p.classList.remove("built", "piece-pop");
+            });
+        }
+    });
 
     // Reset screen cards visibility
     levelCompleteCard.style.display = "none";
