@@ -94,9 +94,9 @@ const houseQuestions = [
     // Q1
     {
         question: "In Python, which function is used to display text or numbers on the screen?",
-        options: ["show()", "print()", "display()", "write()"],
+        options: ["display()", "print()", "output()", "write()"],
         correct: 1,
-        explanation: "print() is Python's built-in function to output text and variable values to the screen.",
+        explanation: "`print()` is Python's built-in function to display text and values to the console or screen.",
         hint: "Think of putting words onto paper.",
         type: "concept",
         difficulty: "VERY EASY"
@@ -105,9 +105,9 @@ const houseQuestions = [
     {
         question: "What will the following code output?",
         code: "x = 5\nprint(x)",
-        options: ["5", "x", "5x", "None"],
+        options: ["5", "x", "'x'", "Error"],
         correct: 0,
-        explanation: "x is a variable holding the integer 5, so print(x) prints 5.",
+        explanation: "The variable `x` stores the number `5`. Passing `x` without quotes to `print()` outputs the stored value `5`.",
         hint: "The variable x stores the number 5.",
         type: "code",
         difficulty: "VERY EASY"
@@ -116,9 +116,9 @@ const houseQuestions = [
     {
         question: "What is the output of this simple calculation?",
         code: "print(10 + 5)",
-        options: ["15", "105", "50", "Error"],
-        correct: 0,
-        explanation: "The + operator adds 10 and 5 together to produce 15.",
+        options: ["105", "50", "15", "Error"],
+        correct: 2,
+        explanation: "The `+` operator adds `10` and `5` numerically to produce `15`.",
         hint: "Simple arithmetic addition: 10 + 5.",
         type: "code",
         difficulty: "VERY EASY"
@@ -127,10 +127,10 @@ const houseQuestions = [
     {
         question: "What does this string concatenation print?",
         code: "a = 'Py'\nb = 'thon'\nprint(a + b)",
-        options: ["'Python'", "'Py thon'", "'Py+thon'", "Error"],
-        correct: 0,
-        explanation: "Adding two strings joins them end-to-end to form 'Python'.",
-        hint: "String concatenation links the two words together.",
+        options: ["Py thon", "Py+thon", "Error", "Python"],
+        correct: 3,
+        explanation: "When applied to strings, the `+` operator joins them end-to-end without adding spaces, resulting in `Python`.",
+        hint: "String concatenation links the two words directly together.",
         type: "code",
         difficulty: "VERY EASY"
     },
@@ -140,7 +140,7 @@ const houseQuestions = [
         code: "word = 'code'\nprint(len(word))",
         options: ["4", "3", "5", "Error"],
         correct: 0,
-        explanation: "len() counts the number of characters in 'code', which is 4.",
+        explanation: "The `len()` function counts the number of characters in a string. `'code'` has 4 characters.",
         hint: "Count the letters: c - o - d - e.",
         type: "code",
         difficulty: "VERY EASY"
@@ -149,9 +149,9 @@ const houseQuestions = [
     {
         question: "What is the output of accessing the first item in this list?",
         code: "fruits = ['apple', 'banana', 'cherry']\nprint(fruits[0])",
-        options: ["'apple'", "'banana'", "'cherry'", "IndexError"],
-        correct: 0,
-        explanation: "Python uses 0-based indexing, so fruits[0] refers to the first item: 'apple'.",
+        options: ["banana", "cherry", "apple", "IndexError"],
+        correct: 2,
+        explanation: "Python uses 0-based indexing, so `fruits[0]` accesses the first item in the list (`apple`).",
         hint: "Python list indices start counting from 0.",
         type: "code",
         difficulty: "VERY EASY"
@@ -160,9 +160,9 @@ const houseQuestions = [
     {
         question: "What will this if condition print?",
         code: "score = 80\nif score >= 50:\n    print('Pass')\nelse:\n    print('Fail')",
-        options: ["'Pass'", "'Fail'", "None", "Error"],
-        correct: 0,
-        explanation: "80 is greater than or equal to 50, so the condition is True and 'Pass' is printed.",
+        options: ["Fail", "Pass", "Pass Fail", "Error"],
+        correct: 1,
+        explanation: "`80` is greater than or equal to `50`, so the `if` condition is `True` and `'Pass'` is printed.",
         hint: "Is 80 greater than or equal to 50?",
         type: "code",
         difficulty: "VERY EASY"
@@ -171,9 +171,9 @@ const houseQuestions = [
     {
         question: "How many times does this loop print 'Hello'?",
         code: "for i in range(3):\n    print('Hello')",
-        options: ["3 times", "2 times", "4 times", "1 time"],
-        correct: 0,
-        explanation: "range(3) produces 0, 1, and 2, executing the loop body exactly 3 times.",
+        options: ["1 time", "2 times", "4 times", "3 times"],
+        correct: 3,
+        explanation: "`range(3)` produces `0`, `1`, and `2`, so the loop executes its body exactly 3 times.",
         hint: "range(3) runs for numbers 0, 1, and 2.",
         type: "code",
         difficulty: "VERY EASY"
@@ -181,9 +181,9 @@ const houseQuestions = [
     // Q9
     {
         question: "What is the result of evaluating 10 > 20 in Python?",
-        options: ["False", "True", "None", "Error"],
-        correct: 0,
-        explanation: "10 is not greater than 20, so the expression evaluates to False.",
+        options: ["True", "None", "False", "Error"],
+        correct: 2,
+        explanation: "The `>` operator checks if the left value is strictly greater than the right value. Since `10` is not greater than `20`, it returns `False`.",
         hint: "Ask yourself: is 10 bigger than 20?",
         type: "concept",
         difficulty: "VERY EASY"
@@ -194,8 +194,8 @@ const houseQuestions = [
         code: "x = 10\nx = x + 5\nprint(x)",
         options: ["15", "10", "5", "20"],
         correct: 0,
-        explanation: "x starts at 10, then adding 5 gives 15, which is assigned back to x.",
-        hint: "Calculate 10 + 5 to find the new value of x.",
+        explanation: "`x` begins at `10`. Adding `5` gives `15`, which is reassigned back to `x`.",
+        hint: "Calculate 10 + 5 to find the updated value of x.",
         type: "code",
         difficulty: "VERY EASY"
     }
@@ -208,10 +208,10 @@ const rocketQuestions = [
     // Q1
     {
         question: "Which symbol is used to write a single-line comment in Python?",
-        options: ["#", "//", "/*", "--"],
-        correct: 0,
-        explanation: "The # symbol denotes a comment in Python; everything after it on that line is ignored.",
-        hint: "Also known as the hash, number sign, or pound symbol.",
+        options: ["//", "/*", "#", "--"],
+        correct: 2,
+        explanation: "Python uses the hash symbol `#` for comments. Everything on the line after `#` is ignored by Python.",
+        hint: "Also known as the hash or pound symbol.",
         type: "concept",
         difficulty: "VERY EASY"
     },
@@ -221,7 +221,7 @@ const rocketQuestions = [
         code: "nums = [1, 2]\nnums.append(3)\nprint(nums)",
         options: ["[1, 2, 3]", "[3, 1, 2]", "[1, 2]", "[3]"],
         correct: 0,
-        explanation: "append(3) adds 3 to the very end of the list, resulting in [1, 2, 3].",
+        explanation: "The `append()` method adds the item to the very end of the list, resulting in `[1, 2, 3]`.",
         hint: "append places an element at the end of the list.",
         type: "code",
         difficulty: "VERY EASY"
@@ -230,9 +230,9 @@ const rocketQuestions = [
     {
         question: "What will this string method output?",
         code: "text = 'hello'\nprint(text.upper())",
-        options: ["'HELLO'", "'hello'", "'Hello'", "Error"],
-        correct: 0,
-        explanation: "upper() converts all lowercase letters in the string to uppercase: 'HELLO'.",
+        options: ["Hello", "hello", "Error", "HELLO"],
+        correct: 3,
+        explanation: "`upper()` converts all lowercase letters in the string to uppercase: `'HELLO'`.",
         hint: "upper converts text to CAPITAL letters.",
         type: "code",
         difficulty: "VERY EASY"
@@ -240,9 +240,9 @@ const rocketQuestions = [
     // Q4
     {
         question: "Which keyword is used to define a new function in Python?",
-        options: ["def", "function", "func", "create"],
-        correct: 0,
-        explanation: "The def keyword (short for define) is used to create user-defined functions.",
+        options: ["function", "def", "func", "create"],
+        correct: 1,
+        explanation: "In Python, the `def` keyword (short for define) is used to create user-defined functions.",
         hint: "A short 3-letter keyword starting with 'd'.",
         type: "concept",
         difficulty: "VERY EASY"
@@ -251,9 +251,9 @@ const rocketQuestions = [
     {
         question: "What will this function call print?",
         code: "def double(n):\n    return n * 2\n\nprint(double(4))",
-        options: ["8", "4", "2", "16"],
-        correct: 0,
-        explanation: "Passing 4 to double(n) multiplies 4 by 2 and returns 8.",
+        options: ["4", "2", "16", "8"],
+        correct: 3,
+        explanation: "Passing `4` to `double(n)` computes `4 * 2`, returning `8` which is printed.",
         hint: "Multiply 4 by 2.",
         type: "code",
         difficulty: "VERY EASY"
@@ -261,9 +261,9 @@ const rocketQuestions = [
     // Q6
     {
         question: "What is the output of evaluating True and False in Python?",
-        options: ["False", "True", "None", "Error"],
-        correct: 0,
-        explanation: "The 'and' operator requires both sides to be True; since one side is False, it returns False.",
+        options: ["True", "False", "None", "Error"],
+        correct: 1,
+        explanation: "The logical `and` operator requires both sides to be `True`. Since one side is `False`, the expression returns `False`.",
         hint: "For 'and' to be True, both operands must be True.",
         type: "concept",
         difficulty: "VERY EASY"
@@ -272,9 +272,9 @@ const rocketQuestions = [
     {
         question: "How do you access the value of 'age' from this dictionary?",
         code: "user = {'name': 'Sam', 'age': 21}\nprint(user['age'])",
-        options: ["21", "'Sam'", "'age'", "KeyError"],
-        correct: 0,
-        explanation: "user['age'] looks up the key 'age' in the dictionary and returns its value: 21.",
+        options: ["Sam", "'age'", "21", "KeyError"],
+        correct: 2,
+        explanation: "Dictionary values are retrieved by key in brackets. `user['age']` returns the associated value `21`.",
         hint: "The key 'age' is paired with the number 21.",
         type: "code",
         difficulty: "VERY EASY"
@@ -285,7 +285,7 @@ const rocketQuestions = [
         code: "total = 0\nfor n in [1, 2, 3]:\n    total = total + n\nprint(total)",
         options: ["6", "3", "5", "0"],
         correct: 0,
-        explanation: "total accumulates each number: 0 + 1 + 2 + 3 = 6.",
+        explanation: "The loop iterates through each number: `0 + 1 = 1`, `1 + 2 = 3`, `3 + 3 = 6`. The final total is `6`.",
         hint: "Add up 1 + 2 + 3.",
         type: "code",
         difficulty: "VERY EASY"
@@ -293,9 +293,9 @@ const rocketQuestions = [
     // Q9
     {
         question: "In computer science, what is a step-by-step procedure for solving a problem called?",
-        options: ["Algorithm", "Hardware", "Compiler", "Bandwidth"],
-        correct: 0,
-        explanation: "An algorithm is a finite, well-defined sequence of steps to solve a problem or complete a task.",
+        options: ["Compiler", "Algorithm", "Hardware", "Bandwidth"],
+        correct: 1,
+        explanation: "An algorithm is a finite, well-defined sequence of instructions designed to solve a problem or perform a task.",
         hint: "The fundamental recipe or instruction sequence in programming.",
         type: "concept",
         difficulty: "VERY EASY"
@@ -305,13 +305,13 @@ const rocketQuestions = [
         question: "What will happen when you try to run this code?",
         code: "x = 10\nif x > 5\n    print('Greater')",
         options: [
-            "SyntaxError (missing colon : after condition)",
             "It prints 'Greater' normally",
             "TypeError",
-            "It prints None"
+            "IndentationError",
+            "SyntaxError (missing colon : after condition)"
         ],
-        correct: 0,
-        explanation: "In Python, if statements must end with a colon (:). Missing it raises a SyntaxError.",
+        correct: 3,
+        explanation: "In Python, `if` statement condition lines must end with a colon (`:`). Omitting it triggers a `SyntaxError`.",
         hint: "Notice what punctuation is missing at the end of the line 'if x > 5'.",
         type: "code",
         difficulty: "VERY EASY"
@@ -325,9 +325,9 @@ const robotQuestions = [
     // Q1
     {
         question: "In Python, which data structure is written with parentheses () and cannot be changed after creation?",
-        options: ["Tuple", "List", "Dictionary", "Set"],
-        correct: 0,
-        explanation: "Tuples are immutable sequences created with () whose elements cannot be modified.",
+        options: ["List", "Dictionary", "Set", "Tuple"],
+        correct: 3,
+        explanation: "Tuples are immutable sequences written with parentheses `()`. Once created, their elements cannot be modified.",
         hint: "Unlike lists, this collection type is immutable.",
         type: "concept",
         difficulty: "VERY EASY"
@@ -336,9 +336,9 @@ const robotQuestions = [
     {
         question: "What is the output of accessing the last item using negative index -1?",
         code: "items = ['pen', 'book', 'laptop']\nprint(items[-1])",
-        options: ["'laptop'", "'pen'", "'book'", "IndexError"],
-        correct: 0,
-        explanation: "Index -1 in Python accesses the very last item in a list: 'laptop'.",
+        options: ["pen", "laptop", "book", "IndexError"],
+        correct: 1,
+        explanation: "Negative indices count backward from the end in Python. Index `-1` accesses the very last item (`laptop`).",
         hint: "Negative indexing counts backward from the end.",
         type: "code",
         difficulty: "VERY EASY"
@@ -349,7 +349,7 @@ const robotQuestions = [
         code: "letters = ['a', 'b', 'c', 'd']\nprint(letters[0:2])",
         options: ["['a', 'b']", "['a', 'b', 'c']", "['b', 'c']", "['a']"],
         correct: 0,
-        explanation: "letters[0:2] extracts items at index 0 and 1, stopping before index 2: ['a', 'b'].",
+        explanation: "Slicing `[0:2]` includes items at index `0` and `1`, stopping before index `2`: `['a', 'b']`.",
         hint: "Includes index 0 and 1, stops right before index 2.",
         type: "code",
         difficulty: "VERY EASY"
@@ -357,8 +357,8 @@ const robotQuestions = [
     // Q4
     {
         question: "In Object-Oriented Programming, what is a blueprint used to create objects called?",
-        options: ["Class", "Method", "Variable", "Module"],
-        correct: 0,
+        options: ["Method", "Instance", "Class", "Module"],
+        correct: 2,
         explanation: "A Class is a blueprint or template from which individual object instances are created.",
         hint: "You define a 'class' to produce instances (objects).",
         type: "concept",
@@ -368,9 +368,9 @@ const robotQuestions = [
     {
         question: "What will this simple class output when greeted?",
         code: "class Robot:\n    def say_hi(self):\n        return 'Beep Boop'\n\nr = Robot()\nprint(r.say_hi())",
-        options: ["'Beep Boop'", "None", "Robot", "Error"],
-        correct: 0,
-        explanation: "r is an instance of Robot, and calling r.say_hi() returns 'Beep Boop'.",
+        options: ["None", "Beep Boop", "Robot", "Error"],
+        correct: 1,
+        explanation: "`r` is an instance of `Robot`. Calling `r.say_hi()` invokes the method, returning `'Beep Boop'`.",
         hint: "Calling the method say_hi() returns the robot's greeting.",
         type: "code",
         difficulty: "VERY EASY"
@@ -380,7 +380,7 @@ const robotQuestions = [
         question: "Which data structure follows the First-In, First-Out (FIFO) principle?",
         options: ["Queue", "Stack", "Binary Tree", "Hash Table"],
         correct: 0,
-        explanation: "A Queue operates on FIFO (First-In, First-Out), just like a real line of people waiting.",
+        explanation: "A Queue operates on FIFO (First-In, First-Out), where the first element added is the first one removed, like a real waiting line.",
         hint: "Think of waiting in a line or queue: the first person to arrive is served first.",
         type: "concept",
         difficulty: "VERY EASY"
@@ -389,9 +389,9 @@ const robotQuestions = [
     {
         question: "What will len() return for this dictionary?",
         code: "car = {'brand': 'Ford', 'model': 'Mustang', 'year': 1964}\nprint(len(car))",
-        options: ["3", "6", "1", "Error"],
-        correct: 0,
-        explanation: "len() on a dictionary returns the number of key-value pairs, which is 3.",
+        options: ["6", "1", "3", "Error"],
+        correct: 2,
+        explanation: "`len()` on a dictionary counts the number of key-value pairs, which is `3` (`brand`, `model`, `year`).",
         hint: "Count the keys: brand, model, year.",
         type: "code",
         difficulty: "VERY EASY"
@@ -399,9 +399,9 @@ const robotQuestions = [
     // Q8
     {
         question: "Which Git command is used to save a snapshot of staged changes into project history?",
-        options: ["git commit", "git push", "git init", "git clone"],
-        correct: 0,
-        explanation: "git commit creates a permanent snapshot of your staged changes in the local repository.",
+        options: ["git push", "git add", "git init", "git commit"],
+        correct: 3,
+        explanation: "`git commit` creates a permanent snapshot of your staged changes in the local repository history.",
         hint: "You 'commit' your changes with a message.",
         type: "concept",
         difficulty: "VERY EASY"
@@ -410,9 +410,9 @@ const robotQuestions = [
     {
         question: "What is the output of this simple while loop?",
         code: "count = 1\nwhile count < 3:\n    count = count + 1\nprint(count)",
-        options: ["3", "2", "1", "4"],
-        correct: 0,
-        explanation: "count starts at 1, increments to 2, increments to 3, and loop stops because 3 < 3 is False.",
+        options: ["2", "3", "1", "4"],
+        correct: 1,
+        explanation: "`count` starts at `1`, increments to `2`, then increments to `3`. The loop stops because `3 < 3` is `False`, printing `3`.",
         hint: "Trace each step: 1 -> 2 -> 3, then it stops.",
         type: "code",
         difficulty: "VERY EASY"
@@ -421,9 +421,9 @@ const robotQuestions = [
     {
         question: "What will this function return for check_number(12)?",
         code: "def check_number(n):\n    if n % 2 == 0:\n        return 'Even'\n    return 'Odd'\n\nprint(check_number(12))",
-        options: ["'Even'", "'Odd'", "None", "Error"],
-        correct: 0,
-        explanation: "12 % 2 is 0 (no remainder), so the if condition matches and returns 'Even'.",
+        options: ["Odd", "None", "Even", "Error"],
+        correct: 2,
+        explanation: "`12 % 2` produces a remainder of `0`, so the `if` condition is `True` and the function returns `'Even'`.",
         hint: "Is 12 an even or odd number?",
         type: "code",
         difficulty: "VERY EASY"
