@@ -108,6 +108,24 @@ const worldAchievementsGrid = document.getElementById("world-achievements-grid")
 const perfectLevelBanner = document.getElementById("perfect-level-banner");
 const finalAchievementsShowcase = document.getElementById("final-achievements-showcase");
 
+// V9 DOM Element References (Mission Briefing, Mistake Review & Reports)
+const missionBriefingCard = document.getElementById("mission-briefing-card");
+const briefingStartBtn = document.getElementById("briefing-start-btn");
+const levelChallengeStats = document.getElementById("level-challenge-stats");
+const reviewMistakesLevelBtn = document.getElementById("review-mistakes-level-btn");
+const levelMistakesBadge = document.getElementById("level-mistakes-badge");
+const finalGradeBox = document.getElementById("final-grade-box");
+const finalChallengeStats = document.getElementById("final-challenge-stats");
+const finalPersonalRecords = document.getElementById("final-personal-records");
+const reviewMistakesFinalBtn = document.getElementById("review-mistakes-final-btn");
+const finalMistakesBadge = document.getElementById("final-mistakes-badge");
+const mistakeReviewModal = document.getElementById("mistake-review-modal");
+const closeReviewBtn = document.getElementById("close-review-btn");
+const prevMistakeBtn = document.getElementById("prev-mistake-btn");
+const nextMistakeBtn = document.getElementById("next-mistake-btn");
+const reviewContent = document.getElementById("review-content");
+const mistakeCounterText = document.getElementById("mistake-counter-text");
+
 // ==================================================
 // QUESTION BANK (Very Beginner-Friendly & Educational)
 // ==================================================
@@ -985,6 +1003,25 @@ let levelFinal3Correct = true;                                // Whether questio
 let postOneLifeConsecutiveCorrect = 0;                        // Consecutive correct answers after reaching 1 life in current level
 let bestNoHintLevelScore = 0;                                 // Best qualifying level score (out of 10) with 0 hints
 let flawlessRunBroken = false;                                // Set to true if any mistake or hint occurs anywhere in the world run
+
+// V9 Performance Report, Mistake Review & Personal Records State
+let runMistakes = [];                                           // Stored mistakes from current run for learning review
+const levelAttemptsByType = { mcq: 0, output: 0, "code-choice": 0, bug: 0 };
+const levelCorrectByType = { mcq: 0, output: 0, "code-choice": 0, bug: 0 };
+const completedLevelStats = [];                                 // Full report stats per completed level
+
+// In-memory session personal records (cleared on browser reload / Ctrl+R, no localStorage)
+const sessionPersonalRecords = {
+    bestStreak: 0,
+    bestLevelAccuracy: 0,
+    mostXpRun: 0,
+    mostPiecesRun: 0,
+    fewestWorldWrongAttempts: null,
+    bestChallengeAccuracy: { mcq: 0, output: 0, "code-choice": 0, bug: 0 }
+};
+
+let activeReviewMistakes = [];
+let currentReviewIndex = 0;
 
 // ==================================================
 // ACHIEVEMENT SYSTEM VERSION MIGRATION (V6.3)
@@ -2104,14 +2141,11 @@ function updateBuildWorldBar() {
         if (completedLevels[index]) {
             statusClass = "completed";
             statusText = "✅ Completed";
-        } else if (currentBuildIndex === index) {
+        } else if (currentBuildIndex === index && !completedLevels[index] && successfulCorrectAnswers > 0) {
             statusClass = "active";
             statusText = "In Progress (" + buildPieces[index] + "/" + totalPieces + ")";
-        } else if (index === 0) {
-            statusClass = "";
-            statusText = "Available";
-        } else if (completedLevels[index - 1]) {
-            statusClass = "";
+        } else if (index === 0 || completedLevels[index - 1]) {
+            statusClass = (currentBuildIndex === index) ? "active" : "unlocked";
             statusText = "🔓 Unlocked";
         } else {
             statusClass = "locked";
@@ -2160,8 +2194,6 @@ function renderWorldMap() {
         streakEl.textContent = "🔥 " + bestStreak;
     }
 
-    // (Duplicate bottom Start Building button removed per specification; main action button is on the active level card)
-
     let html = "";
     BUILDS.forEach(function (build, index) {
         const totalPieces = build.pieces ? build.pieces.length : build.questions.length;
@@ -2169,28 +2201,34 @@ function renderWorldMap() {
 
         // Dynamic state determination:
         // COMPLETED: completedLevels[index] is true
-        // CURRENT: index === currentBuildIndex && !completedLevels[index]
-        // LOCKED: index > currentBuildIndex
+        // UNLOCKED: index === 0 || completedLevels[index - 1] is true
+        // LOCKED: previous level is not completed
+        const isCompleted = !!completedLevels[index];
+        const isUnlocked = (index === 0 || !!completedLevels[index - 1]);
+
         let state = "locked";
         let stateBadgeText = "🔒 LOCKED";
         let stateClass = "state-locked";
         let statusMsg = "Locked • Complete Level " + index + " to unlock";
+        let btnLabel = "START BUILDING ➔";
 
-        if (completedLevels[index]) {
+        if (isCompleted) {
             state = "completed";
             stateBadgeText = "✓ BUILT";
             stateClass = "state-completed";
             statusMsg = "Checkpoint Secured • " + totalPieces + " / " + totalPieces + " Pieces";
-        } else if (index === currentBuildIndex) {
-            state = "current";
-            stateBadgeText = "▶ BUILDING NOW";
+        } else if (isUnlocked) {
+            state = "unlocked";
             stateClass = "state-current";
-            statusMsg = "Active Project • " + currentPieces + " / " + totalPieces + " Pieces";
-        } else if (index < currentBuildIndex) {
-            state = "completed";
-            stateBadgeText = "✓ BUILT";
-            stateClass = "state-completed";
-            statusMsg = "Checkpoint Secured";
+            if (index === currentBuildIndex && successfulCorrectAnswers > 0) {
+                stateBadgeText = "▶ BUILDING NOW";
+                btnLabel = "RESUME BUILDING ➔";
+                statusMsg = "Active Project • " + currentPieces + " / " + totalPieces + " Pieces";
+            } else {
+                stateBadgeText = "🔓 UNLOCKED";
+                btnLabel = "START BUILDING ➔";
+                statusMsg = "Unlocked • Ready to Build";
+            }
         } else {
             state = "locked";
             stateBadgeText = "🔒 LOCKED";
@@ -2212,7 +2250,7 @@ function renderWorldMap() {
         // Build Node Card
         const unlockPulseClass = (index === lastUnlockedBuildIndex) ? " node-unlock-pulse" : "";
         html += '<div class="map-node-wrapper">' +
-            '<div class="map-node-card ' + stateClass + unlockPulseClass + '" id="map-node-' + build.id + '">' +
+            '<div class="map-node-card ' + stateClass + unlockPulseClass + '" id="map-node-' + build.id + '" data-level="' + index + '" data-state="' + state + '">' +
                 '<div class="node-header">' +
                     '<span class="node-level-tag">LEVEL ' + build.levelNumber + '</span>' +
                     '<span class="node-state-pill ' + stateClass + '">' + stateBadgeText + '</span>' +
@@ -2220,7 +2258,7 @@ function renderWorldMap() {
                 '<div class="node-body">' +
                     '<div class="node-icon-wrap ' + stateClass + '">' +
                         '<span class="node-icon">' + build.icon + '</span>' +
-                        (state === "completed" ? '<span class="node-badge-corner check">✓</span>' : '') +
+                        (isCompleted ? '<span class="node-badge-corner check">✓</span>' : '') +
                         (state === "locked" ? '<span class="node-badge-corner lock">🔒</span>' : '') +
                     '</div>' +
                     '<div class="node-content">' +
@@ -2228,14 +2266,13 @@ function renderWorldMap() {
                         '<p class="node-topic">' + escapeHtml(build.description || "") + '</p>' +
                         '<div class="node-meta-row">' +
                             '<span class="node-meta-chip">🎯 10 Correct to Build</span>' +
-                            '<span class="node-meta-chip">🧱 ' + (state === "completed" ? totalPieces : currentPieces) + ' / ' + totalPieces + ' Pieces</span>' +
+                            '<span class="node-meta-chip">🧱 ' + (isCompleted ? totalPieces : currentPieces) + ' / ' + totalPieces + ' Pieces</span>' +
                         '</div>' +
                     '</div>' +
                 '</div>';
 
         // Node Footer (Action or Status message)
-        if (state === "current") {
-            const btnLabel = (successfulCorrectAnswers > 0 || buildPieces[index] > 0) ? "RESUME BUILDING ➔" : "START BUILDING ➔";
+        if (state === "unlocked" || state === "current") {
             html += '<div class="node-footer">' +
                 '<button class="btn-action primary-btn node-action-btn" type="button" data-level="' + index + '">' +
                     btnLabel +
@@ -2262,12 +2299,43 @@ function renderWorldMap() {
 
     journeyContainer.innerHTML = html;
 
+    // Attach event listeners to card nodes
+    const nodeCards = journeyContainer.querySelectorAll(".map-node-card");
+    nodeCards.forEach(function (card) {
+        card.addEventListener("click", function (e) {
+            // If action button was clicked directly, let its dedicated handler execute
+            if (e.target && e.target.closest(".node-action-btn")) {
+                return;
+            }
+
+            const lvl = parseInt(card.getAttribute("data-level"), 10);
+            const st = card.getAttribute("data-state");
+
+            if (st === "unlocked" || st === "current") {
+                selectLevelFromMap(lvl);
+            } else if (st === "completed") {
+                AudioManager.playSound("click");
+                const build = BUILDS[lvl];
+                if (build) {
+                    showToast("", "LEVEL COMPLETED", "✓ Level " + build.levelNumber + " Complete", "This level's checkpoint is secured!", "💾");
+                }
+            } else if (st === "locked") {
+                AudioManager.playSound("wrong");
+                const build = BUILDS[lvl];
+                if (build) {
+                    showToast("", "LEVEL LOCKED", "🔒 Level " + build.levelNumber + " Locked", "Complete Level " + lvl + " first to unlock this build!", "🔒");
+                }
+            }
+        });
+    });
+
     // Attach event listeners to card action buttons
     const nodeActionBtns = journeyContainer.querySelectorAll(".node-action-btn");
     nodeActionBtns.forEach(function (btn) {
-        btn.addEventListener("click", function () {
-            AudioManager.playSound("click");
-            enterGameplayFromMap();
+        btn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            const lvl = parseInt(btn.getAttribute("data-level"), 10);
+            selectLevelFromMap(lvl);
         });
     });
 
@@ -2276,7 +2344,20 @@ function renderWorldMap() {
     renderAchievementsGrid();
 }
 
-function enterGameplayFromMap() {
+function selectLevelFromMap(targetIndex) {
+    if (targetIndex === undefined || targetIndex === null) {
+        targetIndex = currentBuildIndex;
+    }
+
+    if (targetIndex < 0 || targetIndex >= BUILDS.length) return;
+
+    // Check if target level is unlocked
+    const isUnlocked = (targetIndex === 0 || !!completedLevels[targetIndex - 1]);
+    if (!isUnlocked) {
+        AudioManager.playSound("wrong");
+        return;
+    }
+
     // If all levels are already completed, show final victory screen
     if (completedLevels.every(Boolean)) {
         if (worldMapScreen) worldMapScreen.style.display = "none";
@@ -2285,6 +2366,9 @@ function enterGameplayFromMap() {
         return;
     }
 
+    AudioManager.playSound("click");
+
+    // Hide world map and start screen, show game screen
     if (worldMapScreen) worldMapScreen.style.display = "none";
     if (startScreen) startScreen.style.display = "none";
     if (gameScreen) gameScreen.style.display = "block";
@@ -2293,15 +2377,62 @@ function enterGameplayFromMap() {
     if (gameOverCard) gameOverCard.style.display = "none";
     if (levelCompleteCard) levelCompleteCard.style.display = "none";
     if (gameCompleteCard) gameCompleteCard.style.display = "none";
-    if (questionCard) questionCard.style.display = "block";
 
+    // If switching to an unlocked level that isn't the active level, OR if current level was already completed:
+    if (currentBuildIndex !== targetIndex || completedLevels[currentBuildIndex]) {
+        currentBuildIndex = targetIndex;
+        successfulCorrectAnswers = 0;
+        currentQuestionIndex = 0;
+        currentQuestion = null;
+        seenQuestionIds.clear();
+        questionAttempts = 0;
+        levelMistakes = 0;
+
+        // Reset level challenge stats for new level
+        Object.keys(levelAttemptsByType).forEach(function (k) { levelAttemptsByType[k] = 0; });
+        Object.keys(levelCorrectByType).forEach(function (k) { levelCorrectByType[k] = 0; });
+
+        // Each new level gets fresh 3 lives & fresh 1 hint!
+        lives = 3;
+        hintsRemaining = 1;
+        hintUsedForCurrentQuestion = false;
+        isAnswerLocked = false;
+        streak = 0;
+        minLivesInLevel = 3;
+        reachedOneLifeInLevel = false;
+        levelUsedHint = false;
+        levelFinal5Correct = true;
+        levelFinal3Correct = true;
+        postOneLifeConsecutiveCorrect = 0;
+
+        updateLivesDisplay();
+        updateHintDisplay();
+        switchScene(currentBuildIndex);
+        updateBuildWorldBar();
+        updateBuilding(-1);
+        loadQuestion(true);
+        showMissionBriefing(currentBuildIndex);
+        return;
+    }
+
+    // Resuming active level in progress
     switchScene(currentBuildIndex);
     updateBuildWorldBar();
     updateBuilding(-1);
 
-    if (!questionText.textContent || questionText.textContent === "Loading question...") {
-        loadQuestion();
+    if (successfulCorrectAnswers === 0) {
+        showMissionBriefing(currentBuildIndex);
+    } else {
+        if (missionBriefingCard) missionBriefingCard.style.display = "none";
+        if (questionCard) questionCard.style.display = "block";
+        if (!questionText.textContent || questionText.textContent === "Loading question...") {
+            loadQuestion();
+        }
     }
+}
+
+function enterGameplayFromMap(targetIndex) {
+    selectLevelFromMap(targetIndex !== undefined ? targetIndex : currentBuildIndex);
 }
 
 function openWorldMap() {
@@ -2549,6 +2680,7 @@ function handleAnswer(selectedIndex) {
 
     totalQuestionsAttempted++;
     attemptsByType[qType] = (attemptsByType[qType] || 0) + 1;
+    levelAttemptsByType[qType] = (levelAttemptsByType[qType] || 0) + 1;
     if (qType === "output") outputAttempts++;
     else if (qType === "bug") bugAttempts++;
 
@@ -2556,6 +2688,7 @@ function handleAnswer(selectedIndex) {
         // Track challenge types and correct answers
         totalCorrectAnswers++;
         correctByType[qType] = (correctByType[qType] || 0) + 1;
+        levelCorrectByType[qType] = (levelCorrectByType[qType] || 0) + 1;
         if (qType === "output") outputCorrect++;
         else if (qType === "bug") bugCorrect++;
 
@@ -2635,6 +2768,20 @@ function handleAnswer(selectedIndex) {
         // Question attempt is discarded; successfulCorrectAnswers DOES NOT INCREASE.
         levelMistakes++;
         flawlessRunBroken = true;
+
+        // Store mistake details for learning review mode
+        runMistakes.push({
+            levelIndex: currentBuildIndex,
+            levelNumber: build.levelNumber,
+            levelName: build.name,
+            questionText: question.question,
+            code: question.code || null,
+            type: qType,
+            userAnswer: question.options[selectedIndex],
+            correctAnswer: question.options[question.correct],
+            explanation: question.explanation
+        });
+
         lives = Math.max(0, lives - 1);
         minLivesInLevel = Math.min(minLivesInLevel, lives);
         if (lives === 1) {
@@ -2754,6 +2901,26 @@ function completeCurrentLevel() {
         perfectLevelBanner.style.display = isPerfect ? "inline-block" : "none";
     }
 
+    // Save completed level stats for V9 detailed reports & world run tracking
+    const levelAccuracy = questionAttempts > 0 ? Math.round((10 / questionAttempts) * 100) : 100;
+    completedLevelStats[currentBuildIndex] = {
+        levelIndex: currentBuildIndex,
+        levelNumber: build.levelNumber,
+        name: build.name,
+        successfulCorrectAnswers: 10,
+        questionAttempts: questionAttempts,
+        wrongAttempts: levelMistakes,
+        accuracy: levelAccuracy,
+        xpEarned: 100,
+        piecesBuilt: 10,
+        livesLost: 3 - lives,
+        remainingLives: lives,
+        hintsUsed: levelUsedHint ? 1 : 0,
+        bestStreak: bestStreak,
+        attemptsByType: Object.assign({}, levelAttemptsByType),
+        correctByType: Object.assign({}, levelCorrectByType)
+    };
+
     AudioManager.playSound("levelCompleted");
     showToast("", "CHECKPOINT CREATED", "✓ CHECKPOINT CREATED", "Level " + build.levelNumber + " Complete! Checkpoint secured.", "💾");
 
@@ -2776,12 +2943,16 @@ function completeCurrentLevel() {
     updateBuildWorldBar();
 
     if (currentBuildIndex < BUILDS.length - 1) {
+        lastUnlockedBuildIndex = currentBuildIndex + 1;
         // More levels remain -> Show Checkpoint screen
+        if (missionBriefingCard) missionBriefingCard.style.display = "none";
         questionCard.style.display = "none";
         levelCompleteCard.style.display = "block";
 
         const nextBuild = BUILDS[currentBuildIndex + 1];
         const totalPieces = 10;
+        const hintsUsed = levelUsedHint ? 1 : 0;
+        const livesLost = 3 - lives;
 
         levelCompleteTitle.textContent = "LEVEL " + build.levelNumber + " COMPLETE!";
         const completeBadge = document.getElementById("build-complete-badge");
@@ -2790,13 +2961,56 @@ function completeCurrentLevel() {
         }
         levelCompleteMessage.textContent = "Outstanding work! You successfully answered all 10 required questions in Level " + build.levelNumber + " and established a permanent checkpoint!";
 
+        // FEATURE 1: Detailed Level Performance Report
         buildCompleteStats.innerHTML =
-            '<div class="stat-card-row">' +
-                '<div class="mini-stat-card"><span class="m-label">CHECKPOINT XP</span><span class="m-val">⭐ ' + totalXp + ' XP</span></div>' +
-                '<div class="mini-stat-card"><span class="m-label">PIECES BUILT</span><span class="m-val">🧱 ' + buildPieces[currentBuildIndex] + ' / ' + totalPieces + '</span></div>' +
-                '<div class="mini-stat-card"><span class="m-label">BEST STREAK</span><span class="m-val">🔥 ' + bestStreak + '</span></div>' +
+            '<div class="report-section-title">📈 LEVEL ' + build.levelNumber + ' PERFORMANCE REPORT</div>' +
+            '<div class="stat-card-row report-stats-grid">' +
+                '<div class="mini-stat-card"><span class="m-label">LEVEL ACCURACY</span><span class="m-val highlight">' + levelAccuracy + '%</span></div>' +
+                '<div class="mini-stat-card"><span class="m-label">CORRECT ANSWERS</span><span class="m-val">🎯 10 / 10</span></div>' +
+                '<div class="mini-stat-card"><span class="m-label">TOTAL ATTEMPTS</span><span class="m-val">' + questionAttempts + '</span></div>' +
+                '<div class="mini-stat-card"><span class="m-label">WRONG ATTEMPTS</span><span class="m-val">' + levelMistakes + '</span></div>' +
                 '<div class="mini-stat-card"><span class="m-label">LIVES PRESERVED</span><span class="m-val">❤️ ' + lives + ' / 3</span></div>' +
+                '<div class="mini-stat-card"><span class="m-label">LIVES LOST</span><span class="m-val">💔 ' + livesLost + '</span></div>' +
+                '<div class="mini-stat-card"><span class="m-label">HINTS USED</span><span class="m-val">💡 ' + hintsUsed + ' / 1</span></div>' +
+                '<div class="mini-stat-card"><span class="m-label">BEST STREAK</span><span class="m-val">🔥 ' + bestStreak + '</span></div>' +
+                '<div class="mini-stat-card"><span class="m-label">PIECES BUILT</span><span class="m-val">🧱 10 / ' + totalPieces + '</span></div>' +
+                '<div class="mini-stat-card"><span class="m-label">CHECKPOINT XP</span><span class="m-val">⭐ ' + totalXp + ' XP</span></div>' +
             '</div>';
+
+        // Challenge-type breakdown for this completed level
+        const types = ["mcq", "output", "code-choice", "bug"];
+        const typeNames = {
+            mcq: "🎯 MCQ",
+            output: "⚡ OUTPUT",
+            "code-choice": "💻 CODE-CHOICE",
+            bug: "🔍 BUG"
+        };
+
+        let chalHtml = '<div class="report-section-title">📊 CHALLENGE TYPE PERFORMANCE</div><div class="challenge-breakdown-grid">';
+        types.forEach(function (type) {
+            const att = levelAttemptsByType[type] || 0;
+            const corr = levelCorrectByType[type] || 0;
+            const pct = att > 0 ? Math.round((corr / att) * 100) : 0;
+            chalHtml +=
+                '<div class="challenge-stat-card">' +
+                    '<span class="c-stat-type">' + typeNames[type] + '</span>' +
+                    '<div class="c-stat-progress">Correct: <strong>' + corr + ' / ' + att + '</strong></div>' +
+                    '<div class="c-stat-pct">' + pct + '%</div>' +
+                '</div>';
+        });
+        chalHtml += '</div>';
+
+        if (levelChallengeStats) {
+            levelChallengeStats.innerHTML = chalHtml;
+        }
+
+        // Update Level Mistakes Badge count
+        if (levelMistakesBadge) {
+            const thisLevelMistakes = runMistakes.filter(function (m) {
+                return m.levelIndex === currentBuildIndex;
+            }).length;
+            levelMistakesBadge.textContent = thisLevelMistakes;
+        }
 
         buildUnlockBanner.innerHTML =
             '<div class="next-level-preview-box">' +
@@ -2825,6 +3039,10 @@ nextLevelButton.addEventListener("click", function () {
     seenQuestionIds.clear();
     questionAttempts = 0;
     levelMistakes = 0;
+
+    // Reset level challenge stats for new level
+    Object.keys(levelAttemptsByType).forEach(function (k) { levelAttemptsByType[k] = 0; });
+    Object.keys(levelCorrectByType).forEach(function (k) { levelCorrectByType[k] = 0; });
 
     // Unlock celebration
     const nextBuild = BUILDS[currentBuildIndex];
@@ -2863,6 +3081,7 @@ nextLevelButton.addEventListener("click", function () {
 
 function showLevelFailed() {
     AudioManager.playSound("gameOver");
+    if (missionBriefingCard) missionBriefingCard.style.display = "none";
     questionCard.style.display = "none";
     levelCompleteCard.style.display = "none";
     gameCompleteCard.style.display = "none";
@@ -2914,6 +3133,13 @@ tryAgainButton.addEventListener("click", function () {
     streak = 0;
     totalXp = checkpointXp;            // Restore XP from previously completed checkpoints
 
+    // Reset level challenge stats and clear mistakes from this failed attempt
+    Object.keys(levelAttemptsByType).forEach(function (k) { levelAttemptsByType[k] = 0; });
+    Object.keys(levelCorrectByType).forEach(function (k) { levelCorrectByType[k] = 0; });
+    runMistakes = runMistakes.filter(function (m) {
+        return m.levelIndex !== currentBuildIndex;
+    });
+
     // Update displays
     scoreDisplay.textContent = "⭐ " + totalXp + " XP";
     streakDisplay.textContent = "🔥 0";
@@ -2928,15 +3154,46 @@ tryAgainButton.addEventListener("click", function () {
         });
     }
 
-    // Reset UI visibility
+    // Reset UI visibility & show Mission Briefing for level restart
     gameOverCard.style.display = "none";
     tryAgainButton.style.display = "none";
-    questionCard.style.display = "block";
 
     switchScene(currentBuildIndex);
     updateBuildWorldBar();
-    loadQuestion(true);
+    showMissionBriefing(currentBuildIndex);
 });
+
+// ==================================================
+// V9 RUN GRADE CALCULATION (Transparent Criteria)
+// ==================================================
+
+function calculateRunGrade(accuracy, hintsUsed, livesLost) {
+    if (accuracy >= 95 && hintsUsed === 0 && livesLost === 0) {
+        return {
+            grade: "S",
+            title: "S-RANK MASTER",
+            desc: "Flawless World Conquered: 95%+ Accuracy, 0 Hints Used, 0 Lives Lost"
+        };
+    } else if (accuracy >= 90) {
+        return {
+            grade: "A",
+            title: "A-RANK EXPERT",
+            desc: "Exceptional Execution: 90%+ Overall World Accuracy"
+        };
+    } else if (accuracy >= 75) {
+        return {
+            grade: "B",
+            title: "B-RANK BUILDER",
+            desc: "Proficient Problem Solving: 75%+ Overall World Accuracy"
+        };
+    } else {
+        return {
+            grade: "C",
+            title: "C-RANK APPRENTICE",
+            desc: "Full World Completed with Perseverance (Under 75% Accuracy)"
+        };
+    }
+}
 
 // ==================================================
 // FINAL GAME COMPLETE (All Levels Conquered)
@@ -2944,6 +3201,7 @@ tryAgainButton.addEventListener("click", function () {
 
 function showGameComplete() {
     AudioManager.playSound("finalWorldCompleted");
+    if (missionBriefingCard) missionBriefingCard.style.display = "none";
     questionCard.style.display = "none";
     levelCompleteCard.style.display = "none";
     gameOverCard.style.display = "none";
@@ -3000,17 +3258,181 @@ function showGameComplete() {
     const maxPossiblePieces = BUILDS.length * 10; // Exactly 10 pieces per level = 30 pieces
     const completedCount = completedLevels.filter(Boolean).length;
 
+    // Calculate aggregated run totals across completed levels
+    let runTotalAttempts = 0;
+    let runWrongAttempts = 0;
+    let runHintsUsed = 0;
+    let runLivesLost = 0;
+    const runTypeAttempts = { mcq: 0, output: 0, "code-choice": 0, bug: 0 };
+    const runTypeCorrect = { mcq: 0, output: 0, "code-choice": 0, bug: 0 };
+
+    completedLevelStats.forEach(function (stat) {
+        if (!stat) return;
+        runTotalAttempts += stat.questionAttempts;
+        runWrongAttempts += stat.wrongAttempts;
+        runHintsUsed += stat.hintsUsed;
+        runLivesLost += stat.livesLost;
+        ["mcq", "output", "code-choice", "bug"].forEach(function (type) {
+            runTypeAttempts[type] += (stat.attemptsByType[type] || 0);
+            runTypeCorrect[type] += (stat.correctByType[type] || 0);
+        });
+    });
+
+    if (runTotalAttempts === 0) {
+        runTotalAttempts = 30 + levelMistakes;
+        runWrongAttempts = levelMistakes;
+        runLivesLost = 3 - lives;
+        runHintsUsed = levelUsedHint ? 1 : 0;
+    }
+
+    const runSuccessfulAnswers = 30; // 3 levels * 10 successful answers
+    const runAccuracy = runTotalAttempts > 0 ? Math.round((runSuccessfulAnswers / runTotalAttempts) * 100) : 100;
+
+    // FEATURE 5: Performance Grade
+    const gradeData = calculateRunGrade(runAccuracy, runHintsUsed, runLivesLost);
+    if (finalGradeBox) {
+        finalGradeBox.innerHTML =
+            '<div class="grade-banner grade-' + gradeData.grade.toLowerCase() + '">' +
+                '<div class="grade-badge-circle">' + gradeData.grade + '</div>' +
+                '<div class="grade-content">' +
+                    '<span class="grade-badge-title">OVERALL PERFORMANCE GRADE: ' + gradeData.title + '</span>' +
+                    '<p class="grade-badge-desc">' + gradeData.desc + '</p>' +
+                    '<div class="grade-criteria-details">' +
+                        '<span>Accuracy: <strong>' + runAccuracy + '%</strong></span> • ' +
+                        '<span>Hints Used: <strong>' + runHintsUsed + '</strong></span> • ' +
+                        '<span>Lives Lost: <strong>' + runLivesLost + '</strong></span>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+    }
+
+    // FEATURE 5: Overall Performance Report
     finalStats.innerHTML =
         '<div class="final-score-banner">' +
             '<span class="score-title">TOTAL XP EARNED</span>' +
             '<span class="score-number">⭐ ' + totalXp + ' / ' + maxPossibleXp + ' XP</span>' +
         '</div>' +
-        '<div class="stat-card-row">' +
-            '<div class="mini-stat-card"><span class="m-label">LEVELS COMPLETED</span><span class="m-val">' + completedCount + ' / ' + BUILDS.length + ' Completed</span></div>' +
+        '<div class="report-section-title">📈 OVERALL RUN PERFORMANCE</div>' +
+        '<div class="stat-card-row report-stats-grid">' +
+            '<div class="mini-stat-card"><span class="m-label">ACCURACY</span><span class="m-val highlight">' + runAccuracy + '%</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">SUCCESSFUL ANSWERS</span><span class="m-val">🎯 ' + runSuccessfulAnswers + ' / 30</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">TOTAL ATTEMPTS</span><span class="m-val">' + runTotalAttempts + '</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">WRONG ATTEMPTS</span><span class="m-val">' + runWrongAttempts + '</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">HINTS USED</span><span class="m-val">💡 ' + runHintsUsed + '</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">BEST STREAK</span><span class="m-val">🔥 ' + bestStreak + '</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">XP EARNED</span><span class="m-val">⭐ ' + totalXp + ' / ' + maxPossibleXp + '</span></div>' +
             '<div class="mini-stat-card"><span class="m-label">PIECES BUILT</span><span class="m-val">🧱 ' + totalPiecesBuilt + ' / ' + maxPossiblePieces + '</span></div>' +
-            '<div class="mini-stat-card"><span class="m-label">BEST STREAK</span><span class="m-val">🔥 ' + bestStreak + ' in a row</span></div>' +
-            '<div class="mini-stat-card"><span class="m-label">CHECKPOINTS</span><span class="m-val">💾 ' + completedCount + ' / ' + BUILDS.length + ' Secured</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">LIVES LOST</span><span class="m-val">💔 ' + runLivesLost + '</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">REMAINING LIVES</span><span class="m-val">❤️ ' + lives + ' / 3</span></div>' +
         '</div>';
+
+    // FEATURE 5: Challenge Breakdown
+    if (finalChallengeStats) {
+        const types = ["mcq", "output", "code-choice", "bug"];
+        const typeNames = {
+            mcq: "🎯 MCQ",
+            output: "⚡ OUTPUT",
+            "code-choice": "💻 CODE-CHOICE",
+            bug: "🔍 BUG"
+        };
+        let chalHtml = '<div class="report-section-title">📊 CHALLENGE BREAKDOWN (FULL RUN)</div><div class="challenge-breakdown-grid">';
+        types.forEach(function (type) {
+            const att = runTypeAttempts[type] || 0;
+            const corr = runTypeCorrect[type] || 0;
+            const pct = att > 0 ? Math.round((corr / att) * 100) : 0;
+            chalHtml +=
+                '<div class="challenge-stat-card">' +
+                    '<span class="c-stat-type">' + typeNames[type] + '</span>' +
+                    '<div class="c-stat-progress">Correct: <strong>' + corr + ' / ' + att + '</strong></div>' +
+                    '<div class="c-stat-pct">' + pct + '%</div>' +
+                '</div>';
+        });
+        chalHtml += '</div>';
+        finalChallengeStats.innerHTML = chalHtml;
+    }
+
+    // FEATURE 3: Personal Records Tracking
+    let isNewBestStreak = false;
+    let isNewBestAcc = false;
+    let isNewMostXp = false;
+    let isNewFewestWrong = false;
+    let isNewPieces = false;
+
+    if (bestStreak > sessionPersonalRecords.bestStreak) {
+        sessionPersonalRecords.bestStreak = bestStreak;
+        isNewBestStreak = true;
+    }
+
+    let maxLevelAcc = 0;
+    completedLevelStats.forEach(function (s) {
+        if (s && s.accuracy > maxLevelAcc) maxLevelAcc = s.accuracy;
+    });
+    if (maxLevelAcc > sessionPersonalRecords.bestLevelAccuracy) {
+        sessionPersonalRecords.bestLevelAccuracy = maxLevelAcc;
+        isNewBestAcc = true;
+    }
+
+    if (totalXp > sessionPersonalRecords.mostXpRun) {
+        sessionPersonalRecords.mostXpRun = totalXp;
+        isNewMostXp = true;
+    }
+
+    if (totalPiecesBuilt > sessionPersonalRecords.mostPiecesRun) {
+        sessionPersonalRecords.mostPiecesRun = totalPiecesBuilt;
+        isNewPieces = true;
+    }
+
+    if (sessionPersonalRecords.fewestWorldWrongAttempts === null || runWrongAttempts < sessionPersonalRecords.fewestWorldWrongAttempts) {
+        sessionPersonalRecords.fewestWorldWrongAttempts = runWrongAttempts;
+        isNewFewestWrong = true;
+    }
+
+    const challengeTypes = ["mcq", "output", "code-choice", "bug"];
+    challengeTypes.forEach(function (type) {
+        const att = runTypeAttempts[type];
+        const corr = runTypeCorrect[type];
+        const pct = att > 0 ? Math.round((corr / att) * 100) : 0;
+        if (pct > (sessionPersonalRecords.bestChallengeAccuracy[type] || 0)) {
+            sessionPersonalRecords.bestChallengeAccuracy[type] = pct;
+        }
+    });
+
+    if (finalPersonalRecords) {
+        finalPersonalRecords.innerHTML =
+            '<div class="report-section-title">⭐ PERSONAL RECORDS (CURRENT SESSION)</div>' +
+            '<div class="records-grid">' +
+                '<div class="record-card">' +
+                    '<span class="r-label">BEST OVERALL STREAK</span>' +
+                    '<span class="r-val">🔥 ' + sessionPersonalRecords.bestStreak + '</span>' +
+                    (isNewBestStreak ? '<span class="record-new-tag">★ NEW RECORD!</span>' : '') +
+                '</div>' +
+                '<div class="record-card">' +
+                    '<span class="r-label">BEST LEVEL ACCURACY</span>' +
+                    '<span class="r-val">🎯 ' + sessionPersonalRecords.bestLevelAccuracy + '%</span>' +
+                    (isNewBestAcc ? '<span class="record-new-tag">★ NEW RECORD!</span>' : '') +
+                '</div>' +
+                '<div class="record-card">' +
+                    '<span class="r-label">MOST XP IN ONE RUN</span>' +
+                    '<span class="r-val">⭐ ' + sessionPersonalRecords.mostXpRun + ' XP</span>' +
+                    (isNewMostXp ? '<span class="record-new-tag">★ NEW RECORD!</span>' : '') +
+                '</div>' +
+                '<div class="record-card">' +
+                    '<span class="r-label">FEWEST WRONG ATTEMPTS</span>' +
+                    '<span class="r-val">🛡️ ' + (sessionPersonalRecords.fewestWorldWrongAttempts !== null ? sessionPersonalRecords.fewestWorldWrongAttempts : 0) + '</span>' +
+                    (isNewFewestWrong ? '<span class="record-new-tag">★ NEW RECORD!</span>' : '') +
+                '</div>' +
+                '<div class="record-card">' +
+                    '<span class="r-label">MOST PIECES BUILT</span>' +
+                    '<span class="r-val">🧱 ' + sessionPersonalRecords.mostPiecesRun + ' / 30</span>' +
+                    (isNewPieces ? '<span class="record-new-tag">★ NEW RECORD!</span>' : '') +
+                '</div>' +
+            '</div>';
+    }
+
+    // Update Final Mistakes Badge
+    if (finalMistakesBadge) {
+        finalMistakesBadge.textContent = runMistakes.length;
+    }
 
     // Render achievements showcase in victory screen
     const finalAchShowcase = finalAchievementsShowcase || document.getElementById("final-achievements-showcase");
@@ -3056,6 +3478,12 @@ function startNewGame() {
     levelMistakes = 0;
     sessionQuestionsAnswered = 0;
     lastUnlockedBuildIndex = -1;
+
+    // Reset V9 level and run stats
+    completedLevelStats.length = 0;
+    runMistakes.length = 0;
+    Object.keys(levelAttemptsByType).forEach(function (k) { levelAttemptsByType[k] = 0; });
+    Object.keys(levelCorrectByType).forEach(function (k) { levelCorrectByType[k] = 0; });
 
     // Reset single-run tracking counters
     minLivesInLevel = 3;
@@ -3151,6 +3579,192 @@ function startNewGame() {
     DailyStreakManager.updateUI();
     renderAchievementsGrid();
 }
+
+// ==================================================
+// FEATURE 4: MISSION BRIEFING SYSTEM
+// ==================================================
+
+function showMissionBriefing(levelIndex) {
+    const build = BUILDS[levelIndex];
+    if (!build) return;
+
+    if (questionCard) questionCard.style.display = "none";
+    if (levelCompleteCard) levelCompleteCard.style.display = "none";
+    if (gameOverCard) gameOverCard.style.display = "none";
+    if (gameCompleteCard) gameCompleteCard.style.display = "none";
+
+    const chip = document.getElementById("briefing-level-chip");
+    const title = document.getElementById("briefing-title");
+    const desc = document.getElementById("briefing-desc");
+    const buildVal = document.getElementById("briefing-build");
+    const startBtn = document.getElementById("briefing-start-btn");
+
+    if (chip) chip.textContent = "LEVEL " + build.levelNumber;
+    if (title) title.textContent = (build.topicName || build.name).toUpperCase();
+    if (desc) desc.textContent = build.description || "Master engineering challenges to complete this build.";
+    if (buildVal) buildVal.textContent = build.icon + " " + build.name.toUpperCase();
+    if (startBtn) startBtn.textContent = "START LEVEL " + build.levelNumber + " (" + build.name.toUpperCase() + ") ➔";
+
+    if (missionBriefingCard) {
+        missionBriefingCard.style.display = "block";
+    }
+}
+
+if (briefingStartBtn) {
+    briefingStartBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        if (missionBriefingCard) missionBriefingCard.style.display = "none";
+        if (questionCard) questionCard.style.display = "block";
+        if (!currentQuestion || questionText.textContent === "Loading question...") {
+            loadQuestion(true);
+        }
+    });
+}
+
+// ==================================================
+// FEATURE 2: MISTAKE REVIEW SYSTEM (Pure Learning Mode)
+// ==================================================
+
+function openMistakeReview(scope) {
+    if (scope === "all" || scope === undefined) {
+        activeReviewMistakes = runMistakes.slice();
+    } else {
+        activeReviewMistakes = runMistakes.filter(function (m) {
+            return m.levelIndex === scope;
+        });
+    }
+    currentReviewIndex = 0;
+    renderMistakeReview();
+    if (mistakeReviewModal) {
+        mistakeReviewModal.style.display = "flex";
+    }
+}
+
+function closeMistakeReview() {
+    if (mistakeReviewModal) {
+        mistakeReviewModal.style.display = "none";
+    }
+}
+
+function renderMistakeReview() {
+    if (!reviewContent) return;
+
+    if (activeReviewMistakes.length === 0) {
+        if (mistakeCounterText) mistakeCounterText.textContent = "0 of 0";
+        reviewContent.innerHTML =
+            '<div class="review-empty-state">' +
+                '<div class="empty-icon">🌟</div>' +
+                '<h4 class="empty-title">NO MISTAKES TO REVIEW</h4>' +
+                '<p class="empty-desc">Perfect run! You answered every question correctly without any errors.</p>' +
+            '</div>';
+        if (prevMistakeBtn) prevMistakeBtn.style.display = "none";
+        if (nextMistakeBtn) nextMistakeBtn.style.display = "none";
+        return;
+    }
+
+    if (prevMistakeBtn) prevMistakeBtn.style.display = "inline-flex";
+    if (nextMistakeBtn) nextMistakeBtn.style.display = "inline-flex";
+
+    const mistake = activeReviewMistakes[currentReviewIndex];
+    if (mistakeCounterText) {
+        mistakeCounterText.textContent = (currentReviewIndex + 1) + " of " + activeReviewMistakes.length;
+    }
+
+    if (prevMistakeBtn) prevMistakeBtn.disabled = (currentReviewIndex === 0);
+    if (nextMistakeBtn) nextMistakeBtn.disabled = (currentReviewIndex === activeReviewMistakes.length - 1);
+
+    const typeLabels = {
+        mcq: "🎯 MCQ",
+        output: "⚡ OUTPUT",
+        "code-choice": "💻 CODE-CHOICE",
+        bug: "🔍 FIND THE BUG"
+    };
+    const typeLabel = typeLabels[mistake.type] || (mistake.type ? mistake.type.toUpperCase() : "QUESTION");
+
+    let codeBlockHtml = "";
+    if (mistake.code) {
+        codeBlockHtml = '<div class="code-snippet-box review-code-box"><div class="code-header"><span class="code-lang">python</span></div><pre><code>' + escapeHtml(mistake.code) + '</code></pre></div>';
+    }
+
+    reviewContent.innerHTML =
+        '<div class="review-item-card">' +
+            '<div class="review-meta-bar">' +
+                '<span class="review-type-chip chip-' + escapeHtml(mistake.type) + '">' + typeLabel + '</span>' +
+                '<span class="review-level-chip">LEVEL ' + mistake.levelNumber + ': ' + escapeHtml(mistake.levelName.toUpperCase()) + '</span>' +
+            '</div>' +
+            '<div class="review-question-text">' + escapeHtml(mistake.questionText) + '</div>' +
+            codeBlockHtml +
+            '<div class="review-answers-grid">' +
+                '<div class="review-answer-box your-answer">' +
+                    '<span class="ans-label">❌ YOUR ANSWER</span>' +
+                    '<div class="ans-text">' + escapeHtml(mistake.userAnswer) + '</div>' +
+                '</div>' +
+                '<div class="review-answer-box correct-answer">' +
+                    '<span class="ans-label">✅ CORRECT ANSWER</span>' +
+                    '<div class="ans-text">' + escapeHtml(mistake.correctAnswer) + '</div>' +
+                '</div>' +
+            '</div>' +
+            '<div class="review-explanation-box">' +
+                '<span class="exp-label">💡 WHY IT IS CORRECT</span>' +
+                '<p class="exp-text">' + escapeHtml(mistake.explanation) + '</p>' +
+            '</div>' +
+        '</div>';
+}
+
+if (reviewMistakesLevelBtn) {
+    reviewMistakesLevelBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        openMistakeReview(currentBuildIndex);
+    });
+}
+
+if (reviewMistakesFinalBtn) {
+    reviewMistakesFinalBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        openMistakeReview("all");
+    });
+}
+
+if (closeReviewBtn) {
+    closeReviewBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        closeMistakeReview();
+    });
+}
+
+if (prevMistakeBtn) {
+    prevMistakeBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        if (currentReviewIndex > 0) {
+            currentReviewIndex--;
+            renderMistakeReview();
+        }
+    });
+}
+
+if (nextMistakeBtn) {
+    nextMistakeBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        if (currentReviewIndex < activeReviewMistakes.length - 1) {
+            currentReviewIndex++;
+            renderMistakeReview();
+        }
+    });
+}
+
+if (mistakeReviewModal) {
+    mistakeReviewModal.addEventListener("click", function (e) {
+        if (e.target === mistakeReviewModal) {
+            closeMistakeReview();
+        }
+    });
+}
+
+document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && mistakeReviewModal && mistakeReviewModal.style.display !== "none") {
+        closeMistakeReview();
+    }
+});
 
 // Bind Answer Buttons
 answerButtons.forEach(function (button, index) {
@@ -3260,7 +3874,12 @@ window.getGameState = function () {
         bestNoHintLevelScore: bestNoHintLevelScore,
         flawlessRunBroken: flawlessRunBroken,
         unlockedAchievements: Array.from(unlockedAchievements),
-        unlockedRewards: Array.from(unlockedRewards)
+        unlockedRewards: Array.from(unlockedRewards),
+        runMistakes: runMistakes.slice(),
+        completedLevelStats: completedLevelStats.slice(),
+        levelAttemptsByType: Object.assign({}, levelAttemptsByType),
+        levelCorrectByType: Object.assign({}, levelCorrectByType),
+        sessionPersonalRecords: Object.assign({}, sessionPersonalRecords)
     };
 };
 window.checkAchievements = checkAchievements;
@@ -3268,7 +3887,22 @@ window.unlockAchievement = unlockAchievement;
 window.unlockReward = unlockReward;
 window.checkAchievementVersionMigration = checkAchievementVersionMigration;
 window.flawlessLevels = flawlessLevels;
+window.openMistakeReview = openMistakeReview;
+window.closeMistakeReview = closeMistakeReview;
+window.showMissionBriefing = showMissionBriefing;
+window.calculateRunGrade = calculateRunGrade;
+window.completedLevelStats = completedLevelStats;
+window.runMistakes = runMistakes;
+window.sessionPersonalRecords = sessionPersonalRecords;
+window.openWorldMap = openWorldMap;
+window.renderWorldMap = renderWorldMap;
+window.selectLevelFromMap = selectLevelFromMap;
+window.enterGameplayFromMap = enterGameplayFromMap;
+window.completeCurrentLevel = completeCurrentLevel;
 window.setGameTestState = function (state) {
+    if (state.currentBuildIndex !== undefined) {
+        currentBuildIndex = state.currentBuildIndex;
+    }
     if (state.successfulCorrectAnswers !== undefined) {
         successfulCorrectAnswers = state.successfulCorrectAnswers;
         currentQuestionIndex = state.successfulCorrectAnswers;
@@ -3322,6 +3956,23 @@ window.setGameTestState = function (state) {
     if (state.unlockedAchievements !== undefined) {
         unlockedAchievements.clear();
         state.unlockedAchievements.forEach(function (id) { unlockedAchievements.add(id); });
+    }
+    if (state.runMistakes !== undefined) {
+        runMistakes.length = 0;
+        state.runMistakes.forEach(function (m) { runMistakes.push(Object.assign({}, m)); });
+    }
+    if (state.completedLevelStats !== undefined) {
+        completedLevelStats.length = 0;
+        state.completedLevelStats.forEach(function (s) { completedLevelStats.push(Object.assign({}, s)); });
+    }
+    if (state.levelAttemptsByType !== undefined) {
+        Object.assign(levelAttemptsByType, state.levelAttemptsByType);
+    }
+    if (state.levelCorrectByType !== undefined) {
+        Object.assign(levelCorrectByType, state.levelCorrectByType);
+    }
+    if (state.sessionPersonalRecords !== undefined) {
+        Object.assign(sessionPersonalRecords, state.sessionPersonalRecords);
     }
 };
 

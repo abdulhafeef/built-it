@@ -286,6 +286,50 @@
 
             </div>
 
+            <!-- Mission Briefing Card (Level Intro / Briefing) -->
+            <div id="mission-briefing-card" class="state-card mission-briefing-card" style="display: none;">
+                <div class="state-badge-wrap">
+                    <span class="briefing-badge">📋 MISSION BRIEFING</span>
+                </div>
+                <div class="briefing-level-chip" id="briefing-level-chip">LEVEL 1</div>
+                <h3 class="briefing-title" id="briefing-title">PYTHON FOUNDATIONS</h3>
+                <p class="briefing-desc" id="briefing-desc">Master fundamental syntax, variables, and print output to construct your first structure.</p>
+
+                <div class="briefing-grid">
+                    <div class="briefing-card-item">
+                        <span class="b-label">BUILD TARGET</span>
+                        <span class="b-val" id="briefing-build">🏠 HOUSE</span>
+                    </div>
+                    <div class="briefing-card-item">
+                        <span class="b-label">MISSION OBJECTIVE</span>
+                        <span class="b-val highlight">10 Successful Answers</span>
+                    </div>
+                    <div class="briefing-card-item">
+                        <span class="b-label">LIVES</span>
+                        <span class="b-val">❤️❤️❤️ 3 Lives</span>
+                    </div>
+                    <div class="briefing-card-item">
+                        <span class="b-label">HINT</span>
+                        <span class="b-val">💡 1 Clue Available</span>
+                    </div>
+                    <div class="briefing-card-item full-width">
+                        <span class="b-label">CHALLENGE TYPES ENCOUNTERED</span>
+                        <div class="briefing-chips-row" id="briefing-chips-row">
+                            <span class="b-chip chip-mcq">🎯 MCQ</span>
+                            <span class="b-chip chip-output">⚡ OUTPUT</span>
+                            <span class="b-chip chip-code">💻 CODE-CHOICE</span>
+                            <span class="b-chip chip-bug">🔍 BUG</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="briefing-action-row">
+                    <button id="briefing-start-btn" class="btn-action primary-btn briefing-start-btn" type="button">
+                        START LEVEL ➔
+                    </button>
+                </div>
+            </div>
+
             <!-- Question Card (Main Visual Focus) -->
             <div id="question-card" class="question-card">
                 <div class="question-header">
@@ -360,8 +404,14 @@
                 <div id="build-complete-badge" class="complete-subtitle">BUILD COMPLETED!</div>
                 <p id="level-complete-message">You completed all questions in this level.</p>
                 <div id="build-complete-stats" class="final-stats"></div>
+                <div id="level-challenge-stats" class="level-challenge-stats"></div>
                 <div id="build-unlock-banner" class="unlock-banner"></div>
-                <button id="next-level-button" class="btn-action primary-btn next-level-btn">CONTINUE TO NEXT LEVEL ➔</button>
+                <div class="level-action-row">
+                    <button id="review-mistakes-level-btn" class="btn-action secondary-btn review-btn" type="button">
+                        🔍 REVIEW MISTAKES (<span id="level-mistakes-badge">0</span>)
+                    </button>
+                    <button id="next-level-button" class="btn-action primary-btn next-level-btn">CONTINUE TO NEXT LEVEL ➔</button>
+                </div>
             </div>
 
             <!-- Final Game Complete Card (All 3 Levels Done) -->
@@ -375,13 +425,34 @@
                 <p id="game-complete-summary">
                     Incredible achievement! You conquered all 3 levels, solved engineering challenges, and successfully built the House, Rocket, and Robot!
                 </p>
+
+                <!-- Performance Grade Banner -->
+                <div id="final-grade-box" class="final-grade-box"></div>
+
                 <div id="completed-builds-showcase" class="completed-builds-showcase">
                     <!-- Dynamic showcase cards generated from BUILDS in script.js -->
                 </div>
+
+                <!-- Detailed Performance Report -->
                 <div id="final-stats" class="final-stats"></div>
+
+                <!-- Challenge Type Breakdown -->
+                <div id="final-challenge-stats" class="final-challenge-stats"></div>
+
+                <!-- Personal Records Section -->
+                <div id="final-personal-records" class="final-personal-records"></div>
+
+                <!-- Achievements Showcase -->
                 <div id="final-achievements-showcase" class="final-achievements-showcase"></div>
+
+                <!-- Victory Actions Row -->
                 <div class="victory-actions">
-                    <button id="play-again-button" class="btn-action primary-btn play-again-btn">PLAY AGAIN (START FROM LEVEL 1) ↺</button>
+                    <button id="review-mistakes-final-btn" class="btn-action secondary-btn review-btn" type="button">
+                        🔍 REVIEW MISTAKES (<span id="final-mistakes-badge">0</span>)
+                    </button>
+                    <button id="play-again-button" class="btn-action primary-btn play-again-btn">
+                        PLAY AGAIN (START FROM LEVEL 1) ↺
+                    </button>
                 </div>
             </div>
 
@@ -399,6 +470,29 @@
 
         </div>
 
+    </div>
+
+    <!-- Mistake Review Modal (Learning & Review Feature) -->
+    <div id="mistake-review-modal" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="mistake-review-title">
+        <div class="modal-card review-modal-card">
+            <div class="modal-header">
+                <div class="modal-title-group">
+                    <span class="modal-badge">📖 LEARNING & REVIEW</span>
+                    <h3 id="mistake-review-title" class="modal-title">MISTAKE REVIEW</h3>
+                </div>
+                <button id="close-review-btn" class="modal-close-btn" type="button" aria-label="Close Review">✕</button>
+            </div>
+
+            <div id="review-content" class="review-content">
+                <!-- Dynamically populated -->
+            </div>
+
+            <div id="review-nav-bar" class="review-nav-bar">
+                <button id="prev-mistake-btn" class="btn-action secondary-btn nav-btn" type="button">← PREVIOUS</button>
+                <span id="mistake-counter-text" class="mistake-counter-text">1 of 1</span>
+                <button id="next-mistake-btn" class="btn-action secondary-btn nav-btn" type="button">NEXT →</button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
