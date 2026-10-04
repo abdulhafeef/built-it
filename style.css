@@ -3122,7 +3122,7 @@ body {
 }
 
 .achievement-card.locked {
-    opacity: 0.6;
+    opacity: 0.88;
 }
 
 .ach-icon-wrap {
@@ -3281,13 +3281,13 @@ body {
     flex-wrap: wrap;
 }
 
-/* Achievement Rarity Badges (V6.3) */
+/* Achievement Rarity Badges (V8 Mastery) */
 .ach-rarity-badge {
     font-size: 8.5px;
     font-weight: 800;
-    padding: 1px 6px;
+    padding: 1px 7px;
     border-radius: 4px;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.7px;
     text-transform: uppercase;
     display: inline-flex;
     align-items: center;
@@ -3295,56 +3295,132 @@ body {
 }
 
 .ach-rarity-badge.rarity-common {
-    background: rgba(148, 163, 184, 0.14);
-    color: #94a3b8;
-    border: 1px solid rgba(148, 163, 184, 0.28);
+    background: rgba(148, 163, 184, 0.16);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.35);
 }
 
 .ach-rarity-badge.rarity-uncommon {
-    background: rgba(56, 189, 248, 0.15);
-    color: #38bdf8;
-    border: 1px solid rgba(56, 189, 248, 0.35);
+    background: rgba(16, 185, 129, 0.16);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.45);
 }
 
 .ach-rarity-badge.rarity-rare {
-    background: rgba(168, 85, 247, 0.18);
-    color: #c084fc;
-    border: 1px solid rgba(168, 85, 247, 0.45);
-    box-shadow: 0 0 8px rgba(168, 85, 247, 0.2);
+    background: rgba(56, 189, 248, 0.18);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
 }
 
-.ach-rarity-badge.rarity-legendary {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(234, 179, 8, 0.15));
-    color: #fde047;
-    border: 1px solid rgba(245, 158, 11, 0.6);
-    box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+.ach-rarity-badge.rarity-epic {
+    background: rgba(168, 85, 247, 0.2);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.55);
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.25);
     font-weight: 900;
 }
 
-/* Card Rarity Styling Accents */
-.achievement-card.rarity-rare {
-    border-color: rgba(168, 85, 247, 0.25);
+.ach-rarity-badge.rarity-legendary {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(234, 179, 8, 0.2));
+    color: #fde047;
+    border: 1px solid rgba(245, 158, 11, 0.75);
+    box-shadow: 0 0 14px rgba(245, 158, 11, 0.4);
+    font-weight: 900;
 }
 
-.achievement-card.rarity-rare.unlocked {
-    border-color: rgba(168, 85, 247, 0.55);
-    box-shadow: 0 0 14px rgba(168, 85, 247, 0.2);
+/* Card Rarity Base Borders (Locked and Unlocked) */
+.achievement-card.rarity-common {
+    border-color: rgba(148, 163, 184, 0.2);
+}
+
+.achievement-card.rarity-uncommon {
+    border-color: rgba(16, 185, 129, 0.25);
+}
+
+.achievement-card.rarity-rare {
+    border-color: rgba(56, 189, 248, 0.28);
+}
+
+.achievement-card.rarity-epic {
+    border-color: rgba(168, 85, 247, 0.35);
 }
 
 .achievement-card.rarity-legendary {
-    border-color: rgba(245, 158, 11, 0.35);
+    border-color: rgba(245, 158, 11, 0.45);
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.65), rgba(245, 158, 11, 0.05));
+}
+
+/* Unlocked Vibrant State for each Rarity */
+.achievement-card.rarity-common.unlocked {
+    border-color: rgba(148, 163, 184, 0.55);
+    box-shadow: 0 0 12px rgba(148, 163, 184, 0.15);
+    background: rgba(30, 41, 59, 0.85);
+}
+
+.achievement-card.rarity-uncommon.unlocked {
+    border-color: rgba(16, 185, 129, 0.6);
+    box-shadow: 0 0 14px rgba(16, 185, 129, 0.22);
+    background: rgba(16, 185, 129, 0.08);
+}
+
+.achievement-card.rarity-rare.unlocked {
+    border-color: rgba(56, 189, 248, 0.65);
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+    background: rgba(56, 189, 248, 0.08);
+}
+
+.achievement-card.rarity-epic.unlocked {
+    border-color: rgba(168, 85, 247, 0.7);
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+    background: rgba(168, 85, 247, 0.09);
 }
 
 .achievement-card.rarity-legendary.unlocked {
-    border-color: rgba(245, 158, 11, 0.65);
-    box-shadow: 0 0 18px rgba(245, 158, 11, 0.28);
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(245, 158, 11, 0.08));
+    border-color: rgba(245, 158, 11, 0.85);
+    box-shadow: 0 0 24px rgba(245, 158, 11, 0.4);
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.85), rgba(245, 158, 11, 0.16));
+    animation: legendaryPulse 3s ease-in-out infinite;
+}
+
+@keyframes legendaryPulse {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(245, 158, 11, 0.35);
+    }
+    50% {
+        box-shadow: 0 0 28px rgba(245, 158, 11, 0.6);
+    }
+}
+
+/* Challenge Master Checklist Pills */
+.ach-challenge-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 5px;
+    margin-bottom: 2px;
+}
+
+.ach-type-pill {
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(148, 163, 184, 0.1);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    color: var(--text-muted);
+}
+
+.ach-type-pill.is-done {
+    background: rgba(16, 185, 129, 0.16);
+    border-color: rgba(16, 185, 129, 0.45);
+    color: #34d399;
 }
 
 .achievement-card.locked.secret {
-    background: rgba(15, 23, 42, 0.45);
+    background: rgba(15, 23, 42, 0.55);
     border-style: dashed;
-    border-color: rgba(245, 158, 11, 0.35);
+    border-color: rgba(245, 158, 11, 0.45);
 }
 
 .effect-last-spark .builder-stage {

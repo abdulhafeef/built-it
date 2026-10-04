@@ -982,6 +982,9 @@ let reachedOneLifeInLevel = false;                            // Whether player 
 let levelUsedHint = false;                                    // Whether hint was activated in current level attempt
 let levelFinal5Correct = true;                                // Whether questions in the final 5 were all answered correctly
 let levelFinal3Correct = true;                                // Whether questions in the final 3 were all answered correctly
+let postOneLifeConsecutiveCorrect = 0;                        // Consecutive correct answers after reaching 1 life in current level
+let bestNoHintLevelScore = 0;                                 // Best qualifying level score (out of 10) with 0 hints
+let flawlessRunBroken = false;                                // Set to true if any mistake or hint occurs anywhere in the world run
 
 // ==================================================
 // ACHIEVEMENT SYSTEM VERSION MIGRATION (V6.3)
@@ -1408,7 +1411,7 @@ const DailyStreakManager = {
 };
 
 // ==================================================
-// ACHIEVEMENTS & REWARDS DATA ARCHITECTURE (V6.2)
+// ACHIEVEMENTS & REWARDS DATA ARCHITECTURE (V8 MASTERY)
 // ==================================================
 
 const ACHIEVEMENTS = [
@@ -1416,6 +1419,7 @@ const ACHIEVEMENTS = [
         id: "first_build",
         title: "FIRST BUILD",
         rarity: "COMMON",
+        type: "Normal",
         hidden: false,
         icon: "🏠",
         description: "Your first structure is complete.",
@@ -1426,146 +1430,198 @@ const ACHIEVEMENTS = [
         }
     },
     {
-        id: "python_starter",
-        title: "PYTHON STARTER",
+        id: "sharp_mind",
+        title: "SHARP MIND",
         rarity: "UNCOMMON",
+        type: "Skill",
         hidden: false,
-        icon: "🌱",
-        description: "You\'ve built your foundation. Now prove you understand it.",
+        icon: "🧠",
+        description: "Complete any level with at least 9/10 correct and 0 hints used.",
         rewardId: "starter_world_glow",
-        condition: "Complete Level 1 with at least 8/10 correct and no hint used.",
+        condition: "Complete any level with at least 9 successful correct answers out of 10, using 0 hints. Wrong answers are allowed.",
         getProgressText: function (state) {
-            return (state.unlockedAchievements && state.unlockedAchievements.includes("python_starter")) ? "Completed" : "Not yet achieved";
-        }
-    },
-    {
-        id: "output_master",
-        title: "OUTPUT MASTER",
-        rarity: "UNCOMMON",
-        hidden: false,
-        icon: "⚡",
-        description: "Python does exactly what you expect... right?",
-        rewardId: "output_pulse",
-        condition: "Correctly answer at least 5 output challenges with at least 80% accuracy.",
-        getProgressText: function (state) {
-            return Math.min(5, state.outputCorrect || 0) + " / 5 correct";
-        }
-    },
-    {
-        id: "bug_hunter",
-        title: "BUG HUNTER",
-        rarity: "UNCOMMON",
-        hidden: false,
-        icon: "🔍",
-        description: "Something is wrong. Find it.",
-        rewardId: "bug_hunter_effect",
-        condition: "Correctly answer at least 5 bug challenges with at least 80% accuracy.",
-        getProgressText: function (state) {
-            return Math.min(5, state.bugCorrect || 0) + " / 5 correct";
-        }
-    },
-    {
-        id: "streak_builder",
-        title: "STREAK BUILDER",
-        rarity: "RARE",
-        hidden: false,
-        icon: "🔥",
-        description: "Don\'t break the chain.",
-        rewardId: "fire_streak",
-        condition: "Reach a 15-answer correct streak.",
-        getProgressText: function (state) {
-            return "Best: " + Math.min(15, state.bestStreak || 0) + " / 15";
+            if (state.unlockedAchievements && state.unlockedAchievements.includes("sharp_mind")) {
+                return "Completed";
+            }
+            const best = state.bestNoHintLevelScore || 0;
+            return "Best: " + best + " / 10 • Target: 9 / 10";
         }
     },
     {
         id: "perfect_builder",
         title: "PERFECT BUILDER",
         rarity: "RARE",
+        type: "Mastery",
         hidden: false,
         icon: "✨",
-        description: "Every answer. Every piece. Perfect.",
+        description: "Complete ONE entire level: 10/10 correct, 0 wrong answers, 0 hints, and 3/3 lives remaining.",
         rewardId: "perfect_build",
-        condition: "Complete ONE entire level: 10/10 correct, 0 hints used, and all 3 lives preserved.",
+        condition: "Complete an entire level: 10/10 correct, 0 wrong answers, 0 hints, 3/3 lives remaining.",
         getProgressText: function (state) {
-            return (state.unlockedAchievements && state.unlockedAchievements.includes("perfect_builder")) ? "Completed" : "Not yet achieved";
+            return (state.unlockedAchievements && state.unlockedAchievements.includes("perfect_builder")) ? "Completed" : "10/10 correct • 0 wrong • 0 hints • 3 lives";
+        }
+    },
+    {
+        id: "streak_builder",
+        title: "STREAK BUILDER",
+        rarity: "RARE",
+        type: "Streak",
+        hidden: false,
+        icon: "🔥",
+        description: "Reach 15 consecutive correct answers without breaking the chain.",
+        rewardId: "fire_streak",
+        condition: "Reach 15 consecutive correct answers.",
+        getProgressText: function (state) {
+            if (state.unlockedAchievements && state.unlockedAchievements.includes("streak_builder")) {
+                return "Completed";
+            }
+            return "Current best streak: " + Math.min(15, state.bestStreak || 0) + " / 15";
+        }
+    },
+    {
+        id: "bug_hunter",
+        title: "BUG HUNTER",
+        rarity: "RARE",
+        type: "Challenge Specialization",
+        hidden: false,
+        icon: "🔍",
+        description: "Correctly answer at least 8 bug challenges with >= 80% accuracy.",
+        rewardId: "bug_hunter_effect",
+        condition: "Correctly answer at least 8 BUG challenges AND achieve at least 80% accuracy across BUG challenges attempted.",
+        getProgressText: function (state) {
+            if (state.unlockedAchievements && state.unlockedAchievements.includes("bug_hunter")) {
+                return "Completed";
+            }
+            const correct = state.bugCorrect || 0;
+            const attempts = state.bugAttempts || 0;
+            const acc = attempts > 0 ? Math.round((correct / attempts) * 100) : 0;
+            return correct + " / 8 correct • " + acc + "% accuracy";
+        }
+    },
+    {
+        id: "output_master",
+        title: "OUTPUT MASTER",
+        rarity: "RARE",
+        type: "Challenge Specialization",
+        hidden: false,
+        icon: "⚡",
+        description: "Correctly answer at least 8 output challenges with >= 80% accuracy.",
+        rewardId: "output_pulse",
+        condition: "Correctly answer at least 8 OUTPUT / PREDICT-OUTPUT challenges AND achieve at least 80% accuracy across OUTPUT challenges attempted.",
+        getProgressText: function (state) {
+            if (state.unlockedAchievements && state.unlockedAchievements.includes("output_master")) {
+                return "Completed";
+            }
+            const correct = state.outputCorrect || 0;
+            const attempts = state.outputAttempts || 0;
+            const acc = attempts > 0 ? (Math.round((correct / attempts) * 1000) / 10) : 0;
+            return correct + " / 8 correct • " + acc + "% accuracy";
+        }
+    },
+    {
+        id: "challenge_master",
+        title: "CHALLENGE MASTER",
+        rarity: "EPIC",
+        type: "Variety",
+        hidden: false,
+        icon: "🎯",
+        description: "Correctly answer at least 5 questions from EACH of the 4 challenge types.",
+        rewardId: "explorer_glow",
+        condition: "Correctly answer at least 5 questions from EACH of the 4 challenge types (MCQ, OUTPUT, CODE-CHOICE, BUG).",
+        getProgressText: function (state) {
+            if (state.unlockedAchievements && state.unlockedAchievements.includes("challenge_master")) {
+                return "Completed";
+            }
+            const corr = state.correctByType || {};
+            const mcq = corr.mcq || 0;
+            const out = corr.output || 0;
+            const code = corr["code-choice"] || 0;
+            const bug = corr.bug || 0;
+            return "MCQ " + mcq + "/5" + (mcq >= 5 ? " ✓" : "") +
+                " • OUTPUT " + out + "/5" + (out >= 5 ? " ✓" : "") +
+                " • CODE " + code + "/5" + (code >= 5 ? " ✓" : "") +
+                " • BUG " + bug + "/5" + (bug >= 5 ? " ✓" : "");
         }
     },
     {
         id: "clutch_builder",
         title: "CLUTCH BUILDER",
-        rarity: "RARE",
+        rarity: "EPIC",
+        type: "Pressure",
         hidden: false,
         icon: "🛡️",
-        description: "One life left. Five questions. Finish the build.",
+        description: "Reach 1 life, answer 5 consecutive correct after reaching 1 life, and complete the level.",
         rewardId: "clutch_build_effect",
-        condition: "Reach 1 life, correctly answer the final 5 questions, and complete the level.",
+        condition: "During a single level: reach 1 life remaining, answer 5 consecutive questions correctly after reaching 1 life, and complete that level.",
         getProgressText: function (state) {
-            return (state.unlockedAchievements && state.unlockedAchievements.includes("clutch_builder")) ? "Completed" : "Not yet achieved";
-        }
-    },
-    {
-        id: "explorer",
-        title: "EXPLORER",
-        rarity: "UNCOMMON",
-        hidden: false,
-        icon: "🧭",
-        description: "Different challenges. Same goal: become better at Python.",
-        rewardId: "explorer_glow",
-        condition: "Complete at least 2 challenge types with >= 80% accuracy and at least 3 correct each.",
-        getProgressText: function (state) {
-            return (state.unlockedAchievements && state.unlockedAchievements.includes("explorer")) ? "Completed" : "Not yet achieved";
+            return (state.unlockedAchievements && state.unlockedAchievements.includes("clutch_builder")) ? "Completed" : "Reach 1 life, then 5 correct to finish";
         }
     },
     {
         id: "world_builder",
         title: "WORLD BUILDER",
-        rarity: "UNCOMMON",
+        rarity: "EPIC",
+        type: "Completion + Efficiency",
         hidden: false,
         icon: "🌍",
-        description: "Three structures. One growing world.",
+        description: "Complete all 3 levels and build at least 27 of 30 possible pieces.",
         rewardId: "world_builder_effect",
-        condition: "Complete all 3 current levels with at least 75% of all possible pieces built (>= 23 pieces).",
+        condition: "Complete all 3 levels AND build at least 27 of the 30 possible pieces.",
         getProgressText: function (state) {
-            return Math.min(23, state.totalPiecesBuilt || 0) + " / 23 pieces";
+            if (state.unlockedAchievements && state.unlockedAchievements.includes("world_builder")) {
+                return "Completed";
+            }
+            return (state.totalPiecesBuilt || 0) + " / 27 pieces";
         }
     },
     {
         id: "python_master",
         title: "PYTHON MASTER",
-        rarity: "RARE",
+        rarity: "EPIC",
+        type: "Overall Skill",
         hidden: false,
         icon: "👑",
-        description: "Strong fundamentals across the whole world.",
+        description: "Complete all 3 levels with >= 28/30 correct and no individual level below 9.",
         rewardId: "python_master_aura",
-        condition: "Across all 3 levels: at least 27/30 correct, >= 90% accuracy, and >= 8 correct in every level.",
+        condition: "Across all 3 levels: at least 28 successful correct answers out of 30 AND no individual level may have fewer than 9 correct answers.",
         getProgressText: function (state) {
-            return Math.min(27, state.totalCorrectAnswers || 0) + " / 27 correct";
+            if (state.unlockedAchievements && state.unlockedAchievements.includes("python_master")) {
+                return "Completed";
+            }
+            const history = state.levelCorrectHistory || [];
+            const sum = history.reduce(function (a, b) { return a + b; }, 0);
+            return Math.min(28, sum) + " / 28 correct";
         }
     },
     {
         id: "flawless_world",
         title: "FLAWLESS WORLD",
         rarity: "LEGENDARY",
+        type: "Ultimate Mastery",
         hidden: false,
         icon: "🏆",
-        description: "Every answer. Every level. Every build. Flawless.",
+        description: "Complete all 3 levels with 30/30 correct, 0 wrong answers, 0 hints used, and 3/3 lives preserved throughout.",
         rewardId: "golden_world",
-        condition: "Complete ALL 3 levels with 10/10 correct, 0 hints used, and 3 lives preserved in every level.",
+        condition: "Complete all 3 levels with: 30 / 30 correct, 0 wrong answers, 0 hints used, 3 / 3 lives remaining throughout every level.",
         getProgressText: function (state) {
-            return (state.unlockedAchievements && state.unlockedAchievements.includes("flawless_world")) ? "Completed" : "Not yet achieved";
+            if (state.unlockedAchievements && state.unlockedAchievements.includes("flawless_world")) {
+                return "Completed";
+            }
+            return (state.flawlessLevelsCount || 0) + " / 3 flawless levels (30/30, 0 hints)";
         }
     },
     {
         id: "secret_last_spark",
         title: "THE LAST SPARK",
         rarity: "LEGENDARY",
+        type: "SECRET",
         hidden: true,
         icon: "⚡",
-        description: "Even after using your last bit of help, you finished the build.",
+        description: "Survive with 1 life after using a hint and answer the final 3 questions consecutively to complete the level.",
         rewardId: "last_spark_effect",
-        condition: "Reach 1 life, use a hint earlier, and correctly answer the final 3 questions without another mistake.",
+        condition: "During a single level: reach 1 life, use a hint earlier in that level, correctly answer the final 3 required questions consecutively with no additional mistakes, and complete the level.",
         getProgressText: function (state) {
-            return (state.unlockedAchievements && state.unlockedAchievements.includes("secret_last_spark")) ? "Completed" : "???";
+            return (state.unlockedAchievements && state.unlockedAchievements.includes("secret_last_spark")) ? "Completed" : "Secret achievement";
         }
     }
 ];
@@ -1739,7 +1795,7 @@ function checkAchievements(trigger, payload) {
     }, 0);
 
     // --------------------------------------------------
-    // 5. STREAK BUILDER (15 consecutive correct answers)
+    // 4. STREAK BUILDER (15 consecutive correct answers)
     // --------------------------------------------------
     const currentStreakVal = Math.max(streak, bestStreak);
     if (currentStreakVal >= 15) {
@@ -1747,33 +1803,28 @@ function checkAchievements(trigger, payload) {
     }
 
     // --------------------------------------------------
-    // 3. OUTPUT MASTER (>= 5 correct output challenges AND >= 80% accuracy)
+    // 5. BUG HUNTER (>= 8 correct bug challenges AND >= 80% accuracy)
     // --------------------------------------------------
-    if (outputCorrect >= 5 && outputAttempts > 0 && (outputCorrect / outputAttempts) >= 0.8) {
-        unlockAchievement("output_master");
-    }
-
-    // --------------------------------------------------
-    // 4. BUG HUNTER (>= 5 correct bug challenges AND >= 80% accuracy)
-    // --------------------------------------------------
-    if (bugCorrect >= 5 && bugAttempts > 0 && (bugCorrect / bugAttempts) >= 0.8) {
+    if (bugCorrect >= 8 && bugAttempts > 0 && (bugCorrect / bugAttempts) >= 0.8) {
         unlockAchievement("bug_hunter");
     }
 
     // --------------------------------------------------
-    // 8. EXPLORER (at least 2 challenge types with >= 3 correct and >= 80% accuracy each)
+    // 6. OUTPUT MASTER (>= 8 correct output challenges AND >= 80% accuracy)
     // --------------------------------------------------
-    const challengeTypes = ["mcq", "output", "code-choice", "bug"];
-    let qualifyingCount = 0;
-    challengeTypes.forEach(function (t) {
-        const att = attemptsByType[t] || 0;
-        const corr = correctByType[t] || 0;
-        if (corr >= 3 && att > 0 && (corr / att) >= 0.8) {
-            qualifyingCount++;
-        }
-    });
-    if (qualifyingCount >= 2) {
-        unlockAchievement("explorer");
+    if (outputCorrect >= 8 && outputAttempts > 0 && (outputCorrect / outputAttempts) >= 0.8) {
+        unlockAchievement("output_master");
+    }
+
+    // --------------------------------------------------
+    // 7. CHALLENGE MASTER (>= 5 correct from EACH of the 4 challenge types)
+    // --------------------------------------------------
+    const mcqDone = (correctByType["mcq"] || 0) >= 5;
+    const outputDone = (correctByType["output"] || 0) >= 5;
+    const codeDone = (correctByType["code-choice"] || 0) >= 5;
+    const bugDone = (correctByType["bug"] || 0) >= 5;
+    if (mcqDone && outputDone && codeDone && bugDone) {
+        unlockAchievement("challenge_master");
     }
 
     // --------------------------------------------------
@@ -1787,59 +1838,61 @@ function checkAchievements(trigger, payload) {
             unlockAchievement("first_build");
         }
 
-        // 2. PYTHON STARTER: Complete Level 1 with at least 8/10 correct and no hint used
-        if (buildIdx === 0 && payload.levelCorrect >= 8 && payload.noHint) {
-            unlockAchievement("python_starter");
+        // 2. SHARP MIND: Complete any level with >= 9/10 correct and 0 hints used
+        if (payload.noHint && payload.levelCorrect >= 9) {
+            unlockAchievement("sharp_mind");
         }
 
-        // 6. PERFECT BUILDER: Complete ONE entire level: 10/10 correct, 0 hints used, and all 3 lives preserved (0 mistakes)
+        // 3. PERFECT BUILDER: Complete ONE entire level: 10/10 correct, 0 wrong answers, 0 hints, and 3/3 lives remaining
         if (payload.isPerfect && payload.noHint && lives === 3) {
             unlockAchievement("perfect_builder");
         }
 
-        // 7. CLUTCH BUILDER: During level reached 1 life, answered final 5 questions correctly, completed level
-        if (minLivesInLevel === 1 && payload.final5Correct && lives >= 1) {
+        // 8. CLUTCH BUILDER: During single level: reached 1 life, answered 5 consecutive correct after reaching 1 life, completed level
+        if (reachedOneLifeInLevel && lives === 1 && postOneLifeConsecutiveCorrect >= 5) {
             unlockAchievement("clutch_builder");
         }
 
         // 12. SECRET: THE LAST SPARK
-        // Reached 1 life, used hint earlier, answered final 3 correctly without another mistake (lives === 1)
-        if (minLivesInLevel === 1 && payload.usedHint && payload.final3Correct && lives === 1) {
+        // Reached 1 life, used hint earlier in same level, answered final 3 required questions consecutively with no additional mistakes, completed level
+        if (reachedOneLifeInLevel && lives === 1 && payload.usedHint && postOneLifeConsecutiveCorrect >= 3) {
             unlockAchievement("secret_last_spark");
         }
 
-        // 9. WORLD BUILDER: Complete all 3 current levels AND at least 75% pieces built (>= 23 pieces)
+        // 9. WORLD BUILDER: Complete all 3 current levels AND build at least 27 of 30 pieces
         const allCompleted = (completedLevels.length >= BUILDS.length && completedLevels.every(Boolean));
-        const piecesThreshold = Math.ceil(totalPossiblePieces * 0.75); // 23 for 30
-        if (allCompleted && totalPiecesBuilt >= piecesThreshold) {
+        if (allCompleted && totalPiecesBuilt >= 27) {
             unlockAchievement("world_builder");
         }
 
-        // 10. PYTHON MASTER: Across current 3 levels: >= 27/30 correct, >= 90% accuracy, and >= 8 correct in every level
-        const accuracyThreshold = totalQuestionsAttempted > 0 ? (totalCorrectAnswers / totalQuestionsAttempted) : 0;
-        const allLevelsMin8 = (levelCorrectHistory.length >= BUILDS.length && levelCorrectHistory.every(function (c) { return c >= 8; }));
-        if (allCompleted && totalCorrectAnswers >= 27 && accuracyThreshold >= 0.9 && allLevelsMin8) {
-            unlockAchievement("python_master");
+        // 10. PYTHON MASTER: Across all 3 levels: >= 28/30 correct AND no individual level < 9 correct
+        if (allCompleted && levelCorrectHistory.length >= BUILDS.length) {
+            const sumScores = levelCorrectHistory.slice(0, BUILDS.length).reduce(function (sum, score) { return sum + score; }, 0);
+            const allLevelsMin9 = levelCorrectHistory.slice(0, BUILDS.length).every(function (score) { return score >= 9; });
+            if (sumScores >= 28 && allLevelsMin9) {
+                unlockAchievement("python_master");
+            }
         }
 
-        // 11. FLAWLESS WORLD: Complete ALL 3 levels with 10/10 correct, 0 hints, and 3 lives preserved in each
-        if (flawlessLevels.size >= BUILDS.length) {
+        // 11. FLAWLESS WORLD: Complete ALL 3 levels with 30/30 correct, 0 wrong answers, 0 hints, and 3/3 lives in every level
+        if (allCompleted && !flawlessRunBroken && flawlessLevels.size >= BUILDS.length) {
             unlockAchievement("flawless_world");
         }
     }
 
     if (trigger === "game_complete") {
         const allCompleted = (completedLevels.length >= BUILDS.length && completedLevels.every(Boolean));
-        const piecesThreshold = Math.ceil(totalPossiblePieces * 0.75);
-        if (allCompleted && totalPiecesBuilt >= piecesThreshold) {
+        if (allCompleted && totalPiecesBuilt >= 27) {
             unlockAchievement("world_builder");
         }
-        const accuracyThreshold = totalQuestionsAttempted > 0 ? (totalCorrectAnswers / totalQuestionsAttempted) : 0;
-        const allLevelsMin8 = (levelCorrectHistory.length >= BUILDS.length && levelCorrectHistory.every(function (c) { return c >= 8; }));
-        if (allCompleted && totalCorrectAnswers >= 27 && accuracyThreshold >= 0.9 && allLevelsMin8) {
-            unlockAchievement("python_master");
+        if (allCompleted && levelCorrectHistory.length >= BUILDS.length) {
+            const sumScores = levelCorrectHistory.slice(0, BUILDS.length).reduce(function (sum, score) { return sum + score; }, 0);
+            const allLevelsMin9 = levelCorrectHistory.slice(0, BUILDS.length).every(function (score) { return score >= 9; });
+            if (sumScores >= 28 && allLevelsMin9) {
+                unlockAchievement("python_master");
+            }
         }
-        if (flawlessLevels.size >= BUILDS.length) {
+        if (allCompleted && !flawlessRunBroken && flawlessLevels.size >= BUILDS.length) {
             unlockAchievement("flawless_world");
         }
     }
@@ -1867,6 +1920,9 @@ function renderAchievementsGrid() {
         attemptsByType: attemptsByType,
         correctByType: correctByType,
         completedLevels: completedLevels,
+        levelCorrectHistory: levelCorrectHistory.slice(),
+        bestNoHintLevelScore: bestNoHintLevelScore,
+        flawlessLevelsCount: flawlessLevels.size,
         unlockedAchievements: Array.from(unlockedAchievements)
     };
 
@@ -1893,30 +1949,47 @@ function renderAchievementsGrid() {
                     '</div>' +
                 '</div>';
         } else if (ach.hidden) {
+            // Secret achievement locked view: masked title with spark, ??? description, secret badge
             html +=
                 '<div class="achievement-card locked secret ' + rarityClass + '" id="ach-card-' + ach.id + '">' +
                     '<div class="ach-icon-wrap">🔒</div>' +
                     '<div class="ach-info">' +
                         '<div class="ach-title-row">' +
-                            '<span class="ach-name">???</span>' +
+                            '<span class="ach-name">⚡ THE LAST SPARK</span>' +
                             '<span class="ach-status-badge">SECRET</span>' +
                         '</div>' +
                         '<div class="ach-badges-row">' +
                             '<span class="ach-rarity-badge ' + rarityClass + '">' + escapeHtml(ach.rarity) + '</span>' +
                         '</div>' +
-                        '<span class="ach-desc">Secret achievement. Play to discover.</span>' +
-                        '<span class="ach-reward-tag">🎁 Mystery Reward</span>' +
+                        '<span class="ach-desc">???</span>' +
+                        '<div class="ach-progress-row"><span class="ach-progress-badge secret-pill">🔒 Secret achievement</span></div>' +
+                        (reward ? '<span class="ach-reward-tag">🎁 Reward: ' + escapeHtml(reward.title) + '</span>' : '') +
                     '</div>' +
                 '</div>';
         } else {
-            const progressText = (typeof ach.getProgressText === "function") ? ach.getProgressText(currentState) : "";
-            const isProgressDone = (progressText === "Completed");
-            const isProgressPending = (!progressText || progressText === "Not yet achieved");
             let progressHtml = "";
-            if (!isProgressPending && !isProgressDone) {
-                progressHtml = '<div class="ach-progress-row"><span class="ach-progress-badge">📊 ' + escapeHtml(progressText) + '</span></div>';
-            } else if (isProgressPending) {
-                progressHtml = '<div class="ach-progress-row"><span class="ach-progress-badge ach-status-pill">Not yet achieved</span></div>';
+            if (ach.id === "challenge_master") {
+                const corr = currentState.correctByType || {};
+                const mcq = corr.mcq || 0;
+                const out = corr.output || 0;
+                const code = corr["code-choice"] || 0;
+                const bug = corr.bug || 0;
+                progressHtml =
+                    '<div class="ach-challenge-grid">' +
+                        '<span class="ach-type-pill' + (mcq >= 5 ? ' is-done' : '') + '">MCQ ' + mcq + '/5' + (mcq >= 5 ? ' ✓' : '') + '</span>' +
+                        '<span class="ach-type-pill' + (out >= 5 ? ' is-done' : '') + '">OUTPUT ' + out + '/5' + (out >= 5 ? ' ✓' : '') + '</span>' +
+                        '<span class="ach-type-pill' + (code >= 5 ? ' is-done' : '') + '">CODE ' + code + '/5' + (code >= 5 ? ' ✓' : '') + '</span>' +
+                        '<span class="ach-type-pill' + (bug >= 5 ? ' is-done' : '') + '">BUG ' + bug + '/5' + (bug >= 5 ? ' ✓' : '') + '</span>' +
+                    '</div>';
+            } else {
+                const progressText = (typeof ach.getProgressText === "function") ? ach.getProgressText(currentState) : "";
+                const isProgressDone = (progressText === "Completed");
+                const isProgressPending = (!progressText || progressText === "Not yet achieved");
+                if (!isProgressPending && !isProgressDone) {
+                    progressHtml = '<div class="ach-progress-row"><span class="ach-progress-badge">📊 ' + escapeHtml(progressText) + '</span></div>';
+                } else if (isProgressPending) {
+                    progressHtml = '<div class="ach-progress-row"><span class="ach-progress-badge ach-status-pill">Not yet achieved</span></div>';
+                }
             }
 
             html +=
@@ -2278,6 +2351,7 @@ hintButton.addEventListener("click", function () {
         hintsRemaining = 0;
         hintUsedForCurrentQuestion = true;
         levelUsedHint = true;
+        flawlessRunBroken = true;
         updateHintDisplay();
     }
 
@@ -2502,6 +2576,10 @@ function handleAnswer(selectedIndex) {
         }
         streakDisplay.textContent = "🔥 " + streak;
 
+        if (lives === 1 && reachedOneLifeInLevel) {
+            postOneLifeConsecutiveCorrect++;
+        }
+
         // Animate streak counter
         const streakStat = document.querySelector(".stat-streak") || (streakDisplay ? streakDisplay.parentElement : null);
         if (streakStat) {
@@ -2556,9 +2634,15 @@ function handleAnswer(selectedIndex) {
         // Wrong answer: -1 life on current level, reset streak, build NOTHING, 0 XP
         // Question attempt is discarded; successfulCorrectAnswers DOES NOT INCREASE.
         levelMistakes++;
+        flawlessRunBroken = true;
         lives = Math.max(0, lives - 1);
         minLivesInLevel = Math.min(minLivesInLevel, lives);
-        if (lives === 1) reachedOneLifeInLevel = true;
+        if (lives === 1) {
+            reachedOneLifeInLevel = true;
+            postOneLifeConsecutiveCorrect = 0;
+        } else {
+            postOneLifeConsecutiveCorrect = 0;
+        }
         streak = 0;
         if (successfulCorrectAnswers >= 5) {
             levelFinal5Correct = false;
@@ -2654,14 +2738,17 @@ function completeCurrentLevel() {
     // Save checkpoint XP permanently
     checkpointXp = totalXp;
 
-    const levelCorrect = 10;
-    levelCorrectHistory[currentBuildIndex] = 10 - levelMistakes;
+    const levelScore = Math.max(0, 10 - levelMistakes);
+    levelCorrectHistory[currentBuildIndex] = levelScore;
 
     // Check if level was completed with 0 mistakes and 3 lives -> Perfect Level
     const isPerfect = (levelMistakes === 0 && lives === 3);
     const noHint = !levelUsedHint;
     if (isPerfect && noHint && lives === 3) {
         flawlessLevels.add(currentBuildIndex);
+    }
+    if (noHint && levelScore > bestNoHintLevelScore) {
+        bestNoHintLevelScore = levelScore;
     }
     if (perfectLevelBanner) {
         perfectLevelBanner.style.display = isPerfect ? "inline-block" : "none";
@@ -2676,12 +2763,14 @@ function completeCurrentLevel() {
     // Check level complete achievements
     checkAchievements("level_complete", {
         buildIndex: currentBuildIndex,
-        levelCorrect: levelCorrectHistory[currentBuildIndex],
+        levelCorrect: levelScore,
         isPerfect: isPerfect,
         noHint: noHint,
         usedHint: levelUsedHint,
         final5Correct: levelFinal5Correct,
-        final3Correct: levelFinal3Correct
+        final3Correct: levelFinal3Correct,
+        postOneLifeConsecutiveCorrect: postOneLifeConsecutiveCorrect,
+        reachedOneLifeInLevel: reachedOneLifeInLevel
     });
 
     updateBuildWorldBar();
@@ -2754,6 +2843,7 @@ nextLevelButton.addEventListener("click", function () {
     levelUsedHint = false;
     levelFinal5Correct = true;
     levelFinal3Correct = true;
+    postOneLifeConsecutiveCorrect = 0;
 
     updateLivesDisplay();
     updateHintDisplay();
@@ -2814,6 +2904,8 @@ tryAgainButton.addEventListener("click", function () {
     levelUsedHint = false;
     levelFinal5Correct = true;
     levelFinal3Correct = true;
+    postOneLifeConsecutiveCorrect = 0;
+    flawlessRunBroken = true;
     buildPieces[currentBuildIndex] = 0; // Reset only this level's build pieces
     lives = 3;                         // Fresh 3 lives for retry!
     hintsRemaining = 1;                // Reset hints for retry (strictly 1 hint)!
@@ -2964,22 +3056,17 @@ function startNewGame() {
     levelMistakes = 0;
     sessionQuestionsAnswered = 0;
     lastUnlockedBuildIndex = -1;
-    unlockedAchievements.clear();
-    unlockedRewards.clear();
 
-    // Reset extended V6.2 tracking counters
-    totalCorrectAnswers = 0;
-    correctOutputChallenges = 0;
-    correctBugChallenges = 0;
-    correctCodeChoiceChallenges = 0;
-    completedTypes.clear();
-    streakEncounteredTypes.clear();
-    perfectNoHintLevels.clear();
+    // Reset single-run tracking counters
     minLivesInLevel = 3;
     reachedOneLifeInLevel = false;
     levelUsedHint = false;
     levelFinal5Correct = true;
     levelFinal3Correct = true;
+    postOneLifeConsecutiveCorrect = 0;
+    flawlessRunBroken = false;
+    flawlessLevels.clear();
+    levelCorrectHistory.length = 0;
 
     // Clear cosmetic reward classes from body
     document.body.classList.remove(
@@ -3009,6 +3096,13 @@ function startNewGame() {
         "effect-unbreakable",
         "effect-celebration"
     );
+
+    // Re-apply active cosmetic classes for rewards unlocked in this session
+    unlockedRewards.forEach(function (rid) {
+        if (REWARDS[rid] && REWARDS[rid].cssClass) {
+            document.body.classList.add(REWARDS[rid].cssClass);
+        }
+    });
 
     buildPieces = new Array(BUILDS.length).fill(0);
     completedLevels = new Array(BUILDS.length).fill(false);
@@ -3162,6 +3256,9 @@ window.getGameState = function () {
         levelUsedHint: levelUsedHint,
         levelFinal5Correct: levelFinal5Correct,
         levelFinal3Correct: levelFinal3Correct,
+        postOneLifeConsecutiveCorrect: postOneLifeConsecutiveCorrect,
+        bestNoHintLevelScore: bestNoHintLevelScore,
+        flawlessRunBroken: flawlessRunBroken,
         unlockedAchievements: Array.from(unlockedAchievements),
         unlockedRewards: Array.from(unlockedRewards)
     };
@@ -3217,6 +3314,9 @@ window.setGameTestState = function (state) {
     if (state.levelUsedHint !== undefined) levelUsedHint = state.levelUsedHint;
     if (state.levelFinal5Correct !== undefined) levelFinal5Correct = state.levelFinal5Correct;
     if (state.levelFinal3Correct !== undefined) levelFinal3Correct = state.levelFinal3Correct;
+    if (state.postOneLifeConsecutiveCorrect !== undefined) postOneLifeConsecutiveCorrect = state.postOneLifeConsecutiveCorrect;
+    if (state.bestNoHintLevelScore !== undefined) bestNoHintLevelScore = state.bestNoHintLevelScore;
+    if (state.flawlessRunBroken !== undefined) flawlessRunBroken = state.flawlessRunBroken;
     if (state.buildPieces !== undefined) buildPieces = state.buildPieces.slice();
     if (state.completedLevels !== undefined) completedLevels = state.completedLevels.slice();
     if (state.unlockedAchievements !== undefined) {
