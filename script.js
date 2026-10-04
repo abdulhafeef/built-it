@@ -2073,6 +2073,17 @@ function updateBuilding(newlyBuiltIndex) {
     buildProgress.textContent = build.icon + " " + piecesBuilt + " / " + totalPieces + " (" + percent + "%)";
     buildProgressBar.style.width = percent + "%";
 
+    // PHASE 3: Update segmented 10-piece progression pips
+    const pips = document.querySelectorAll("#progress-pips-track .pip");
+    if (pips && pips.length > 0) {
+        pips.forEach(function (pip, index) {
+            const isFilled = index < piecesBuilt;
+            const isTarget = index === piecesBuilt && piecesBuilt < totalPieces;
+            pip.classList.toggle("filled", isFilled);
+            pip.classList.toggle("target", isTarget);
+        });
+    }
+
     // Build animation feedback on newly added piece
     if (newlyBuiltIndex >= 0) {
         const stage = builderStage || document.getElementById("builder-stage");
@@ -2378,6 +2389,12 @@ function selectLevelFromMap(targetIndex) {
     if (levelCompleteCard) levelCompleteCard.style.display = "none";
     if (gameCompleteCard) gameCompleteCard.style.display = "none";
 
+    // PHASE 10: Zero-lives safety guard: if level failed (lives === 0), initialize clean retry state
+    if (lives === 0 || (currentBuildIndex === targetIndex && lives <= 0)) {
+        resetLevelForRetry(targetIndex);
+        return;
+    }
+
     // If switching to an unlocked level that isn't the active level, OR if current level was already completed:
     if (currentBuildIndex !== targetIndex || completedLevels[currentBuildIndex]) {
         currentBuildIndex = targetIndex;
@@ -2425,7 +2442,7 @@ function selectLevelFromMap(targetIndex) {
     } else {
         if (missionBriefingCard) missionBriefingCard.style.display = "none";
         if (questionCard) questionCard.style.display = "block";
-        if (!questionText.textContent || questionText.textContent === "Loading question...") {
+        if (!currentQuestion || !questionText.textContent || questionText.textContent === "Loading question...") {
             loadQuestion();
         }
     }
@@ -2435,11 +2452,88 @@ function enterGameplayFromMap(targetIndex) {
     selectLevelFromMap(targetIndex !== undefined ? targetIndex : currentBuildIndex);
 }
 
-function openWorldMap() {
+// PHASE 9: Contextual World Map origin tracking
+let worldMapOrigin = "title"; // "game" or "title"
+
+function updateMapBackButton() {
+    if (!mapBackBtn) return;
+    if (worldMapOrigin === "game") {
+        mapBackBtn.textContent = "← BACK TO GAME";
+    } else {
+        mapBackBtn.textContent = "← TITLE SCREEN";
+    }
+}
+
+function openWorldMap(origin) {
+    if (origin) {
+        worldMapOrigin = origin;
+    } else if (gameScreen && gameScreen.style.display !== "none") {
+        worldMapOrigin = "game";
+    } else {
+        worldMapOrigin = "title";
+    }
+    updateMapBackButton();
     if (gameScreen) gameScreen.style.display = "none";
     if (startScreen) startScreen.style.display = "none";
     if (worldMapScreen) worldMapScreen.style.display = "block";
     renderWorldMap();
+}
+
+// PHASE 10: Clean level retry helper (used by both TRY AGAIN button and World Map retry)
+function resetLevelForRetry(levelIndex) {
+    if (levelIndex === undefined) levelIndex = currentBuildIndex;
+    currentBuildIndex = levelIndex;
+    successfulCorrectAnswers = 0;
+    currentQuestionIndex = 0;
+    currentQuestion = null;
+    seenQuestionIds.clear();
+    questionAttempts = 0;
+    levelMistakes = 0;
+    minLivesInLevel = 3;
+    reachedOneLifeInLevel = false;
+    levelUsedHint = false;
+    levelFinal5Correct = true;
+    levelFinal3Correct = true;
+    postOneLifeConsecutiveCorrect = 0;
+    flawlessRunBroken = true;
+    buildPieces[currentBuildIndex] = 0; // Reset only this level's build pieces
+    lives = 3;                         // Fresh 3 lives for retry
+    hintsRemaining = 1;                // Reset hints for retry (strictly 1 hint)
+    hintUsedForCurrentQuestion = false;
+    isAnswerLocked = false;
+    streak = 0;
+    totalXp = checkpointXp;            // Restore XP from previously completed checkpoints
+
+    // Reset level challenge stats and clear mistakes from this failed attempt
+    Object.keys(levelAttemptsByType).forEach(function (k) { levelAttemptsByType[k] = 0; });
+    Object.keys(levelCorrectByType).forEach(function (k) { levelCorrectByType[k] = 0; });
+    runMistakes = runMistakes.filter(function (m) {
+        return m.levelIndex !== currentBuildIndex;
+    });
+
+    // Update displays
+    scoreDisplay.textContent = "⭐ " + totalXp + " XP";
+    streakDisplay.textContent = "🔥 0";
+    updateLivesDisplay();
+    updateHintDisplay();
+
+    // Reset visual pieces for only the current level scene
+    if (BUILDS[currentBuildIndex] && BUILDS[currentBuildIndex].pieces) {
+        BUILDS[currentBuildIndex].pieces.forEach(function (p) {
+            p.classList.remove("built");
+            p.classList.remove("piece-pop");
+        });
+    }
+
+    // Reset UI visibility & show Mission Briefing for level restart
+    if (gameOverCard) gameOverCard.style.display = "none";
+    if (tryAgainButton) tryAgainButton.style.display = "none";
+
+    switchScene(currentBuildIndex);
+    updateBuildWorldBar();
+    updateBuilding(-1);
+    loadQuestion(true);
+    showMissionBriefing(currentBuildIndex);
 }
 
 // ==================================================
@@ -2574,29 +2668,39 @@ function loadQuestion(forceNew) {
     // Header level indicator & build progress (strictly tracking successful correct answers)
     levelIndicator.textContent = build.topicName;
     levelIndicator.className = "level-indicator level-" + build.levelNumber;
-    questionProgress.textContent = "BUILD PROGRESS: " + successfulCorrectAnswers + " / 10";
+    if (questionProgress) {
+        questionProgress.textContent = "BUILD PROGRESS: " + successfulCorrectAnswers + " / 10";
+    }
 
-    // Question number badge & difficulty badge
-    questionNumber.textContent = "BUILD PROGRESS: " + successfulCorrectAnswers + " / 10 (" + build.name + ")";
+    // PHASE 4: Question number badge communicates next target piece
+    const nextPiece = Math.min(10, successfulCorrectAnswers + 1);
+    questionNumber.textContent = "🎯 PIECE " + nextPiece + " OF 10";
     difficultyBadge.textContent = question.difficulty || "VERY EASY";
     difficultyBadge.className = "difficulty-badge badge-easy";
 
-    // Dynamic challenge type badge
+    // PHASE 5: Dynamic challenge type badge (MCQ, OUTPUT, CODE-CHOICE, BUG)
     const qType = question.type || "mcq";
     if (challengeTypeBadge) {
         if (qType === "output") {
-            challengeTypeBadge.textContent = "⚡ PREDICT OUTPUT";
+            challengeTypeBadge.textContent = "⚡ OUTPUT";
             challengeTypeBadge.className = "challenge-type-badge type-output";
         } else if (qType === "code-choice") {
-            challengeTypeBadge.textContent = "💻 CODE CHOICE";
+            challengeTypeBadge.textContent = "💻 CODE-CHOICE";
             challengeTypeBadge.className = "challenge-type-badge type-code-choice";
         } else if (qType === "bug") {
-            challengeTypeBadge.textContent = "🐛 FIND THE BUG";
+            challengeTypeBadge.textContent = "🔍 BUG";
             challengeTypeBadge.className = "challenge-type-badge type-bug";
         } else {
-            challengeTypeBadge.textContent = "🎯 CONCEPT";
+            challengeTypeBadge.textContent = "🎯 MCQ";
             challengeTypeBadge.className = "challenge-type-badge type-mcq";
         }
+    }
+
+    // PHASE 7: Subtle question entrance animation
+    if (questionCard) {
+        questionCard.classList.remove("question-card-enter");
+        void questionCard.offsetWidth;
+        questionCard.classList.add("question-card-enter");
     }
 
     // Question text
@@ -2620,11 +2724,15 @@ function loadQuestion(forceNew) {
         codeSnippetBox.style.display = "none";
     }
 
-    // Populate answer buttons with distinct option badges
+    // PHASE 1: Populate answer buttons with distinct keycaps [1] [A]
     const prefixes = ["A", "B", "C", "D"];
+    const nums = ["1", "2", "3", "4"];
     const isCodeChoice = (qType === "code-choice");
     answerButtons.forEach(function (button, index) {
-        button.innerHTML = '<span class="ans-badge">' + prefixes[index] + '</span><span class="ans-text">' + escapeHtml(question.options[index]) + '</span>';
+        button.innerHTML = '<span class="ans-badge">' +
+            '<span class="keycap-num">[' + nums[index] + ']</span> ' +
+            '<span class="keycap-letter">[' + prefixes[index] + ']</span>' +
+            '</span><span class="ans-text">' + escapeHtml(question.options[index]) + '</span>';
         button.disabled = false;
         button.style.display = "flex";
         button.className = isCodeChoice ? "answer-btn code-choice-btn" : "answer-btn";
@@ -2849,6 +2957,23 @@ function handleAnswer(selectedIndex) {
 
     resultBox.style.display = "block";
     updateBuildWorldBar();
+
+    // PHASE 8: Answer feedback auto-scroll on small screens
+    try {
+        if (continueButton && continueButton.getBoundingClientRect) {
+            const rect = continueButton.getBoundingClientRect();
+            const vpHeight = window.innerHeight || document.documentElement.clientHeight || 800;
+            if (rect.bottom > vpHeight - 20) {
+                const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+                continueButton.scrollIntoView({
+                    behavior: prefersReducedMotion ? "auto" : "smooth",
+                    block: "nearest"
+                });
+            }
+        }
+    } catch (e) {
+        // Fallback gracefully
+    }
 }
 
 // ==================================================
@@ -2871,6 +2996,138 @@ continueButton.addEventListener("click", function () {
         loadQuestion(true);
     }
 });
+
+// ==================================================
+// PHASE 6: LEVEL COMPLETION & VICTORY CELEBRATION
+// ==================================================
+
+const ConfettiManager = (function () {
+    let canvas = null;
+    let ctx = null;
+    let particles = [];
+    let animationFrameId = null;
+    let stopTime = 0;
+
+    function init() {
+        if (!canvas) {
+            canvas = document.getElementById("confetti-canvas");
+            if (canvas) {
+                ctx = canvas.getContext("2d");
+            }
+        }
+    }
+
+    function resize() {
+        if (!canvas) return;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
+    function createParticle(mode) {
+        const colors = ["#38bdf8", "#818cf8", "#34d399", "#fbbf24", "#f472b6", "#a78bfa", "#60a5fa"];
+        const x = Math.random() * (canvas ? canvas.width : window.innerWidth);
+        const y = mode === "grand" ? Math.random() * -120 : -20;
+        const size = (Math.random() * 8) + 6;
+        const speedY = (Math.random() * 3) + 2.5;
+        const speedX = (Math.random() - 0.5) * 4;
+        const rotation = Math.random() * 360;
+        const rotSpeed = (Math.random() - 0.5) * 8;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        return {
+            x: x,
+            y: y,
+            size: size,
+            speedY: speedY,
+            speedX: speedX,
+            rotation: rotation,
+            rotSpeed: rotSpeed,
+            color: color,
+            opacity: 1
+        };
+    }
+
+    function launch(mode) {
+        // Respect prefers-reduced-motion
+        if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            return;
+        }
+
+        init();
+        if (!canvas || !ctx) return;
+
+        resize();
+        canvas.style.display = "block";
+
+        const count = mode === "grand" ? 90 : 45;
+        const duration = mode === "grand" ? 3500 : 2200;
+        stopTime = Date.now() + duration;
+
+        particles = [];
+        for (let i = 0; i < count; i++) {
+            particles.push(createParticle(mode));
+        }
+
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+        }
+
+        function loop() {
+            if (!canvas || !ctx) return;
+            const now = Date.now();
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const remaining = stopTime - now;
+            let activeCount = 0;
+
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                p.y += p.speedY;
+                p.x += p.speedX;
+                p.rotation += p.rotSpeed;
+
+                if (remaining < 800) {
+                    p.opacity = Math.max(0, remaining / 800);
+                }
+
+                if (p.y < canvas.height + 30 && p.opacity > 0) {
+                    activeCount++;
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.opacity;
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+                    ctx.restore();
+                }
+            }
+
+            if (now < stopTime && activeCount > 0) {
+                animationFrameId = requestAnimationFrame(loop);
+            } else {
+                stop();
+            }
+        }
+
+        animationFrameId = requestAnimationFrame(loop);
+    }
+
+    function stop() {
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+        }
+        particles = [];
+        if (canvas) {
+            if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+            canvas.style.display = "none";
+        }
+    }
+
+    return {
+        launch: launch,
+        stop: stop
+    };
+})();
 
 // ==================================================
 // LEVEL COMPLETION (Checkpoint Reached)
@@ -3021,6 +3278,7 @@ function completeCurrentLevel() {
             '</div>';
 
         nextLevelButton.textContent = "CONTINUE TO LEVEL " + nextBuild.levelNumber + " (" + nextBuild.name.toUpperCase() + ") ➔";
+        ConfettiManager.launch("level");
     } else {
         // Final level complete (All levels conquered!) -> Final Victory Screen
         showGameComplete();
@@ -3112,55 +3370,7 @@ function showLevelFailed() {
 // When TRY AGAIN is clicked on a failed level:
 tryAgainButton.addEventListener("click", function () {
     AudioManager.playSound("click");
-    successfulCorrectAnswers = 0;
-    currentQuestionIndex = 0;
-    currentQuestion = null;
-    seenQuestionIds.clear();
-    questionAttempts = 0;
-    levelMistakes = 0;
-    minLivesInLevel = 3;
-    reachedOneLifeInLevel = false;
-    levelUsedHint = false;
-    levelFinal5Correct = true;
-    levelFinal3Correct = true;
-    postOneLifeConsecutiveCorrect = 0;
-    flawlessRunBroken = true;
-    buildPieces[currentBuildIndex] = 0; // Reset only this level's build pieces
-    lives = 3;                         // Fresh 3 lives for retry!
-    hintsRemaining = 1;                // Reset hints for retry (strictly 1 hint)!
-    hintUsedForCurrentQuestion = false;
-    isAnswerLocked = false;
-    streak = 0;
-    totalXp = checkpointXp;            // Restore XP from previously completed checkpoints
-
-    // Reset level challenge stats and clear mistakes from this failed attempt
-    Object.keys(levelAttemptsByType).forEach(function (k) { levelAttemptsByType[k] = 0; });
-    Object.keys(levelCorrectByType).forEach(function (k) { levelCorrectByType[k] = 0; });
-    runMistakes = runMistakes.filter(function (m) {
-        return m.levelIndex !== currentBuildIndex;
-    });
-
-    // Update displays
-    scoreDisplay.textContent = "⭐ " + totalXp + " XP";
-    streakDisplay.textContent = "🔥 0";
-    updateLivesDisplay();
-    updateHintDisplay();
-
-    // Reset visual pieces for only the current level scene
-    if (BUILDS[currentBuildIndex] && BUILDS[currentBuildIndex].pieces) {
-        BUILDS[currentBuildIndex].pieces.forEach(function (p) {
-            p.classList.remove("built");
-            p.classList.remove("piece-pop");
-        });
-    }
-
-    // Reset UI visibility & show Mission Briefing for level restart
-    gameOverCard.style.display = "none";
-    tryAgainButton.style.display = "none";
-
-    switchScene(currentBuildIndex);
-    updateBuildWorldBar();
-    showMissionBriefing(currentBuildIndex);
+    resetLevelForRetry(currentBuildIndex);
 });
 
 // ==================================================
@@ -3233,8 +3443,11 @@ function showGameComplete() {
 
     const completeSubtitle = document.getElementById("game-complete-subtitle") || gameCompleteCard.querySelector(".complete-subtitle");
     if (completeSubtitle) {
-        completeSubtitle.textContent = "All " + BUILDS.length + " Levels Completed";
+        completeSubtitle.textContent = "ALL " + BUILDS.length + " LEVELS COMPLETED";
     }
+
+    // PHASE 6: Stronger grand celebration confetti for all levels completed
+    ConfettiManager.launch("grand");
 
     const gameCompleteSummary = document.getElementById("game-complete-summary");
     if (gameCompleteSummary) {
@@ -3469,6 +3682,7 @@ if (playAgainButton) {
 // ==================================================
 
 function startNewGame() {
+    ConfettiManager.stop();
     currentBuildIndex = 0;
     successfulCorrectAnswers = 0;
     currentQuestionIndex = 0;
@@ -3677,7 +3891,7 @@ function renderMistakeReview() {
         mcq: "🎯 MCQ",
         output: "⚡ OUTPUT",
         "code-choice": "💻 CODE-CHOICE",
-        bug: "🔍 FIND THE BUG"
+        bug: "🔍 BUG"
     };
     const typeLabel = typeLabels[mistake.type] || (mistake.type ? mistake.type.toUpperCase() : "QUESTION");
 
@@ -3760,9 +3974,143 @@ if (mistakeReviewModal) {
     });
 }
 
+// ==================================================
+// PHASE 1: KEYBOARD CONTROLS & ACCESSIBILITY
+// ==================================================
+
 document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && mistakeReviewModal && mistakeReviewModal.style.display !== "none") {
-        closeMistakeReview();
+    // Prevent intercepting text typing in inputs
+    const activeEl = document.activeElement;
+    const activeTag = (activeEl && activeEl.tagName) ? activeEl.tagName.toLowerCase() : "";
+    if (activeTag === "input" || activeTag === "textarea" || activeTag === "select" || (activeEl && activeEl.isContentEditable)) {
+        return;
+    }
+
+    // Mistake Review Navigation (Modal is open)
+    if (mistakeReviewModal && mistakeReviewModal.style.display !== "none" && mistakeReviewModal.style.display !== "") {
+        if (e.key === "Escape") {
+            closeMistakeReview();
+            return;
+        }
+        if (e.key === "ArrowLeft") {
+            if (prevMistakeBtn && !prevMistakeBtn.disabled && prevMistakeBtn.style.display !== "none") {
+                prevMistakeBtn.click();
+            }
+            e.preventDefault();
+            return;
+        }
+        if (e.key === "ArrowRight") {
+            if (nextMistakeBtn && !nextMistakeBtn.disabled && nextMistakeBtn.style.display !== "none") {
+                nextMistakeBtn.click();
+            }
+            e.preventDefault();
+            return;
+        }
+        return; // Don't trigger gameplay behind the modal
+    }
+
+    // Primary Actions (Enter or Space)
+    if (e.key === "Enter" || e.key === " " || e.code === "Space") {
+        // If an enabled button already has keyboard focus, let native browser activation proceed
+        if (activeEl && activeEl.tagName && activeEl.tagName.toLowerCase() === "button" && !activeEl.disabled) {
+            return;
+        }
+
+        // Contextual Primary Action 1: Game Over Retry
+        if (gameOverCard && gameOverCard.style.display !== "none") {
+            if (tryAgainButton && tryAgainButton.style.display !== "none" && !tryAgainButton.disabled) {
+                e.preventDefault();
+                tryAgainButton.click();
+                return;
+            }
+        }
+
+        // Contextual Primary Action 2: Game Complete Play Again
+        if (gameCompleteCard && gameCompleteCard.style.display !== "none") {
+            if (playAgainButton && playAgainButton.style.display !== "none" && !playAgainButton.disabled) {
+                e.preventDefault();
+                playAgainButton.click();
+                return;
+            }
+        }
+
+        // Contextual Primary Action 3: Level Complete Continue to Next Level
+        if (levelCompleteCard && levelCompleteCard.style.display !== "none") {
+            if (nextLevelButton && nextLevelButton.style.display !== "none" && !nextLevelButton.disabled) {
+                e.preventDefault();
+                nextLevelButton.click();
+                return;
+            }
+        }
+
+        // Contextual Primary Action 4: Mission Briefing Start Level
+        if (missionBriefingCard && missionBriefingCard.style.display !== "none") {
+            if (briefingStartBtn && briefingStartBtn.style.display !== "none" && !briefingStartBtn.disabled) {
+                e.preventDefault();
+                briefingStartBtn.click();
+                return;
+            }
+        }
+
+        // Contextual Primary Action 5: Result / Feedback Continue
+        if (resultBox && resultBox.style.display !== "none") {
+            if (continueButton && continueButton.style.display !== "none" && !continueButton.disabled) {
+                e.preventDefault();
+                continueButton.click();
+                return;
+            }
+        }
+
+        // Contextual Primary Action 6: Start Screen
+        if (startScreen && startScreen.style.display !== "none") {
+            if (startButton && !startButton.disabled) {
+                e.preventDefault();
+                startButton.click();
+                return;
+            }
+        }
+
+        // Contextual Primary Action 7: World Map Screen (enter first active/unlocked node)
+        if (worldMapScreen && worldMapScreen.style.display !== "none") {
+            const activeNodeBtn = document.querySelector(".map-node-card.active .btn-node-action, .map-node-card.unlocked .btn-node-action");
+            if (activeNodeBtn && !activeNodeBtn.disabled) {
+                e.preventDefault();
+                activeNodeBtn.click();
+                return;
+            }
+        }
+    }
+
+    // Hint: H or h
+    if (e.key === "h" || e.key === "H") {
+        if (gameScreen && gameScreen.style.display !== "none" &&
+            questionCard && questionCard.style.display !== "none" &&
+            !isAnswerLocked && hintButton && !hintButton.disabled && hintsRemaining > 0) {
+            e.preventDefault();
+            hintButton.click();
+            return;
+        }
+    }
+
+    // Answer Selection: 1-4 and A-D
+    if (gameScreen && gameScreen.style.display !== "none" &&
+        questionCard && questionCard.style.display !== "none" &&
+        !isAnswerLocked && (!resultBox || resultBox.style.display === "none")) {
+        let answerIndex = -1;
+        if (e.key === "1") answerIndex = 0;
+        else if (e.key === "2") answerIndex = 1;
+        else if (e.key === "3") answerIndex = 2;
+        else if (e.key === "4") answerIndex = 3;
+        else if (e.key === "a" || e.key === "A") answerIndex = 0;
+        else if (e.key === "b" || e.key === "B") answerIndex = 1;
+        else if (e.key === "c" || e.key === "C") answerIndex = 2;
+        else if (e.key === "d" || e.key === "D") answerIndex = 3;
+
+        if (answerIndex >= 0 && answerButtons[answerIndex] && !answerButtons[answerIndex].disabled) {
+            e.preventDefault();
+            answerButtons[answerIndex].click();
+            return;
+        }
     }
 });
 
@@ -3779,6 +4127,8 @@ startButton.addEventListener("click", function () {
     startScreen.style.display = "none";
     gameScreen.style.display = "none";
     worldMapScreen.style.display = "block";
+    worldMapOrigin = "title";
+    updateMapBackButton();
     renderWorldMap();
 });
 
@@ -3786,15 +4136,31 @@ startButton.addEventListener("click", function () {
 if (mapBackBtn) {
     mapBackBtn.addEventListener("click", function () {
         AudioManager.playSound("click");
-        worldMapScreen.style.display = "none";
-        startScreen.style.display = "block";
+        if (worldMapOrigin === "game") {
+            worldMapScreen.style.display = "none";
+            gameScreen.style.display = "block";
+            if (lives === 0) {
+                resetLevelForRetry(currentBuildIndex);
+            } else if (successfulCorrectAnswers === 0) {
+                showMissionBriefing(currentBuildIndex);
+            } else {
+                if (missionBriefingCard) missionBriefingCard.style.display = "none";
+                if (questionCard) questionCard.style.display = "block";
+                if (!currentQuestion || !questionText.textContent || questionText.textContent === "Loading question...") {
+                    loadQuestion();
+                }
+            }
+        } else {
+            worldMapScreen.style.display = "none";
+            startScreen.style.display = "block";
+        }
     });
 }
 
 if (openWorldMapBtn) {
     openWorldMapBtn.addEventListener("click", function () {
         AudioManager.playSound("click");
-        openWorldMap();
+        openWorldMap("game");
     });
 }
 
@@ -3805,7 +4171,7 @@ if (buildWorldBar) {
         }
         if (e.target.closest(".world-item")) {
             AudioManager.playSound("click");
-            openWorldMap();
+            openWorldMap("game");
         }
     });
 }

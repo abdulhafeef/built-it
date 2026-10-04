@@ -941,6 +941,7 @@ body {
 }
 
 .question-progress {
+    display: none;
     font-size: 13px;
     font-weight: 700;
     color: #cbd5e1;
@@ -1096,21 +1097,67 @@ body {
 }
 
 .progress-bar-track {
+    position: relative;
     width: 100%;
-    height: 7px;
-    background: rgba(30, 41, 59, 0.85);
+    height: 14px;
+    background: rgba(15, 23, 42, 0.9);
     border-radius: 9999px;
-    overflow: hidden;
     margin-bottom: 14px;
-    border: 1px solid rgba(148, 163, 184, 0.15);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .progress-bar-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
     height: 100%;
     background: linear-gradient(90deg, #38bdf8 0%, #6366f1 50%, #10b981 100%);
     border-radius: 9999px;
-    transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.5);
+    z-index: 1;
+}
+
+.progress-pips-track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px;
+    box-sizing: border-box;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.progress-pips-track .pip {
+    flex: 1;
+    height: 6px;
+    margin: 0 2px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 3px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.progress-pips-track .pip.filled {
+    background: #ffffff;
+    box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+}
+
+.progress-pips-track .pip.target {
+    background: rgba(56, 189, 248, 0.85);
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.95);
+    animation: pipPulse 1.2s infinite ease-in-out;
+}
+
+@keyframes pipPulse {
+    0%, 100% { opacity: 0.55; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.35); }
 }
 
 .build-scene {
@@ -2036,16 +2083,30 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
+    gap: 5px;
+    padding: 3px 8px;
+    min-height: 28px;
     border-radius: 8px;
-    background: rgba(15, 23, 42, 0.7);
+    background: rgba(15, 23, 42, 0.75);
     border: 1.5px solid rgba(148, 163, 184, 0.25);
     color: #94a3b8;
     font-size: 13px;
     font-weight: 800;
     transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.keycap-num {
+    font-size: 10.5px;
+    color: #64748b;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+}
+
+.keycap-letter {
+    font-size: 13px;
+    font-weight: 800;
+    color: #38bdf8;
 }
 
 .ans-text {
@@ -2084,14 +2145,41 @@ body {
     color: #38bdf8;
 }
 
-.answer-btn:focus-visible {
-    outline: 2px solid #38bdf8;
-    outline-offset: 2px;
+.answer-btn:hover:not(:disabled) .keycap-num {
+    color: #94a3b8;
 }
 
-.answer-btn:disabled {
+/* PHASE 1 & 2: Focus Visible and Button Disabled States */
+button:focus-visible,
+.answer-btn:focus-visible,
+.map-node-card:focus-visible,
+.modal-close-btn:focus-visible,
+.sound-toggle-btn:focus-visible,
+.hint-button:focus-visible {
+    outline: 2px solid #38bdf8 !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.5) !important;
+}
+
+.btn-action:disabled,
+.primary-btn:disabled,
+.secondary-btn:disabled,
+.nav-btn:disabled,
+.hint-button:disabled,
+.open-map-btn:disabled {
+    opacity: 0.42 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+    filter: grayscale(40%) !important;
+}
+
+.answer-btn:disabled:not(.btn-correct):not(.btn-wrong) {
     cursor: not-allowed;
-    opacity: 0.9;
+    opacity: 0.65;
+    pointer-events: none;
+    transform: none !important;
 }
 
 /* Answer feedback state styling */
@@ -4301,6 +4389,9 @@ body {
 
 /* Mobile responsive adjustments */
 @media (max-width: 600px) {
+    .keycap-num {
+        display: none;
+    }
     .briefing-grid {
         grid-template-columns: 1fr;
     }
@@ -4323,6 +4414,50 @@ body {
     }
 }
 
+/* ==================================================
+   PHASE 6 & 7: CELEBRATION CONFETTI & SMOOTH ENTRANCES
+   ================================================== */
+
+.confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+@keyframes fadeSlideUp {
+    0% {
+        opacity: 0;
+        transform: translateY(12px) scale(0.99);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+#game-screen,
+#world-map-screen,
+.state-card {
+    animation: fadeSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.question-card,
+.question-card.question-card-enter {
+    animation: fadeSlideUp 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mission-briefing-card {
+    animation: fadeSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.result-box {
+    animation: fadeSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* Accessibility: prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
     *, ::before, ::after {
@@ -4330,6 +4465,16 @@ body {
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
+    }
+    #game-screen,
+    .question-card,
+    .mission-briefing-card,
+    .result-box,
+    .state-card,
+    .world-map-screen {
+        animation: none !important;
+        transform: none !important;
+        transition: none !important;
     }
 }
 
