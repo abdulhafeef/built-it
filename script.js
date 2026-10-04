@@ -91,6 +91,18 @@ const resultXpTag = document.getElementById("result-xp-tag");
 const resultStreakTag = document.getElementById("result-streak-tag");
 const resultCorrectAnswer = document.getElementById("result-correct-answer");
 const resultExplanation = document.getElementById("result-explanation");
+const resultConceptBar = document.getElementById("result-concept-bar");
+const resultConceptText = document.getElementById("result-concept-text");
+const resultWrongChoiceNote = document.getElementById("result-wrong-choice-note");
+const resultWrongChoiceText = document.getElementById("result-wrong-choice-text");
+const resultExplanationHeading = document.getElementById("result-explanation-heading");
+const resultTakeawayBox = document.getElementById("result-takeaway-box");
+const resultTakeawayText = document.getElementById("result-takeaway-text");
+const resultLearnMoreWrap = document.getElementById("result-learn-more-wrap");
+const resultLearnMoreToggle = document.getElementById("result-learn-more-toggle");
+const resultLearnMoreDrawer = document.getElementById("result-learn-more-drawer");
+const resultLearnMoreText = document.getElementById("result-learn-more-text");
+const learnMoreChevron = document.getElementById("learn-more-chevron");
 const continueButton = document.getElementById("continue-button");
 
 // State Cards (Level Complete, Game Over / Level Failed, Game Complete)
@@ -140,6 +152,60 @@ const nextMistakeBtn = document.getElementById("next-mistake-btn");
 const reviewContent = document.getElementById("review-content");
 const mistakeCounterText = document.getElementById("mistake-counter-text");
 
+// EVOLUTION UPGRADE: DOM References
+const homeGoalsCard = document.getElementById("home-goals-card");
+const homeGoalsItemsRow = document.getElementById("home-goals-items-row");
+const homeGoalsWeakConcept = document.getElementById("home-goals-weak-concept");
+const homeDailyBuildBtn = document.getElementById("home-daily-build-btn");
+const homeDailyBadge = document.getElementById("home-daily-badge");
+const mapDailyBuildBtn = document.getElementById("map-daily-build-btn");
+const worldMapMasterySection = document.getElementById("world-map-mastery-section");
+const conceptMasteryGrid = document.getElementById("concept-mastery-grid");
+const mapWeakConceptText = document.getElementById("map-weak-concept-text");
+
+// Mission Tracker
+const missionTracker = document.getElementById("mission-tracker");
+const trackerMissionName = document.getElementById("tracker-mission-name");
+const trackerPieceTarget = document.getElementById("tracker-piece-target");
+const missionStepsRow = document.getElementById("mission-steps-row");
+
+// Revenge Banner
+const revengeBanner = document.getElementById("revenge-banner");
+const revengeSubtitle = document.getElementById("revenge-subtitle");
+
+// Code Builder
+const codeBuilderContainer = document.getElementById("code-builder-container");
+const codeBuilderSlots = document.getElementById("code-builder-slots");
+const codeBuilderTokens = document.getElementById("code-builder-tokens");
+const builderResetBtn = document.getElementById("builder-reset-btn");
+const builderSubmitBtn = document.getElementById("builder-submit-btn");
+
+// Daily Build Modal
+const dailyBuildModal = document.getElementById("daily-build-modal");
+const dailyBuildModalClose = document.getElementById("daily-build-modal-close");
+const dailyModalBody = document.getElementById("daily-modal-body");
+
+// Final Results 4 Quadrants
+const quadWellContent = document.getElementById("quad-well-content");
+const quadStruggledContent = document.getElementById("quad-struggled-content");
+const quadLearnedContent = document.getElementById("quad-learned-content");
+const quadNextContent = document.getElementById("quad-next-content");
+
+// Orientation & Dedicated Challenge Containers
+const challengeOrientationBar = document.getElementById("challenge-orientation-bar");
+const orientationWorldTag = document.getElementById("orientation-world-tag");
+const orientationStageTag = document.getElementById("orientation-stage-tag");
+const orientationMissionTag = document.getElementById("orientation-mission-tag");
+const outputChallengeContainer = document.getElementById("output-challenge-container");
+const outputTerminalCode = document.getElementById("output-terminal-code");
+const outputPromptText = document.getElementById("output-prompt-text");
+const debugChallengeContainer = document.getElementById("debug-challenge-container");
+const debugCodeText = document.getElementById("debug-code-text");
+const worldSelectorNav = document.getElementById("world-selector-nav");
+const futureWorldsSection = document.getElementById("future-worlds-section");
+const futureWorldsGrid = document.getElementById("future-worlds-grid");
+
+
 // ==================================================
 // QUESTION BANK (Very Beginner-Friendly & Educational)
 // ==================================================
@@ -148,827 +214,1967 @@ const mistakeCounterText = document.getElementById("mistake-counter-text");
 // LEVEL 1: 🏠 HOUSE (Python Fundamentals, Variables & Print)
 // Pool: 20 Unique Questions (MCQ, Output, Code-Choice, Bug)
 // --------------------------------------------------
+// --------------------------------------------------
+// LEVEL 1: 🏠 HOUSE (Python Fundamentals, Variables & Print)
+// Pool: 20 Unique Questions (MCQ, Output, Code-Choice, Bug)
+// --------------------------------------------------
 const houseQuestions = [
-    // Q1
+    {
+        id: "l1-mcq-000",
+        concept: "Python Introduction",
+        question: "What is Python primarily known for in programming?",
+        options: ["A clear, readable, and beginner-friendly programming language", "A physical mechanical tool for assembling hardware motors", "A database query tool that cannot run application logic", "An operating system like Windows or Linux"],
+        correct: 0,
+        explanation: "Python is designed with an emphasis on code readability and clean English-like syntax, making it one of the most accessible and widely-used programming languages in the world.",
+        takeaway: "Python uses clean, simple syntax so you can focus directly on learning programming logic.",
+        learnMore: "Python was created by Guido van Rossum in 1991. Today it powers web applications, data science, artificial intelligence, automation, and games.",
+        optionNotes: [null, "Python is software code, not a mechanical machine part.", "Python is a full general-purpose programming language, not just a query tool.", "Python is a programming language that runs on top of operating systems like Linux, macOS, and Windows."],
+        hint: "Think about why Python is so popular for learning to code.",
+        type: "mcq",
+        difficulty: "VERY EASY"
+    },
     {
         id: "l1-mcq-001",
+        concept: "Python print()",
         question: "Which built-in Python function displays text or numbers in the console?",
         options: ["display()", "print()", "write()", "output()"],
         correct: 1,
-        explanation: "`print()` is Python's built-in function to display text and values to the screen.",
+        explanation: "`print()` is Python's built-in standard function designed to output text, numbers, and variables to the console screen.",
+        takeaway: "Use `print()` whenever you want to display data or messages to the screen.",
+        learnMore: "You can pass multiple items into `print()` separated by commas, and Python will automatically separate them with a space.",
+        optionNotes: ["`display()` is used in IPython/Jupyter environments, but is not standard built-in Python.", null, "`write()` is a file method (e.g. `file.write()`), not a global console print function.", "`output()` does not exist in Python's standard built-in functions."],
         hint: "Think of putting words onto paper.",
         type: "mcq",
         difficulty: "VERY EASY"
     },
-    // Q2
-    {
-        id: "l1-code-001",
-        question: "Which line of Python code correctly stores the number 10 in a variable named score?",
-        options: ["score = 10", "var score = 10", "int score = 10", "10 -> score"],
-        correct: 0,
-        explanation: "Python creates and assigns variables using just the variable name, an `=` sign, and the value.",
-        hint: "Python does not require keywords like 'var' or type declarations.",
-        type: "code-choice",
-        difficulty: "VERY EASY"
-    },
-    // Q3
-    {
-        id: "l1-output-001",
-        question: "What will this Python calculation output?",
-        code: "print(10 + 5)",
-        options: ["105", "50", "15", "Error"],
-        correct: 2,
-        explanation: "The `+` operator adds `10` and `5` numerically to produce `15`.",
-        hint: "Simple arithmetic addition: 10 + 5.",
-        type: "output",
-        difficulty: "VERY EASY"
-    },
-    // Q4
-    {
-        id: "l1-bug-001",
-        question: "What is wrong with this Python code?",
-        code: "age = 20\nprint(Age)",
-        options: [
-            "Variables cannot store numbers in Python",
-            "print() requires curly braces instead of parentheses",
-            "The variable age cannot be printed without converting to text",
-            "Variable names are case-sensitive, so 'Age' is not defined"
-        ],
-        correct: 3,
-        explanation: "Python is case-sensitive: `age` and `Age` are completely different identifiers. Calling `Age` raises a `NameError`.",
-        hint: "Check the capitalization of the variable name in both lines.",
-        type: "bug",
-        difficulty: "VERY EASY"
-    },
-    // Q5
-    {
-        id: "l1-output-002",
-        question: "What will this string concatenation print?",
-        code: "first = 'Py'\nsecond = 'thon'\nprint(first + second)",
-        options: ["Python", "Py thon", "Py+thon", "None"],
-        correct: 0,
-        explanation: "The `+` operator joins string variables end-to-end without extra spaces, outputting `Python`.",
-        hint: "Concatenation attaches the two strings directly together.",
-        type: "output",
-        difficulty: "VERY EASY"
-    },
-    // Q6
-    {
-        id: "l1-code-002",
-        question: "Which code correctly prints the text 'Hello, World!' in Python?",
-        options: [
-            "echo 'Hello, World!'",
-            "print('Hello, World!')",
-            "System.out.println('Hello, World!')",
-            "console.log('Hello, World!')"
-        ],
-        correct: 1,
-        explanation: "In Python, `print()` with string quotes is the standard way to print messages.",
-        hint: "Python uses the print() function with parentheses.",
-        type: "code-choice",
-        difficulty: "VERY EASY"
-    },
-    // Q7
-    {
-        id: "l1-mcq-002",
-        question: "What data type does the value 3.14 belong to in Python?",
-        options: ["int", "str", "float", "bool"],
-        correct: 2,
-        explanation: "Numbers with a fractional decimal point (like `3.14`) are of type `float` in Python.",
-        hint: "Floating-point numbers represent values with decimals.",
-        type: "mcq",
-        difficulty: "VERY EASY"
-    },
-    // Q8
-    {
-        id: "l1-mcq-003",
-        question: "Which symbol is used to assign a value to a variable in Python?",
-        options: [":=", "==", "->", "="],
-        correct: 3,
-        explanation: "A single equals sign `=` is the assignment operator in Python. Double equals `==` is for comparison.",
-        hint: "A single standard equals character.",
-        type: "mcq",
-        difficulty: "VERY EASY"
-    },
-    // Q9
-    {
-        id: "l1-output-003",
-        question: "What will this variable reassignment print?",
-        code: "x = 5\nx = x + 3\nprint(x)",
-        options: ["5", "8", "53", "3"],
-        correct: 1,
-        explanation: "`x` starts at `5`. Adding `3` produces `8`, which is assigned back to `x`.",
-        hint: "Calculate 5 + 3.",
-        type: "output",
-        difficulty: "VERY EASY"
-    },
-    // Q10
-    {
-        id: "l1-mcq-004",
-        question: "What is the result of evaluating 10 > 20 in Python?",
-        options: ["False", "True", "None", "Error"],
-        correct: 0,
-        explanation: "10 is not greater than 20, so the comparison evaluates to the Boolean value `False`.",
-        hint: "Ask yourself: is 10 strictly greater than 20?",
-        type: "mcq",
-        difficulty: "VERY EASY"
-    },
-    // Q11
-    {
-        id: "l1-mcq-005",
-        question: "What built-in function is used to find the data type of any variable in Python?",
-        options: ["typeof()", "type()", "kind()", "classof()"],
-        correct: 1,
-        explanation: "The `type()` function returns the data type of the given object (e.g., `<class 'int'>`).",
-        hint: "A simple 4-letter function: 'type'.",
-        type: "mcq",
-        difficulty: "VERY EASY"
-    },
-    // Q12
-    {
-        id: "l1-code-003",
-        question: "Which of the following is a valid variable name in Python?",
-        options: ["2nd_player", "player_score", "player-score", "class"],
-        correct: 1,
-        explanation: "Variable names can contain letters, numbers, and underscores, but cannot start with a digit or contain hyphens, nor can they be reserved keywords like `class`.",
-        hint: "Uses letters and underscores without starting with numbers.",
-        type: "code-choice",
-        difficulty: "VERY EASY"
-    },
-    // Q13
-    {
-        id: "l1-output-004",
-        question: "What will this arithmetic calculation print?",
-        code: "print(20 - 7)",
-        options: ["27", "13", "14", "Error"],
-        correct: 1,
-        explanation: "`20 - 7` subtracts 7 from 20, resulting in `13`.",
-        hint: "Subtract 7 from 20.",
-        type: "output",
-        difficulty: "VERY EASY"
-    },
-    // Q14
-    {
-        id: "l1-bug-002",
-        question: "What error will occur when executing this line?",
-        code: "print(\"Welcome to Python!)",
-        options: [
-            "TypeError",
-            "SyntaxError: unterminated string literal",
-            "NameError: Welcome is not defined",
-            "ZeroDivisionError"
-        ],
-        correct: 1,
-        explanation: "The opening double quote has no matching closing quote before the closing parenthesis, causing a `SyntaxError`.",
-        hint: "Notice the missing closing quote at the end of the text.",
-        type: "bug",
-        difficulty: "VERY EASY"
-    },
-    // Q15
-    {
-        id: "l1-output-005",
-        question: "What will this multiplication output in Python?",
-        code: "print(4 * 3)",
-        options: ["7", "43", "12", "1"],
-        correct: 2,
-        explanation: "The `*` symbol is the multiplication operator in Python. `4 * 3` gives `12`.",
-        hint: "Multiply 4 times 3.",
-        type: "output",
-        difficulty: "VERY EASY"
-    },
-    // Q16
-    {
-        id: "l1-mcq-006",
-        question: "What are the two possible Boolean values in Python?",
-        options: ["TRUE and FALSE", "yes and no", "True and False", "1 and 0"],
-        correct: 2,
-        explanation: "In Python, Boolean values are written with capital first letters: `True` and `False`.",
-        hint: "Capital T and Capital F.",
-        type: "mcq",
-        difficulty: "VERY EASY"
-    },
-    // Q17
-    {
-        id: "l1-code-004",
-        question: "How do you write a single-line comment in Python?",
-        options: [
-            "# This is a comment",
-            "// This is a comment",
-            "/* This is a comment */",
-            "-- This is a comment"
-        ],
-        correct: 0,
-        explanation: "Python uses the hash symbol `#` for single-line comments.",
-        hint: "Starts with the '#' character.",
-        type: "code-choice",
-        difficulty: "VERY EASY"
-    },
-    // Q18
     {
         id: "l1-mcq-007",
+        concept: "String Data Type (str)",
         question: "What data type does the text \"Hello\" belong to in Python?",
         options: ["char", "text", "str", "word"],
         correct: 2,
-        explanation: "Text enclosed in quotes has the type `str` (short for string) in Python.",
+        explanation: "Text enclosed in quotes (single, double, or triple quotes) is of type `str` (string) in Python.",
+        takeaway: "Textual data in Python is always represented by the `str` data type.",
+        learnMore: "Strings in Python are immutable sequences of Unicode characters, supporting international text and emojis.",
+        optionNotes: ["`char` is a single-character type in C/Java; Python has no `char` type, only single-character `str`.", "`text` is a descriptive word, not a built-in Python data type.", null, "`word` is not a data type in Python."],
         hint: "Short for 'string'.",
         type: "mcq",
         difficulty: "VERY EASY"
     },
-    // Q19
+    {
+        id: "l1-mcq-num",
+        concept: "Numbers (Integers)",
+        question: "Which of the following represents a number (integer) in Python?",
+        options: ["val 42", "\"42\"", "number(42)", "42"],
+        correct: 3,
+        explanation: "In Python, numbers are written directly without quotation marks. Writing \"42\" with quotes creates a text string, not a number.",
+        takeaway: "Write numbers directly without quotes to perform mathematical calculations.",
+        learnMore: "Python integers (int) can be as large as your computer memory allows without overflowing.",
+        optionNotes: ["val is used in languages like Kotlin/Scala, not Python.", "Surrounding with quotes makes it a string, not an integer.", "number() is not a standard Python type constructor (Python uses int()).", null],
+        hint: "Numbers should not have quotation marks around them.",
+        type: "mcq",
+        difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-code-001",
+        concept: "Variable Assignment",
+        question: "Which line of Python code correctly stores the number 10 in a variable named score?",
+        options: ["var score = 10", "score = 10", "int score = 10", "10 -> score"],
+        correct: 1,
+        explanation: "Python dynamically assigns variables using the variable name, a single `=` symbol, and the value. No keywords or type declarations are needed.",
+        takeaway: "Variables in Python are created automatically the first time you assign a value to them using `=`.",
+        learnMore: "Python is dynamically typed: you don't need `var`, `let`, or `int` like JavaScript, C++, or Java.",
+        optionNotes: ["`var` is used in JavaScript and other languages, but causes a `SyntaxError` in Python.", null, "`int score = 10` is C/Java syntax; Python does not use static type prefix declarations.", "`->` is used for function return type hints, not for variable assignment."],
+        hint: "Python does not require keywords like 'var' or type declarations.",
+        type: "code-choice",
+        difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-mcq-002",
+        concept: "Float Data Type",
+        question: "What data type does the value 3.14 belong to in Python?",
+        options: ["int", "str", "float", "bool"],
+        correct: 2,
+        explanation: "In Python, any numeric value containing a decimal point (like `3.14`) belongs to the `float` (floating-point number) data type.",
+        takeaway: "Numbers with fractional decimal points are `float`; whole numbers without decimals are `int`.",
+        learnMore: "You can check the type of any value interactively using `type(3.14)`, which returns `<class 'float'>`.",
+        optionNotes: ["`int` represents whole numbers without decimals (like `3` or `14`).", "`str` represents text characters enclosed in quotes (like `'3.14'`).", null, "`bool` represents Boolean logical values (`True` or `False`)."],
+        hint: "Floating-point numbers represent values with decimals.",
+        type: "mcq",
+        difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-output-001",
+        concept: "Arithmetic Addition (+)",
+        question: "What will this Python calculation output?",
+        code: "print(10 + 5)",
+        options: ["105", "50", "Error", "15"],
+        correct: 3,
+        explanation: "Python evaluates `10 + 5` first inside the parentheses, producing the numeric sum `15`, which `print()` then outputs.",
+        takeaway: "The `+` operator performs standard numeric addition when used between two numbers.",
+        learnMore: "If both operands are integers, the result is an integer (`15`). If either were a float (e.g. `10.0 + 5`), the result would be `15.0`.",
+        optionNotes: ["`'105'` would only happen if they were strings (`'10' + '5'`), not numbers.", "`50` is the result of multiplication (`10 * 5`), not addition.", "Valid numeric addition never throws an error in Python.", null],
+        hint: "Simple arithmetic addition: 10 + 5.",
+        type: "output",
+        difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-mcq-003",
+        concept: "Assignment Operator (=)",
+        question: "Which symbol is used to assign a value to a variable in Python?",
+        options: ["=", "==", "->", ":="],
+        correct: 0,
+        explanation: "A single equals sign `=` assigns the value on its right to the variable on its left. Double equals `==` is an equality comparison operator.",
+        takeaway: "`=` assigns a value to a variable, while `==` checks if two values are equal.",
+        learnMore: "Confusing `=` (assignment) with `==` (equality check) is one of the most common beginner syntax mistakes.",
+        optionNotes: [null, "`==` tests for equality and returns `True` or `False`; it does not assign values.", "`->` is used for function type annotations, not variable assignment.", "`:=` is the walrus operator (assignment expression introduced in Python 3.8), not standard variable assignment."],
+        hint: "A single standard equals character.",
+        type: "mcq",
+        difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-mcq-004",
+        concept: "Comparison Operators (>)",
+        question: "What is the result of evaluating 10 > 20 in Python?",
+        options: ["None", "True", "False", "Error"],
+        correct: 2,
+        explanation: "The comparison operator `>` tests if the left value is strictly greater than the right value. Since 10 is not greater than 20, Python returns the Boolean `False`.",
+        takeaway: "Comparison operators (`>`, `<`, `==`, `!=`, `>=`, `<=`) always evaluate to `True` or `False`.",
+        learnMore: "Boolean results can directly control conditional statements like `if 10 > 20:`.",
+        optionNotes: ["`None` represents the absence of a value, not the result of a comparison.", "`True` would only be returned if 10 were strictly greater than 20.", null, "Comparing two integers is completely valid and does not raise an error."],
+        hint: "Ask yourself: is 10 strictly greater than 20?",
+        type: "mcq",
+        difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-mcq-input",
+        concept: "User Input: input()",
+        question: "Which built-in function is used to ask for and receive text input from the user in Python?",
+        options: ["scan()", "read()", "ask()", "input()"],
+        correct: 3,
+        explanation: "The input() function pauses program execution, displays an optional prompt message, and waits for the user to type text and press Enter.",
+        takeaway: "Use input() to receive text entered by the user. It always returns data as a string.",
+        learnMore: "Because input() returns a string, use int(input()) if you need the user\'s entry as a number.",
+        optionNotes: ["scan() is used in languages like C (scanf) or Go, not Python.", "read() is a method on file objects, not the global console input function.", "ask() is not a built-in Python function.", null],
+        hint: "It takes \'input\' from the user.",
+        type: "mcq",
+        difficulty: "EASY"
+    },
+    {
+        id: "l1-bug-001",
+        concept: "Case Sensitivity",
+        question: "What is wrong with this Python code?",
+        code: "age = 20\nprint(Age)",
+        options: ["Variable names are case-sensitive, so 'Age' is not defined", "print() requires curly braces instead of parentheses", "The variable age cannot be printed without converting to text", "Variables cannot store numbers in Python"],
+        correct: 0,
+        explanation: "Python identifiers are case-sensitive. The variable defined was `age` (lowercase), so calling `Age` (capital A) raises a `NameError: name 'Age' is not defined`.",
+        takeaway: "Variable names in Python must match in letter casing everywhere they are referenced.",
+        learnMore: "Best practice in Python (PEP 8) is to use `snake_case` (lowercase words separated by underscores) for variable names.",
+        optionNotes: [null, "`print()` uses parentheses `()`, never curly braces `{}`.", "Numbers can be printed directly by `print()` without manual conversion.", "Variables can store any data type in Python, including numbers."],
+        hint: "Check the capitalization of the variable name in both lines.",
+        type: "bug",
+        difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-output-002",
+        concept: "String Concatenation (+)",
+        question: "What will this string concatenation print?",
+        code: "first = 'Py'\nsecond = 'thon'\nprint(first + second)",
+        options: ["Py thon", "Python", "Py+thon", "None"],
+        correct: 1,
+        explanation: "When `+` is applied between strings, Python concatenates (joins) them directly end-to-end without adding any extra space: `'Py'` + `'thon'` = `'Python'`.",
+        takeaway: "String concatenation (`+`) joins strings directly without inserting spaces.",
+        learnMore: "To include a space between strings, either add `' '` explicitly or pass them as separate arguments to `print(first, second)`.",
+        optionNotes: ["String concatenation does not insert spaces automatically between joined strings.", null, "The `+` operator executes concatenation; it does not print the literal plus symbol.", "`print()` prints the concatenated string, not `None`."],
+        hint: "Concatenation attaches the two strings directly together.",
+        type: "output",
+        difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-code-002",
+        concept: "Standard Output Syntax",
+        question: "Which code correctly prints the text 'Hello, World!' in Python?",
+        options: ["echo 'Hello, World!'", "console.log('Hello, World!')", "System.out.println('Hello, World!')", "print('Hello, World!')"],
+        correct: 3,
+        explanation: "`print('Hello, World!')` uses Python's built-in `print()` function with string quotes inside parentheses.",
+        takeaway: "Always call `print(...)` with parentheses and enclose literal text in quotes.",
+        learnMore: "Both single quotes `'...'` and double quotes `\"...\"` work identically for defining strings in Python.",
+        optionNotes: ["`echo` is a shell command (Bash/PHP), not valid Python syntax.", "`console.log()` is JavaScript syntax, not Python.", "`System.out.println()` is Java syntax, not Python.", null],
+        hint: "Python uses the print() function with parentheses.",
+        type: "code-choice",
+        difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-output-003",
+        concept: "Variable Reassignment & Updating",
+        question: "What will this variable reassignment print?",
+        code: "x = 5\nx = x + 3\nprint(x)",
+        options: ["8", "5", "53", "3"],
+        correct: 0,
+        explanation: "Python executes right-to-left: `x = 5`, then `x + 3` evaluates to `8`, which is reassigned back to `x`. Printing `x` outputs `8`.",
+        takeaway: "Reassigning a variable updates its stored value; the previous value is replaced.",
+        learnMore: "Python provides a shorthand for this called an augmented assignment: `x += 3` means the exact same thing as `x = x + 3`.",
+        optionNotes: [null, "`5` was the initial value of `x`, before `x = x + 3` was evaluated.", "`'53'` would only happen if `x` was a string `'5'` concatenated with `'3'`, but here `x` is an integer.", "`3` was the added value, not the resulting total."],
+        hint: "Calculate 5 + 3.",
+        type: "output",
+        difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-mcq-005",
+        concept: "Data Inspection: type()",
+        question: "What built-in function is used to find the data type of any variable in Python?",
+        options: ["typeof()", "type()", "kind()", "classof()"],
+        correct: 1,
+        explanation: "`type()` is Python's built-in function that inspects an object and returns its data type (e.g. `type(42)` returns `<class 'int'>`).",
+        takeaway: "Pass any variable or value into `type()` to inspect its data type.",
+        learnMore: "In production code, `isinstance(x, int)` is often preferred over `type()` when checking if an object matches a specific type.",
+        optionNotes: ["`typeof` is an operator in JavaScript, not a Python function.", null, "`kind()` does not exist in Python.", "`classof()` does not exist in Python."],
+        hint: "A simple 4-letter function: 'type'.",
+        type: "mcq",
+        difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-code-003",
+        concept: "Python Identifier Rules",
+        question: "Which of the following is a valid variable name in Python?",
+        options: ["2nd_player", "player-score", "player_score", "class"],
+        correct: 2,
+        explanation: "`player_score` is valid because Python identifiers can use letters, numbers, and underscores, cannot start with a digit, and cannot contain hyphens or be reserved keywords.",
+        takeaway: "Variable names can contain letters, numbers, and underscores, but cannot start with a number.",
+        learnMore: "Python reserved keywords like `class`, `def`, `if`, and `for` cannot be used as variable names.",
+        optionNotes: ["`2nd_player` is invalid because variable names cannot begin with a number.", "`player-score` is invalid because the hyphen is parsed as the subtraction operator `-`.", null, "`class` is a reserved Python keyword used to define classes and cannot be used as a variable name."],
+        hint: "Uses letters and underscores without starting with numbers.",
+        type: "code-choice",
+        difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-output-004",
+        concept: "Arithmetic Subtraction (-)",
+        question: "What will this arithmetic calculation print?",
+        code: "print(20 - 7)",
+        options: ["13", "27", "14", "Error"],
+        correct: 0,
+        explanation: "Python evaluates `20 - 7` inside the `print()` call, subtracting 7 from 20 to compute `13`.",
+        takeaway: "The `-` operator performs arithmetic subtraction between numeric values.",
+        learnMore: "Subtracting a larger number from a smaller number produces a negative number (e.g., `7 - 20` yields `-13`).",
+        optionNotes: [null, "`27` is the result of addition (`20 + 7`), not subtraction.", "`14` is an off-by-one arithmetic error; `20 - 7` is exactly `13`.", "Valid integer subtraction does not raise an error."],
+        hint: "Subtract 7 from 20.",
+        type: "output",
+        difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-bug-002",
+        concept: "String Literal Syntax",
+        question: "What error will occur when executing this line?",
+        code: "print(\"Welcome to Python!)",
+        options: ["TypeError", "SyntaxError: unterminated string literal", "NameError: Welcome is not defined", "ZeroDivisionError"],
+        correct: 1,
+        explanation: "The string starts with a double quote `\"` but is missing its closing double quote before the `)`, triggering a `SyntaxError: unterminated string literal`.",
+        takeaway: "Every string literal must be closed with the exact same quote character that opened it.",
+        learnMore: "The correct line is `print(\"Welcome to Python!\")`. Always ensure quotes and parentheses are properly balanced.",
+        optionNotes: ["`TypeError` occurs when an operation is performed on incompatible types, not for unclosed quote syntax.", null, "`NameError` occurs when referencing an undefined variable name.", "`ZeroDivisionError` occurs when dividing by zero (`x / 0`)."],
+        hint: "Notice the missing closing quote at the end of the text.",
+        type: "bug",
+        difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-output-005",
+        concept: "Arithmetic Multiplication (*)",
+        question: "What will this multiplication output in Python?",
+        code: "print(4 * 3)",
+        options: ["7", "43", "12", "1"],
+        correct: 2,
+        explanation: "The asterisk `*` is Python's multiplication operator. `4 * 3` calculates 4 multiplied by 3, which produces `12`.",
+        takeaway: "Use `*` for multiplication and `**` for exponentiation in Python.",
+        learnMore: "When `*` is used between a string and an integer (e.g. `'A' * 3`), it repeats the string: `'AAA'`.",
+        optionNotes: ["`7` is the result of addition (`4 + 3`), not multiplication.", "`43` would only occur if treating them as text characters, not numeric multiplication.", null, "`1` is the result of subtraction (`4 - 3`), not multiplication."],
+        hint: "Multiply 4 times 3.",
+        type: "output",
+        difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-mcq-006",
+        concept: "Boolean Literals",
+        question: "What are the two possible Boolean values in Python?",
+        options: ["TRUE and FALSE", "yes and no", "1 and 0", "True and False"],
+        correct: 3,
+        explanation: "Python's Boolean literals are capitalized: `True` and `False`. Lowercase `true` or uppercase `TRUE` will raise a `NameError` unless defined as variables.",
+        takeaway: "Booleans in Python must always be capitalized: `True` and `False`.",
+        learnMore: "Under the hood in Python, `bool` is a subclass of `int`: `True == 1` and `False == 0`.",
+        optionNotes: ["`TRUE` and `FALSE` in all caps are not recognized keywords and raise `NameError`.", "`yes` and `no` are regular words/identifiers, not built-in Boolean values in Python.", "`1` and `0` are integers that evaluate as truthy/falsy, but the literal Boolean type values are `True` and `False`.", null],
+        hint: "Capital T and Capital F.",
+        type: "mcq",
+        difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-code-004",
+        concept: "Single-Line Comments (#)",
+        question: "How do you write a single-line comment in Python?",
+        options: ["// This is a comment", "# This is a comment", "/* This is a comment */", "-- This is a comment"],
+        correct: 1,
+        explanation: "Python uses the hash symbol `#` for single-line comments. Everything following `#` on that line is ignored by the Python interpreter.",
+        takeaway: "Prefix any single-line note or explanation with `#` to create a comment in Python.",
+        learnMore: "Comments are essential for explaining *why* code does something, rather than just *what* it does.",
+        optionNotes: ["`//` is used in C, C++, JavaScript, and Java, but in Python `//` is the floor division operator!", null, "`/* ... */` is C/JavaScript multi-line comment syntax, which causes a `SyntaxError` in Python.", "`--` is SQL/Lua comment syntax, not Python."],
+        hint: "Starts with the '#' character.",
+        type: "code-choice",
+        difficulty: "VERY EASY"
+    },
     {
         id: "l1-output-006",
+        concept: "Variable Overwriting",
         question: "What will this variable update print?",
         code: "color = 'red'\ncolor = 'blue'\nprint(color)",
-        options: ["red", "blue", "redblue", "None"],
-        correct: 1,
-        explanation: "Variables store the most recently assigned value. The value was updated from `'red'` to `'blue'`.",
+        options: ["red", "redblue", "blue", "None"],
+        correct: 2,
+        explanation: "`color` is first set to `'red'`. The second line reassigns `color = 'blue'`, overwriting the previous value. Printing `color` outputs `'blue'`.",
+        takeaway: "When you assign a new value to an existing variable, the old value is replaced completely.",
+        learnMore: "Python executes line-by-line from top to bottom, so the most recent assignment wins.",
+        optionNotes: ["`'red'` was replaced by the subsequent assignment `'blue'`.", "Reassigning does not concatenate strings; it replaces the variable's value.", null, "`print()` outputs the stored variable value, not `None`."],
         hint: "Variables take on the newest assigned value.",
         type: "output",
         difficulty: "VERY EASY"
     },
-    // Q20
     {
         id: "l1-bug-003",
+        concept: "Assignment Order (Left-hand Target)",
         question: "Why does this assignment raise a SyntaxError?",
         code: "100 = total",
-        options: [
-            "Variable names must be in uppercase",
-            "Numbers cannot be used in Python programs",
-            "Cannot assign to a literal number; variable name must be on the left",
-            "total is a reserved keyword"
-        ],
-        correct: 2,
-        explanation: "In Python, the variable being assigned to must always be on the left-hand side of `=` (e.g. `total = 100`).",
+        options: ["Variable names must be in uppercase", "Numbers cannot be used in Python programs", "total is a reserved keyword", "Cannot assign to a literal number; variable name must be on the left"],
+        correct: 3,
+        explanation: "In Python assignment, the variable name (target) must always be on the left-hand side of `=`. Writing `100 = total` tries to assign to a numeric literal, raising a `SyntaxError`.",
+        takeaway: "Variable assignment always follows: `variable_name = value` (target on the left, value on the right).",
+        learnMore: "The correct statement is `total = 100`. Python cannot change the value of the literal number `100`.",
+        optionNotes: ["Variable names in Python do not need to be in uppercase (PEP 8 recommends lowercase).", "Numbers can freely be used throughout Python programs.", "`total` is not a reserved keyword; it is a valid variable identifier.", null],
         hint: "Variable name goes on the left, value goes on the right.",
         type: "bug",
         difficulty: "VERY EASY"
+    },
+    {
+        id: "l1-bld-001",
+        concept: "Variables",
+        question: "Which line of Python code correctly stores \"Cozy Cabin\" in a variable named house_name?",
+        type: "mcq",
+        difficulty: "EASY",
+        builderTokens: ["house_name", "=", "\"Cozy Cabin\"", "set", "=="],
+        correctOrder: ["house_name", "=", "\"Cozy Cabin\""],
+        solutionCode: "house_name = \"Cozy Cabin\"",
+        explanation: "In Python, variable assignment uses the variable name on the left, a single equals sign =, and the value on the right.",
+        takeaway: "Variable assignment syntax in Python is always: variable_name = value.",
+        learnMore: "Variable names cannot start with a number or contain spaces. Snake_case is Python standard style.",
+        options: ["house_name = \"Cozy Cabin\"", "set house_name = \"Cozy Cabin\"", "house_name == \"Cozy Cabin\"", "\"Cozy Cabin\" = house_name"],
+        correct: 0,
+        optionNotes: [null, "Python does not use a \"set\" keyword for assigning variables.", "== is for comparison, not assignment.", "Variable name must be on the left."],
+        hint: "Start with the variable name, then the single equals operator."
+    },
+    {
+        id: "l1-bld-002",
+        concept: "Strings",
+        question: "Which line of code correctly prints the variable wall joined with an exclamation mark \"!\"?",
+        type: "mcq",
+        difficulty: "MEDIUM",
+        builderTokens: ["print(", "wall", "+", "\"!\"", ")", "show("],
+        correctOrder: ["print(", "wall", "+", "\"!\"", ")"],
+        solutionCode: "print(wall + \"!\")",
+        explanation: "Strings are concatenated using the + operator inside print(). The closing parenthesis completes the call.",
+        takeaway: "The + operator concatenates strings end-to-end without adding spaces.",
+        learnMore: "String concatenation creates a brand new string object in memory.",
+        options: ["print(wall & \"!\")", "show(wall + \"!\")", "print(wall + \"!\")", "print(wall ++ \"!\")"],
+        correct: 2,
+        optionNotes: ["& is bitwise AND, not string concatenation.", "show() is not standard Python.", null, "Python does not have a ++ operator."],
+        hint: "Use print(), the variable wall, and the plus sign."
+    },
+    {
+        id: "l1-cmp-001",
+        concept: "Variables",
+        question: "Complete the code snippet to display the stored blueprint variable in the console:",
+        code: "blueprint = \"Modern Villa\"\nprint(____)",
+        type: "code-completion",
+        difficulty: "VERY EASY",
+        options: ["print", "\"blueprint\"", "var blueprint", "blueprint"],
+        correct: 3,
+        explanation: "Passing the variable identifier blueprint directly into print() prints its evaluated value: \"Modern Villa\".",
+        takeaway: "Pass the variable name without quotes to print its value.",
+        learnMore: "If you put quotes around \"blueprint\", Python treats it as a literal string rather than looking up the variable.",
+        optionNotes: ["print would print the built-in function object.", "Quotes would print the word \"blueprint\" literally rather than its value.", "Python does not use the var keyword.", null],
+        hint: "Pass the variable name directly without quotes."
+    },
+    {
+        id: "l1-cmp-002",
+        concept: "Data Types",
+        question: "Complete the code to convert the string \"15\" into an integer so it can be added to 5:",
+        code: "raw_height = \"15\"\nheight = ____(raw_height) + 5",
+        type: "code-completion",
+        difficulty: "EASY",
+        options: ["int", "str", "float", "number"],
+        correct: 0,
+        explanation: "The int() constructor converts numeric strings like \"15\" into the integer 15, enabling mathematical addition.",
+        takeaway: "Use int() to parse integers from strings.",
+        learnMore: "Adding a string to an integer directly causes a TypeError: can only concatenate str to str.",
+        optionNotes: [null, "str() would keep it as a string, causing a TypeError when added to 5.", "float() converts to decimal 15.0, not integer.", "number is not a built-in conversion function in Python."],
+        hint: "Three-letter keyword for integer."
+    },
+    {
+        id: "l1-rev-001",
+        concept: "Variables",
+        question: "What will be the final value stored in the variable foundation after this sequence?",
+        code: "foundation = \"Stone\"\nbase = foundation\nfoundation = \"Brick\"\nprint(base)",
+        type: "output",
+        difficulty: "MEDIUM",
+        options: ["Brick", "Stone", "StoneBrick", "Error"],
+        correct: 1,
+        explanation: "In Python, base is assigned the value that foundation currently holds (\"Stone\"). Later changing foundation to \"Brick\" does not mutate base.",
+        takeaway: "Variables hold values/references; reassigning one variable does not alter another already-assigned variable.",
+        learnMore: "Primitive values like strings and numbers in Python are immutable.",
+        optionNotes: ["foundation was changed to \"Brick\", but base still refers to \"Stone\".", null, "Assignment does not concatenate strings.", "All operations are valid; no error occurs."],
+        hint: "Trace what value base was holding before foundation was changed."
+    },
+    {
+        id: "l1-rev-002",
+        concept: "Strings",
+        question: "What is the output when multiplying a string by an integer in Python?",
+        code: "pillar = \"|--|\"\nprint(pillar * 2)",
+        type: "output",
+        difficulty: "EASY",
+        options: ["|--||--|", "|--| 2", "Error: cannot multiply string", "|--|*2"],
+        correct: 0,
+        explanation: "In Python, multiplying a string by an integer n repeats the string sequence n times.",
+        takeaway: "String repetition with * duplicates the string sequence.",
+        learnMore: "If you multiply a string by 0 or a negative number, Python returns an empty string \"\".",
+        optionNotes: [null, "Multiplication does not insert spaces.", "String multiplication by integer is valid and standard in Python.", "It evaluates the operation, not printing the expression literally."],
+        hint: "Repeating the sequence two times."
+    },
+    {
+        id: "l1-rev-003",
+        concept: "Data Types",
+        question: "Which expression evaluates to False in Python?",
+        options: ["bool(1)", "bool(0)", "bool(\"False\")", "bool(-5)"],
+        correct: 1,
+        explanation: "In Python, the number 0 is falsy, so bool(0) returns False. Any non-empty string like \"False\" and non-zero integers are truthy.",
+        takeaway: "0, None, and empty collections are falsy; all non-zero numbers and non-empty strings are truthy.",
+        learnMore: "Even the string \"False\" is truthy because its length is greater than 0!",
+        optionNotes: ["1 is non-zero, so bool(1) is True.", null, "\"False\" is a non-empty string, so bool(\"False\") is True!", "-5 is non-zero, so it is True."],
+        hint: "The number zero is falsy."
+    },
+    {
+        id: "l1-rev-004",
+        concept: "Debugging",
+        question: "Which error occurs if you try to use a variable before it has been assigned a value?",
+        code: "print(unbuilt_roof)",
+        options: ["TypeError", "SyntaxError", "NameError", "ValueError"],
+        correct: 2,
+        explanation: "Python raises a NameError when an identifier or variable name is used that has not been defined in the current scope.",
+        takeaway: "NameError means Python cannot find any variable with that name.",
+        learnMore: "Make sure you define or assign your variable before reading it in your code.",
+        optionNotes: ["TypeError occurs when an operation is applied to an inappropriate type.", "SyntaxError occurs before code runs when Python grammar rules are broken.", null, "ValueError occurs when a function receives an argument of right type but inappropriate value."],
+        hint: "Error indicating an unknown name."
     }
 ];
 
 // --------------------------------------------------
-// LEVEL 2: 🚀 ROCKET (Strings, Operators, Loops & Functions)
-// Pool: 20 Unique Questions (MCQ, Output, Code-Choice, Bug)
-// --------------------------------------------------
 const rocketQuestions = [
-    // Q1
     {
         id: "l2-mcq-001",
+        concept: "Code Comments (#)",
         question: "Which symbol is used for writing single-line comments in Python?",
-        options: ["//", "/*", "#", "--"],
-        correct: 2,
-        explanation: "Python uses `#` for single-line comments. Everything on the line after `#` is ignored by the interpreter.",
+        options: ["//", "#", "/*", "--"],
+        correct: 1,
+        explanation: "In Python, the hash `#` symbol marks the start of a single-line comment. The interpreter skips everything after `#` on that line.",
+        takeaway: "Use `#` to write developer notes and explanations that Python ignores during execution.",
+        learnMore: "You can also place `#` comments at the end of a code line (an inline comment) to explain that specific line.",
+        optionNotes: ["`//` is integer floor division in Python (e.g. `7 // 2 == 3`), not a comment symbol.", null, "`/* ... */` is C/JavaScript multi-line comment syntax, which causes a SyntaxError in Python.", "`--` is SQL/Lua comment syntax, not Python."],
         hint: "Also called the hash, pound, or number sign.",
         type: "mcq",
         difficulty: "VERY EASY"
     },
-    // Q2
     {
         id: "l2-output-001",
+        concept: "String Methods: upper()",
         question: "What will this string method output?",
         code: "city = 'tokyo'\nprint(city.upper())",
-        options: ["TOKYO", "tokyo", "Tokyo", "Error"],
-        correct: 0,
-        explanation: "`upper()` converts all lowercase characters in the string to uppercase letters.",
+        options: ["Tokyo", "tokyo", "TOKYO", "Error"],
+        correct: 2,
+        explanation: "The `.upper()` string method returns a new copy of the string with all lowercase alphabetic characters converted to uppercase: `'tokyo'` becomes `'TOKYO'`.",
+        takeaway: "`.upper()` converts all characters in a string to uppercase without modifying the original string in-place.",
+        learnMore: "Strings in Python are immutable; `.upper()` returns a transformed copy rather than modifying `city` in memory.",
+        optionNotes: ["`'Tokyo'` only capitalizes the first letter (`.capitalize()`), while `.upper()` capitalizes all letters.", "`'tokyo'` is the original string before `.upper()` was called.", null, "Valid string method calls return the transformed string without error."],
         hint: "upper() transforms all characters to uppercase.",
         type: "output",
         difficulty: "VERY EASY"
     },
-    // Q3
     {
         id: "l2-code-001",
+        concept: "Function Definition (def)",
         question: "Which keyword is used to define a reusable function in Python?",
-        options: ["function", "def", "func", "fn"],
-        correct: 1,
-        explanation: "In Python, `def` (short for define) is the keyword used to declare functions.",
+        options: ["function", "fn", "func", "def"],
+        correct: 3,
+        explanation: "In Python, the `def` keyword (short for define) is required to declare and create a reusable function block followed by the function name, parentheses, and a colon.",
+        takeaway: "Every Python function begins with the `def` keyword followed by the function name and parentheses.",
+        learnMore: "Functions allow you to organize code into reusable blocks and reduce repetitive logic across your program.",
+        optionNotes: ["`function` is used in JavaScript and TypeScript, but causes a `SyntaxError` in Python.", "`fn` is used in Rust, not Python.", "`func` is used in Go and Swift, not Python.", null],
         hint: "A 3-letter keyword beginning with 'd'.",
         type: "code-choice",
         difficulty: "VERY EASY"
     },
-    // Q4
     {
         id: "l2-bug-001",
+        concept: "if Statement Syntax (Colon :)",
         question: "What is the syntax bug in this if statement?",
         code: "score = 85\nif score >= 50\n    print('Passed')",
-        options: [
-            "score cannot be compared with a number",
-            "print() must be inside curly braces",
-            "The if condition line is missing a colon (:) at the end",
-            "The variable name must be capitalized"
-        ],
-        correct: 2,
-        explanation: "In Python, header statements like `if`, `for`, `while`, and `def` must end with a colon (`:`).",
+        options: ["The if condition line is missing a colon (:) at the end", "print() must be inside curly braces", "score cannot be compared with a number", "The variable name must be capitalized"],
+        correct: 0,
+        explanation: "In Python, compound statements that introduce an indented code block—such as `if`, `elif`, `else`, `for`, `while`, and `def`—must end with a colon `:`.",
+        takeaway: "Always put a colon `:` at the end of conditional statements like `if condition:`.",
+        learnMore: "The correct line is `if score >= 50:`. The colon signals Python that an indented suite of statements follows.",
+        optionNotes: [null, "`print()` uses parentheses, never curly braces.", "Variables holding numbers can freely be compared with `>=`.", "Variable names in Python do not need to be capitalized."],
         hint: "Look at the end of the line 'if score >= 50'.",
         type: "bug",
         difficulty: "VERY EASY"
     },
-    // Q5
     {
         id: "l2-output-002",
+        concept: "Function Arguments & Return",
         question: "What will this function call output?",
         code: "def multiply_by_two(n):\n    return n * 2\n\nprint(multiply_by_two(4))",
-        options: ["4", "6", "16", "8"],
-        correct: 3,
-        explanation: "`multiply_by_two(4)` calculates `4 * 2`, returning `8`, which is printed.",
+        options: ["4", "6", "8", "16"],
+        correct: 2,
+        explanation: "Calling `multiply_by_two(4)` passes `4` to `n`. The function evaluates `n * 2` (4 * 2 = 8) and returns `8`, which `print()` displays.",
+        takeaway: "The `return` statement sends a computed value back to the caller of the function.",
+        learnMore: "If a function finishes without an explicit `return` statement, it automatically returns `None`.",
+        optionNotes: ["`4` was the input argument `n`, not the computed output.", "`6` is addition (`4 + 2`), but the function performs multiplication `n * 2`.", null, "`16` is `4 * 4` (squaring), but the function multiplies by `2`."],
         hint: "Multiply 4 by 2.",
         type: "output",
         difficulty: "VERY EASY"
     },
-    // Q6
     {
         id: "l2-code-002",
+        concept: "For Loops & range()",
         question: "Which code creates a for loop that repeats exactly 3 times?",
-        options: [
-            "for i in range(3):",
-            "loop 3 times:",
-            "for (i = 0; i < 3; i++):",
-            "repeat(3):"
-        ],
-        correct: 0,
-        explanation: "`for i in range(3):` is the standard Python loop syntax, generating values 0, 1, and 2.",
+        options: ["repeat(3):", "loop 3 times:", "for (i = 0; i < 3; i++):", "for i in range(3):"],
+        correct: 3,
+        explanation: "`for i in range(3):` generates integers `0, 1, 2` (exactly 3 numbers), causing the loop body to execute exactly 3 times.",
+        takeaway: "`range(n)` generates `n` numbers from `0` up to `n - 1`, making it ideal for looping `n` times.",
+        learnMore: "`range(3)` produces `0`, `1`, and `2`. The loop variable `i` takes on each of these values sequentially.",
+        optionNotes: ["`repeat(3):` is not a built-in Python looping construct.", "`loop 3 times:` is not valid Python syntax.", "`for (i = 0; ...)` is C/Java/JavaScript loop syntax, not valid Python.", null],
         hint: "Python uses 'for ... in range(...):'.",
         type: "code-choice",
         difficulty: "VERY EASY"
     },
-    // Q7
     {
         id: "l2-mcq-002",
+        concept: "Logical AND Operator",
         question: "What is the result of evaluating True and False in Python?",
-        options: ["True", "False", "None", "Error"],
-        correct: 1,
-        explanation: "The logical `and` operator requires both operands to be `True`. Since one is `False`, the result is `False`.",
+        options: ["False", "True", "None", "Error"],
+        correct: 0,
+        explanation: "The logical `and` operator only evaluates to `True` if BOTH operands are `True`. Since the right operand is `False`, `True and False` evaluates to `False`.",
+        takeaway: "`A and B` is only `True` when both `A` and `B` are `True`.",
+        learnMore: "Python uses short-circuit evaluation: if the first operand of `and` is falsy, Python stops and returns it immediately without evaluating the second.",
+        optionNotes: [null, "`True` requires both sides of `and` to be `True` (`True and True`).", "`None` represents the absence of a value, not a Boolean logic outcome.", "Logical operations between Booleans are fully supported and raise no error."],
         hint: "Both sides must be True for 'and' to be True.",
         type: "mcq",
         difficulty: "VERY EASY"
     },
-    // Q8
     {
         id: "l2-output-003",
+        concept: "Loop Accumulator Pattern",
         question: "What will be printed after this loop finishes?",
         code: "total = 0\nfor n in [1, 2, 3]:\n    total = total + n\nprint(total)",
-        options: ["3", "5", "6", "0"],
-        correct: 2,
-        explanation: "The loop iterates over the numbers: `0 + 1 = 1`, `1 + 2 = 3`, `3 + 3 = 6`. Final total is `6`.",
+        options: ["3", "6", "5", "0"],
+        correct: 1,
+        explanation: "`count` starts at `0`. The loop iterates through `[1, 2, 3]`: `0 + 1 = 1`, then `1 + 2 = 3`, then `3 + 3 = 6`. After the loop finishes, printing `count` outputs `6`.",
+        takeaway: "An accumulator variable initialized before a loop accumulates values across every iteration.",
+        learnMore: "Python also provides the built-in `sum([1, 2, 3])` function to calculate the total directly.",
+        optionNotes: ["`3` was the last element in the list, but `count` accumulates the sum of all elements.", null, "`5` is the sum of only 2 and 3, missing the first element `1`.", "`0` was the initial value of `count` before the loop executed."],
         hint: "Add 1 + 2 + 3.",
         type: "output",
         difficulty: "VERY EASY"
     },
-    // Q9
     {
         id: "l2-mcq-003",
+        concept: "Equality Operator (==)",
         question: "Which operator checks if two values are equal in Python?",
         options: ["=", ":=", "equals", "=="],
         correct: 3,
-        explanation: "`==` is the equality comparison operator. A single `=` is used for assigning values to variables.",
+        explanation: "Double equals `==` checks whether the values on both sides are equal and returns a Boolean (`True` or `False`). Single equals `=` is used for assignment.",
+        takeaway: "Use `==` to check if two values are equal, and `=` to assign a value to a variable.",
+        learnMore: "Python also has `is`, which checks if two references point to the exact same object in memory (identity), whereas `==` checks value equality.",
+        optionNotes: ["`=` assigns a value to a variable; it does not check equality.", "`:=` is the walrus operator (assignment expression), not equality comparison.", "`equals` is a method in Java, not an operator in Python.", null],
         hint: "Double equals sign checks equality.",
         type: "mcq",
         difficulty: "VERY EASY"
     },
-    // Q10
     {
         id: "l2-mcq-004",
+        concept: "List Methods: append()",
         question: "What method adds a new item to the end of a Python list?",
         options: ["append()", "push()", "insert_end()", "add()"],
         correct: 0,
-        explanation: "`append()` is the built-in list method that appends an element to the end of the list.",
+        explanation: "The `.append()` method adds a single item to the very end of an existing Python list in-place.",
+        takeaway: "`list.append(item)` adds `item` to the end of the list and increases its length by 1.",
+        learnMore: "To combine all elements from another list instead of adding a single item, use `list.extend()`.",
+        optionNotes: [null, "`push()` is used in JavaScript and PHP arrays, but does not exist on Python lists.", "`insert_end()` is not a Python list method.", "`add()` is used to add items to a Python `set`, not a `list`."],
         hint: "It starts with the letter 'a'.",
         type: "mcq",
         difficulty: "VERY EASY"
     },
-    // Q11
     {
         id: "l2-output-004",
+        concept: "Sequence Length: len()",
         question: "What will this len() function output?",
         code: "word = 'rocket'\nprint(len(word))",
         options: ["5", "6", "7", "Error"],
         correct: 1,
-        explanation: "`len()` counts the number of characters in the string `'rocket'`, which has 6 letters.",
+        explanation: "`words` is a list containing 6 string elements: `'code'`, `'python'`, `'game'`, `'level'`, `'build'`, `'fun'`. `len(words)` counts the elements and outputs `6`.",
+        takeaway: "`len()` returns the number of items in a list, tuple, dictionary, or string.",
+        learnMore: "When called on a string (e.g. `len('python')`), `len()` counts the number of characters (which is 6).",
+        optionNotes: ["`5` is the index of the last element (`words[5]`), not the count of elements.", null, "`7` is off by one; there are exactly 6 items in the list.", "Calling `len()` on a list containing 6 items is valid and raises no error."],
         hint: "Count the letters in 'rocket'.",
         type: "output",
         difficulty: "VERY EASY"
     },
-    // Q12
     {
         id: "l2-output-005",
+        concept: "String Repetition (*)",
         question: "What will this string repetition output in Python?",
         code: "print('Go!' * 3)",
-        options: ["Go! 3", "Go!Go!Go!", "Go!*3", "Error"],
-        correct: 1,
-        explanation: "Multiplying a string by an integer repeats the string that many times: `'Go!Go!Go!'`.",
+        options: ["Go! 3", "Go!*3", "Go!Go!Go!", "Error"],
+        correct: 2,
+        explanation: "Multiplying a string by an integer `n` repeats the string `n` times back-to-back: `'Go!' * 3` creates `'Go!Go!Go!'`.",
+        takeaway: "The `*` operator repeats a string when multiplied by an integer.",
+        learnMore: "Multiplying a string by `0` or a negative integer results in an empty string `''`.",
+        optionNotes: ["String repetition does not insert spaces or print the multiplier number.", "The `*` operator executes string repetition; it does not print the literal `*` symbol.", null, "Multiplying a string by an integer is standard Python syntax and produces no error."],
         hint: "The string is repeated 3 times without spaces.",
         type: "output",
         difficulty: "VERY EASY"
     },
-    // Q13
     {
         id: "l2-mcq-005",
+        concept: "Logical NOT Operator",
         question: "What is the result of evaluating not True in Python?",
-        options: ["True", "False", "None", "Error"],
-        correct: 1,
-        explanation: "The `not` operator inverts a Boolean value: `not True` becomes `False`.",
+        options: ["False", "True", "None", "Error"],
+        correct: 0,
+        explanation: "The `not` operator inverts the Boolean value of its operand. If the value is `True`, `not True` evaluates to `False`.",
+        takeaway: "`not` flips `True` to `False` and `False` to `True`.",
+        learnMore: "You can also use `not` on non-Boolean values: `not []` or `not ''` evaluates to `True` because empty collections are falsy.",
+        optionNotes: [null, "`True` is the original value before being inverted by `not`.", "`None` represents the absence of a value, not a Boolean negation.", "`not True` is standard Python syntax and raises no error."],
         hint: "The opposite of True.",
         type: "mcq",
         difficulty: "VERY EASY"
     },
-    // Q14
     {
         id: "l2-bug-002",
+        concept: "Function Header Syntax (Colon :)",
         question: "What is missing in this function definition header?",
         code: "def calculate_area(width, height)\n    return width * height",
-        options: [
-            "Missing return type keyword",
-            "Missing colon (:) after (width, height)",
-            "Parameters cannot have commas",
-            "def should be replaced by function"
-        ],
+        options: ["Missing return type keyword", "Missing colon (:) after (width, height)", "Parameters cannot have commas", "def should be replaced by function"],
         correct: 1,
-        explanation: "Every function header in Python must terminate with a colon `:` before the indented block.",
+        explanation: "Function definitions require a colon `:` at the end of the `def` header line before the indented body block: `def calc_area(width, height):`.",
+        takeaway: "Function definition lines in Python must always end with a colon `:`. ",
+        learnMore: "Missing colons after `def`, `if`, `for`, and `while` lines are the #1 cause of beginner `SyntaxError`s.",
+        optionNotes: ["Python functions do not require static return type keywords.", null, "Multiple parameters in Python must be separated by commas.", "`def` is the correct and only keyword to define a function in Python."],
         hint: "Check the punctuation at the end of the first line.",
         type: "bug",
         difficulty: "VERY EASY"
     },
-    // Q15
     {
         id: "l2-mcq-006",
+        concept: "range() Number Generation",
         question: "What sequence of numbers does range(4) generate?",
-        options: ["1, 2, 3, 4", "0, 1, 2, 3", "0, 1, 2, 3, 4", "1, 2, 3"],
-        correct: 1,
-        explanation: "`range(4)` starts at 0 and produces 4 numbers: 0, 1, 2, and 3 (stops before 4).",
+        options: ["1, 2, 3, 4", "0, 1, 2, 3, 4", "0, 1, 2, 3", "1, 2, 3"],
+        correct: 2,
+        explanation: "`range(n)` produces a sequence of numbers starting at `0` and incrementing by 1 up to, but not including, `n`. Thus `range(4)` generates `0, 1, 2, 3`.",
+        takeaway: "`range(n)` starts at `0` and stops at `n - 1` (never including `n` itself).",
+        learnMore: "To generate 1 through 4 instead, specify a custom start and stop: `range(1, 5)`.",
+        optionNotes: ["`1, 2, 3, 4` corresponds to `range(1, 5)`, because `range(4)` starts at 0.", "`0, 1, 2, 3, 4` incorrectly includes 4; `range()` stops before reaching `n`.", null, "`1, 2, 3` misses the starting 0 index."],
         hint: "Starts at 0 and stops before 4.",
         type: "mcq",
         difficulty: "VERY EASY"
     },
-    // Q16
     {
         id: "l2-output-006",
+        concept: "Inequality Operator (!=)",
         question: "What will this inequality comparison output?",
         code: "print(10 != 5)",
-        options: ["True", "False", "10", "None"],
-        correct: 0,
-        explanation: "`!=` means 'not equal to'. Since 10 is indeed not equal to 5, the expression evaluates to `True`.",
+        options: ["None", "False", "10", "True"],
+        correct: 3,
+        explanation: "The `!=` operator checks if two values are *not* equal. Since `10` is indeed not equal to `20`, the comparison evaluates to `True`.",
+        takeaway: "`!=` returns `True` if two values are different, and `False` if they are equal.",
+        learnMore: "`10 != 20` is the exact logical opposite of `10 == 20` (`not (10 == 20)`).",
+        optionNotes: ["`!=` returns a Boolean, never `None`.", "`False` would mean that 10 is equal to 20, but they are different.", "`10` is the value of `a`; comparison operators return Boolean `True` or `False`.", null],
         hint: "Is 10 different from 5?",
         type: "output",
         difficulty: "VERY EASY"
     },
-    // Q17
     {
         id: "l2-code-003",
+        concept: "Function Output: return",
         question: "Which statement properly returns a result from a Python function?",
         options: ["give result", "send result", "return result", "output result"],
         correct: 2,
-        explanation: "The `return` keyword passes back a value from a function to its caller.",
+        explanation: "The `return` keyword sends a value out of the function to the place where the function was called and immediately terminates the function's execution.",
+        takeaway: "Use `return` inside a function to send the final result back to the caller.",
+        learnMore: "Code written after a `return` statement in the same execution block is unreachable dead code.",
+        optionNotes: ["`give` is not a Python keyword.", "`send` is not a Python keyword.", null, "`output` is not a Python keyword."],
         hint: "The standard keyword is 'return'.",
         type: "code-choice",
         difficulty: "VERY EASY"
     },
-    // Q18
     {
         id: "l2-mcq-007",
+        concept: "While Loops",
         question: "Which loop type in Python repeatedly executes as long as a condition remains True?",
-        options: ["for loop", "while loop", "repeat loop", "until loop"],
-        correct: 1,
-        explanation: "A `while` loop continues running its block repeatedly as long as its test condition evaluates to `True`.",
+        options: ["while loop", "for loop", "repeat loop", "until loop"],
+        correct: 0,
+        explanation: "A `while` loop repeatedly executes its code block as long as its condition remains `True`. It stops as soon as the condition evaluates to `False`.",
+        takeaway: "Use a `while` loop when you don't know in advance how many times the loop needs to run.",
+        learnMore: "Always ensure the condition eventually becomes `False` inside a `while` loop, or use `break`, to avoid an infinite loop.",
+        optionNotes: [null, "`for` loops iterate over a predefined sequence or iterable.", "`repeat` is not a loop type in Python.", "`until` is used in Ruby or Pascal, but does not exist in Python."],
         hint: "Starts with 'w'.",
         type: "mcq",
         difficulty: "VERY EASY"
     },
-    // Q19
     {
         id: "l2-bug-003",
+        concept: "Indentation in Python",
         question: "What causes an IndentationError in Python?",
         code: "def launch():\nprint('Blast off!')",
-        options: [
-            "Missing parentheses around 'Blast off!'",
-            "launch is a restricted keyword",
-            "The line inside the function body is not indented",
-            "print() cannot be used inside functions"
-        ],
-        correct: 2,
-        explanation: "Python uses indentation (typically 4 spaces) to define code blocks. The statement inside `launch()` must be indented.",
+        options: ["Missing parentheses around 'Blast off!'", "launch is a restricted keyword", "print() cannot be used inside functions", "The line inside the function body is not indented"],
+        correct: 3,
+        explanation: "Python uses indentation (whitespace spaces at the start of a line) to define code blocks instead of curly braces `{}`. Missing or mismatched indentation raises an `IndentationError`.",
+        takeaway: "Code blocks under `if`, `def`, `for`, and `while` must be consistently indented (usually 4 spaces).",
+        learnMore: "Standard Python practice (PEP 8) mandates using 4 spaces per indentation level and avoiding tabs.",
+        optionNotes: ["Parentheses around `'Blast off!'` are already present and valid.", "`launch` is a valid identifier, not a restricted Python keyword.", "`print()` can be freely used anywhere, including inside function bodies.", null],
         hint: "Python requires code inside functions to be indented.",
         type: "bug",
         difficulty: "VERY EASY"
     },
-    // Q20
     {
         id: "l2-output-007",
+        concept: "String Methods: lower()",
         question: "What will this lower() string method output?",
         code: "planet = 'MARS'\nprint(planet.lower())",
-        options: ["mars", "MARS", "Mars", "Error"],
-        correct: 0,
-        explanation: "`lower()` converts all characters in a string to lowercase, outputting `'mars'`.",
+        options: ["MARS", "mars", "Mars", "Error"],
+        correct: 1,
+        explanation: "The `.lower()` string method returns a copy of the string with all uppercase letters converted to lowercase: `'MARS'` becomes `'mars'`.",
+        takeaway: "`.lower()` converts all alphabetic characters in a string to lowercase.",
+        learnMore: "`.lower()` is frequently used to normalize user input for case-insensitive comparisons (e.g., `user_answer.lower() == 'yes'`).",
+        optionNotes: ["`'MARS'` is the original uppercase string before `.lower()` was called.", null, "`'Mars'` is title-cased, but `.lower()` converts all characters to lowercase.", "Valid string method calls execute cleanly without error."],
         hint: "Converts uppercase letters to lowercase.",
         type: "output",
         difficulty: "VERY EASY"
+    },
+    {
+        id: "l2-bld-001",
+        concept: "Loops",
+        question: "Which loop statement correctly iterates over numbers from 0 up to 4 using fuel as the loop variable?",
+        type: "mcq",
+        difficulty: "MEDIUM",
+        builderTokens: ["for", "fuel", "in", "range(5):", "while", "to"],
+        correctOrder: ["for", "fuel", "in", "range(5):"],
+        solutionCode: "for fuel in range(5):",
+        explanation: "A Python for loop uses the syntax: for <variable> in <iterable>:. range(5) generates numbers 0, 1, 2, 3, 4.",
+        takeaway: "Use \"for var in range(n):\" for counting loops in Python.",
+        learnMore: "The colon : at the end is required to initiate the indented loop body block.",
+        options: ["while fuel in range(5):", "for fuel in range(5):", "for fuel to 5:", "loop fuel in 5:"],
+        correct: 1,
+        optionNotes: ["while loops take a condition, not an \"in iterable\" clause.", null, "Python does not use a \"to\" keyword.", "\"loop\" is not a valid Python keyword."],
+        hint: "Start with \"for\", then the loop variable, \"in\", and the range generator with colon."
+    },
+    {
+        id: "l2-bld-002",
+        concept: "Functions",
+        question: "Which line correctly defines a function header named ignite with parameters thrust and angle?",
+        type: "mcq",
+        difficulty: "HARD",
+        builderTokens: ["def", "ignite(", "thrust,", "angle", "):", "func", "function"],
+        correctOrder: ["def", "ignite(", "thrust,", "angle", "):"],
+        solutionCode: "def ignite(thrust, angle):",
+        explanation: "In Python, functions are defined using def followed by the function name, parameters in parentheses separated by commas, and a colon.",
+        takeaway: "The \"def\" keyword begins all standard function definitions in Python.",
+        learnMore: "Unlike JavaScript (function) or Go/Rust (fn/func), Python exclusively uses \"def\".",
+        options: ["def ignite[thrust, angle]:", "func ignite(thrust, angle):", "function ignite(thrust, angle):", "def ignite(thrust, angle):"],
+        correct: 3,
+        optionNotes: ["Parameters must use parentheses (), not square brackets.", "func is used in Go and Swift, not Python.", "function is JavaScript syntax.", null],
+        hint: "Starts with \"def\" and ends with a colon."
+    },
+    {
+        id: "l2-cmp-001",
+        concept: "Loops",
+        question: "Complete the loop code to print each telemetry value multiplied by 2:",
+        code: "readings = [10, 20, 30]\nfor reading in readings:\n    print(____ * 2)",
+        type: "code-completion",
+        difficulty: "EASY",
+        options: ["reading", "readings", "i", "val"],
+        correct: 0,
+        explanation: "Inside the loop, the variable reading holds the current item from readings during each iteration.",
+        takeaway: "Use the exact loop target variable declared after \"for\" inside the loop body.",
+        learnMore: "Multiplying the whole list readings * 2 would repeat the list, not multiply individual numbers.",
+        optionNotes: [null, "readings is the entire list, not the individual iteration element.", "i is not defined in this loop.", "val is not defined in this scope."],
+        hint: "The singular loop variable name."
+    },
+    {
+        id: "l2-cmp-002",
+        concept: "Functions",
+        question: "Complete the function to send back the calculated orbital speed to the caller:",
+        code: "def calc_speed(thrust, mass):\n    speed = thrust / mass\n    ____ speed",
+        type: "code-completion",
+        difficulty: "EASY",
+        options: ["output", "print", "return", "send"],
+        correct: 2,
+        explanation: "The return keyword exits a function and passes the calculated result value back to the caller.",
+        takeaway: "Functions use return to give back a result; print only displays text to the console.",
+        learnMore: "A function without an explicit return statement implicitly returns None.",
+        optionNotes: ["output is not a Python keyword.", "print displays text to the screen but does not return a value to the caller.", null, "send is not a Python keyword."],
+        hint: "Keyword that gives back a value."
+    },
+    {
+        id: "l2-rev-001",
+        concept: "Strings",
+        question: "What does the .count() method return for this rocket telemetry string?",
+        code: "telemetry = \"STAGE1-STAGE2-STAGE3\"\nprint(telemetry.count(\"STAGE\"))",
+        type: "output",
+        difficulty: "MEDIUM",
+        options: ["Error", "1", "2", "3"],
+        correct: 3,
+        explanation: "str.count(sub) returns the number of non-overlapping occurrences of the substring \"STAGE\" within the target string. Here it appears exactly 3 times.",
+        takeaway: ".count() calculates how many times a substring appears in a string.",
+        learnMore: ".count() is case-sensitive: \"stage\" would return 0.",
+        optionNotes: ["count() is a standard string method and executes without error.", "There are three occurrences, not one.", "There are three occurrences, not two.", null],
+        hint: "Count how many times STAGE appears."
+    },
+    {
+        id: "l2-rev-002",
+        concept: "Operators",
+        question: "What is the boolean result of this logical operator expression?",
+        code: "power = True\nsafe = False\nprint(power or safe and False)",
+        type: "output",
+        difficulty: "HARD",
+        options: ["False", "True", "None", "Error"],
+        correct: 1,
+        explanation: "In Python operator precedence, \"and\" has higher precedence than \"or\". So safe and False evaluates first to False. Then power or False evaluates to True.",
+        takeaway: "\"and\" is evaluated before \"or\" unless parentheses override precedence.",
+        learnMore: "Best practice is to use explicit parentheses: (power or safe) and False vs power or (safe and False).",
+        optionNotes: ["Because \"and\" binds tighter, safe and False is False; then True or False is True.", null, "Boolean expressions evaluate to True or False, not None.", "Logical operators are valid and raise no error."],
+        hint: "\"and\" has higher precedence than \"or\"."
+    },
+    {
+        id: "l2-rev-003",
+        concept: "Loops",
+        question: "How many times does this while loop execute its body?",
+        code: "altitude = 3\nwhile altitude > 0:\n    altitude -= 1",
+        type: "output",
+        difficulty: "MEDIUM",
+        options: ["2 times", "4 times", "3 times", "Infinite loop"],
+        correct: 2,
+        explanation: "Iterations: 1) altitude becomes 2; 2) altitude becomes 1; 3) altitude becomes 0. Then altitude > 0 is False, so the loop terminates after 3 iterations.",
+        takeaway: "While loops continue as long as the condition evaluates to True.",
+        learnMore: "Decreasing the loop variable towards the termination condition ensures the loop finishes safely.",
+        optionNotes: ["It runs for 3, 2, and 1, which is 3 times.", "It stops as soon as altitude reaches 0, not running a 4th time.", null, "The counter decrements every cycle, so it is not an infinite loop."],
+        hint: "Trace altitude values: 3 -> 2 -> 1 -> 0."
+    },
+    {
+        id: "l2-rev-004",
+        concept: "Functions",
+        question: "What will this function call output when using default arguments?",
+        code: "def booster(power=100):\n    return power + 20\n\nprint(booster())",
+        type: "output",
+        difficulty: "MEDIUM",
+        options: ["120", "100", "20", "Error: missing argument"],
+        correct: 0,
+        explanation: "When booster() is called without arguments, power takes its default value of 100. The function returns 100 + 20 = 120.",
+        takeaway: "Default parameter values are used when the caller does not provide an argument.",
+        learnMore: "You can override the default by providing an argument: booster(200) returns 220.",
+        optionNotes: [null, "The function adds 20 to the default value 100.", "The default value was 100, not 0.", "Default parameters make the argument optional, so no error is raised."],
+        hint: "Default value of power is 100."
     }
 ];
 
 // --------------------------------------------------
-// LEVEL 3: 🤖 ROBOT (Lists, Tuples, Dictionaries & Classes)
+// LEVEL 3: 🤖 ROBOT (Data Structures, Dictionaries & OOP)
 // Pool: 20 Unique Questions (MCQ, Output, Code-Choice, Bug)
 // --------------------------------------------------
 const robotQuestions = [
-    // Q1
     {
         id: "l3-mcq-001",
+        concept: "Data Structures: Tuple vs List",
         question: "Which Python data structure is defined using parentheses () and cannot be modified after creation?",
-        options: ["List", "Dictionary", "Set", "Tuple"],
-        correct: 3,
-        explanation: "Tuples are immutable sequences in Python created with parentheses `()`. Their elements cannot be changed once created.",
+        options: ["List", "Dictionary", "Tuple", "Set"],
+        correct: 2,
+        explanation: "A tuple is defined using parentheses `()` and is immutable, meaning its elements cannot be changed, added, or removed once created.",
+        takeaway: "Tuples use parentheses `()` and are immutable; lists use square brackets `[]` and are mutable.",
+        learnMore: "Immutability makes tuples faster and hashable, allowing them to be used as dictionary keys, unlike lists.",
+        optionNotes: ["`List` is created with square brackets `[]` and is mutable.", "`Dictionary` is created with curly braces `{}` and stores key-value pairs.", null, "`Set` is created with curly braces `{}` and stores unique unordered values."],
         hint: "An immutable sequence starting with 'T'.",
         type: "mcq",
         difficulty: "VERY EASY"
     },
-    // Q2
     {
         id: "l3-output-001",
+        concept: "Negative Indexing (-1)",
         question: "What is printed when accessing index -1 of this list?",
         code: "items = ['book', 'pen', 'laptop']\nprint(items[-1])",
-        options: ["book", "laptop", "pen", "IndexError"],
-        correct: 1,
-        explanation: "Negative index `-1` retrieves the last element of the list, which is `'laptop'`.",
+        options: ["laptop", "book", "pen", "IndexError"],
+        correct: 0,
+        explanation: "In Python, negative indices count backward from the end of the sequence. Index `-1` always refers to the very last element: in `['pen', 'book', 'laptop']`, index `-1` is `'laptop'`.",
+        takeaway: "Index `-1` accesses the last element of any Python sequence without needing to know its length.",
+        learnMore: "Similarly, `-2` refers to the second-to-last element (`'book'`), `-3` to the third-to-last (`'pen'`), and so on.",
+        optionNotes: [null, "`'book'` is at index `1` (or index `-2`).", "`'pen'` is at index `0` (or index `-3`), the first item.", "Negative indexing is fully valid in Python and does not raise an `IndexError`."],
         hint: "Negative indexing counts backward starting from the last item.",
         type: "output",
         difficulty: "VERY EASY"
     },
-    // Q3
     {
         id: "l3-output-002",
+        concept: "List Slicing [start:stop]",
         question: "What will this list slice produce?",
         code: "letters = ['a', 'b', 'c', 'd']\nprint(letters[0:2])",
-        options: ["['a', 'b']", "['a', 'b', 'c']", "['b', 'c']", "['a']"],
-        correct: 0,
-        explanation: "Slicing `[0:2]` includes items from index `0` up to (but not including) index `2`: `['a', 'b']`.",
+        options: ["['a', 'b', 'c']", "['a', 'b']", "['b', 'c']", "['a']"],
+        correct: 1,
+        explanation: "List slicing `letters[0:2]` extracts elements starting at index `0` up to (but not including) index `2`. Elements at indices 0 and 1 are `'a'` and `'b'`, so the slice produces `['a', 'b']`.",
+        takeaway: "Slicing `[start:stop]` includes the element at `start` and stops right before `stop`.",
+        learnMore: "Slicing always returns a new list and never modifies the original list.",
+        optionNotes: ["`['a', 'b', 'c']` includes index 2 (`letters[0:3]`), but `0:2` stops before index 2.", null, "`['b', 'c']` starts at index 1 (`letters[1:3]`), not index 0.", "`['a']` is only index 0 (`letters[0:1]`)."],
         hint: "Includes index 0 and 1, stops before index 2.",
         type: "output",
         difficulty: "VERY EASY"
     },
-    // Q4
     {
         id: "l3-code-001",
+        concept: "Dictionary Key Access",
         question: "Which code correctly accesses the value of the key 'brand' in this dictionary?",
         code: "car = {'brand': 'Tesla', 'model': '3'}",
-        options: [
-            "car.get_key('brand')",
-            "car(brand)",
-            "car['brand']",
-            "car->brand"
-        ],
-        correct: 2,
-        explanation: "Dictionary values are retrieved using square bracket notation with the key name: `car['brand']`.",
+        options: ["car.get_key('brand')", "car(brand)", "car->brand", "car['brand']"],
+        correct: 3,
+        explanation: "Dictionary values are retrieved using square brackets with the key name: `car['brand']`. You can also safely use `car.get('brand')`.",
+        takeaway: "Access dictionary values by placing the key inside square brackets: `dict_name[key]`.",
+        learnMore: "If the key might not exist, `car.get('brand', 'Default')` avoids raising a `KeyError`.",
+        optionNotes: ["`get_key()` is not a dictionary method in Python (the method is `.get('brand')`).", "`car(brand)` attempts to call `car` as a function, which raises a `TypeError`.", "`car->brand` is C++/PHP syntax, not valid Python.", null],
         hint: "Use square brackets [] with the key name.",
         type: "code-choice",
         difficulty: "VERY EASY"
     },
-    // Q5
     {
         id: "l3-bug-001",
+        concept: "Function Header Syntax (Colon :)",
         question: "What is the bug in this Python function definition?",
         code: "def greet(name)\n    return 'Hello ' + name",
-        options: [
-            "return statements are not allowed in functions",
-            "name cannot be passed as an argument",
-            "Functions must be called with curly braces",
-            "Missing colon (:) after def greet(name)"
-        ],
+        options: ["return statements are not allowed in functions", "name cannot be passed as an argument", "Functions must be called with curly braces", "Missing colon (:) after def greet(name)"],
         correct: 3,
-        explanation: "Function definition lines must end with a colon `:` to start the indented code block.",
+        explanation: "The function definition header `def greet(name)` is missing a trailing colon `:`. Python requires a colon before any indented block.",
+        takeaway: "Always end function definition lines with a colon `:`. ",
+        learnMore: "The correct header is `def greet(name):`. Colons are mandatory for starting all code blocks in Python.",
+        optionNotes: ["`return` statements are standard and valid inside functions.", "`name` is a valid parameter name for accepting arguments.", "Functions in Python use parentheses `()`, never curly braces.", null],
         hint: "Check the punctuation at the end of the 'def' line.",
         type: "bug",
         difficulty: "VERY EASY"
     },
-    // Q6
     {
         id: "l3-mcq-002",
+        concept: "Object-Oriented Programming (OOP) Classes",
         question: "In Object-Oriented Programming (OOP), what is a blueprint used for creating objects?",
-        options: ["Class", "Method", "Module", "Variable"],
-        correct: 0,
-        explanation: "A Class serves as a blueprint or template from which individual object instances are created.",
+        options: ["Method", "Class", "Module", "Variable"],
+        correct: 1,
+        explanation: "A Class is a blueprint or template that defines the attributes (data) and methods (behavior) that objects instantiated from it will possess.",
+        takeaway: "A `class` is the blueprint, and an `object` (or instance) is the concrete thing built from that blueprint.",
+        learnMore: "For example, a `Robot` class defines what every robot has (e.g. `battery`, `name`) and can do (e.g. `speak()`).",
+        optionNotes: ["A `Method` is a function defined inside a class, not the blueprint itself.", null, "A `Module` is a file containing Python code.", "A `Variable` holds a value or reference to an object."],
         hint: "You define a 'class' to instantiate objects.",
         type: "mcq",
         difficulty: "VERY EASY"
     },
-    // Q7
     {
         id: "l3-output-003",
+        concept: "Class Method Invocation",
         question: "What will this simple class method call output?",
         code: "class Bot:\n    def speak(self):\n        return 'Beep'\n\nb = Bot()\nprint(b.speak())",
-        options: ["None", "Beep", "Bot", "Error"],
-        correct: 1,
-        explanation: "`b` is an instance of `Bot`. Calling `b.speak()` runs the method and returns `'Beep'`.",
+        options: ["None", "Bot", "Beep", "Error"],
+        correct: 2,
+        explanation: "`b = Bot()` creates an instance of `Bot`. Calling `b.speak()` invokes the `speak` method on that instance, which returns `'Beep'`, and `print()` outputs it.",
+        takeaway: "Call an instance method using dot notation on the object: `instance.method()`.",
+        learnMore: "Python automatically passes the object instance `b` as the first argument (`self`) to `speak(self)` behind the scenes.",
+        optionNotes: ["`None` would only be returned if `speak()` had no `return` statement.", "`'Bot'` is the class name, not the value returned by `speak()`.", null, "Creating an instance and calling its method executes without error."],
         hint: "The speak() method returns the string 'Beep'.",
         type: "output",
         difficulty: "VERY EASY"
     },
-    // Q8
     {
         id: "l3-code-002",
+        concept: "Class Definition Syntax",
         question: "Which code correctly defines a class named Robot in Python?",
-        options: [
-            "define Robot():",
-            "class = Robot():",
-            "class Robot:",
-            "new class Robot{}"
-        ],
-        correct: 2,
-        explanation: "In Python, classes are created using the `class` keyword followed by the class name and a colon: `class Robot:`.",
+        options: ["class Robot:", "class = Robot():", "define Robot():", "new class Robot{}"],
+        correct: 0,
+        explanation: "Classes in Python are defined with the `class` keyword followed by the class name in PascalCase and a colon: `class Robot:`.",
+        takeaway: "Declare classes using `class ClassName:` followed by an indented block defining attributes and methods.",
+        learnMore: "By PEP 8 convention, class names use `CapWords` (PascalCase), such as `Robot` or `UserProfile`.",
+        optionNotes: [null, "`class = Robot():` attempts to assign to the reserved keyword `class`, raising a `SyntaxError`.", "`define` is not a Python keyword; classes use `class` and functions use `def`.", "`new class Robot{}` is Java/C++ syntax, invalid in Python."],
         hint: "The class keyword followed by the name and a colon.",
         type: "code-choice",
         difficulty: "VERY EASY"
     },
-    // Q9
     {
         id: "l3-mcq-003",
+        concept: "Dictionary Length: len()",
         question: "What does the len() function return when passed a dictionary with 3 key-value pairs?",
-        options: ["6", "1", "Error", "3"],
-        correct: 3,
-        explanation: "When used on a dictionary, `len()` returns the number of keys (or key-value pairs), which is `3`.",
+        options: ["3", "1", "Error", "6"],
+        correct: 0,
+        explanation: "When applied to a dictionary, `len(dictionary)` returns the total number of unique keys (key-value pairs) in the dictionary.",
+        takeaway: "`len()` on a dictionary counts its total number of keys.",
+        learnMore: "Keys in a dictionary must be unique. If you reassign an existing key, the length does not change.",
+        optionNotes: [null, "`1` would only be returned if the dictionary contained only 1 key.", "`len()` works directly on dictionaries without error.", "`6` counts keys and values separately; `len()` counts key-value pairs."],
         hint: "It counts the total number of keys in the dictionary.",
         type: "mcq",
         difficulty: "VERY EASY"
     },
-    // Q10
     {
         id: "l3-mcq-004",
+        concept: "Loop Termination (break)",
         question: "What keyword is used inside a loop to stop it immediately?",
-        options: ["break", "exit", "stop", "halt"],
-        correct: 0,
-        explanation: "The `break` keyword immediately terminates the innermost enclosing loop.",
+        options: ["halt", "exit", "stop", "break"],
+        correct: 3,
+        explanation: "The `break` statement immediately terminates the loop in which it is placed, jumping execution to the first statement after the loop.",
+        takeaway: "Use `break` to exit a loop immediately before its normal condition or range finishes.",
+        learnMore: "Use `continue` when you want to skip only the current iteration and move to the next one, rather than stopping the whole loop.",
+        optionNotes: ["`halt` is not a Python keyword.", "`exit()` terminates the entire Python program, not just the loop.", "`stop` is not a Python keyword.", null],
         hint: "To 'break' out of a loop.",
         type: "mcq",
         difficulty: "VERY EASY"
     },
-    // Q11
     {
         id: "l3-output-004",
+        concept: "Dictionary Mutation & Size",
         question: "What will be printed when modifying this dictionary and checking its size?",
         code: "bot = {'id': 1}\nbot['name'] = 'Alpha'\nprint(len(bot))",
         options: ["1", "2", "3", "Error"],
         correct: 1,
-        explanation: "The dictionary started with 1 key (`'id'`) and added another key (`'name'`), so `len(bot)` is `2`.",
+        explanation: "The dictionary starts with 1 key: `{'id': 1}`. Assigning `bot['name'] = 'Alpha'` adds a second key. Therefore, `len(bot)` evaluates to `2`.",
+        takeaway: "Adding a new key to a dictionary increases its key count by 1.",
+        learnMore: "If the key `'name'` already existed, assigning to it would update its value without changing the dictionary's size.",
+        optionNotes: ["`1` was the initial length before adding the `'name'` key.", null, "`3` would require adding two more distinct keys.", "Adding keys to a dictionary with `[]` is standard and raises no error."],
         hint: "Count how many keys are in the dictionary.",
         type: "output",
         difficulty: "VERY EASY"
     },
-    // Q12
     {
         id: "l3-mcq-005",
+        concept: "List Methods: pop()",
         question: "Which list method removes and returns the last item from a list?",
-        options: ["pop()", "remove()", "delete()", "discard()"],
-        correct: 0,
-        explanation: "`pop()` removes and returns the last element from the list (or from a specific index if provided).",
+        options: ["delete()", "remove()", "pop()", "discard()"],
+        correct: 2,
+        explanation: "The `.pop()` list method removes and returns the element at the specified index, or the very last element if no index is passed.",
+        takeaway: "`list.pop()` removes the last item from a list and returns it.",
+        learnMore: "`.remove(value)` searches for and removes the first matching value, but does not return it. `.pop()` works by index and returns the removed item.",
+        optionNotes: ["`delete()` is not a list method (the statement is `del list[i]`).", "`remove()` searches for and removes the first matching value, but does not return it.", null, "`discard()` is a method on `set` objects, not on lists."],
         hint: "Think of 'popping' an item off a stack.",
         type: "mcq",
         difficulty: "VERY EASY"
     },
-    // Q13
     {
         id: "l3-code-003",
+        concept: "Instance Methods (self)",
         question: "What is the conventional name for the first parameter of an instance method in a Python class?",
         options: ["this", "self", "me", "inst"],
         correct: 1,
-        explanation: "In Python, `self` represents the instance of the class and is conventionally the first parameter of instance methods.",
+        explanation: "In Python, the first parameter of any instance method is conventionally named `self`. It represents the specific object instance the method was called on.",
+        takeaway: "Always include `self` as the first parameter of instance methods in a class.",
+        learnMore: "While `self` is technically a convention (not a rigid language keyword), using anything else violates PEP 8 and confuses all Python tooling.",
+        optionNotes: ["`this` is used in JavaScript, C++, and Java, but is not standard Python.", null, "`me` is not standard Python convention.", "`inst` is not standard Python convention."],
         hint: "A 4-letter word starting with 's'.",
         type: "code-choice",
         difficulty: "VERY EASY"
     },
-    // Q14
     {
         id: "l3-bug-002",
+        concept: "Tuple Immutability",
         question: "Why does this code cause a TypeError in Python?",
         code: "coords = (10, 20)\ncoords[0] = 50",
-        options: [
-            "coords is not a variable name",
-            "Tuples are immutable and cannot be modified after creation",
-            "Index 0 does not exist in coords",
-            "Parentheses cannot hold numbers"
-        ],
-        correct: 1,
-        explanation: "Tuples cannot be altered once created; attempting to assign to an element raises a `TypeError`.",
+        options: ["coords is not a variable name", "Index 0 does not exist in coords", "Tuples are immutable and cannot be modified after creation", "Parentheses cannot hold numbers"],
+        correct: 2,
+        explanation: "Tuples cannot be modified after creation. Attempting item assignment on a tuple (`coords[0] = 50`) raises a `TypeError: 'tuple' object does not support item assignment`.",
+        takeaway: "Tuples are immutable; if you need to modify elements in-place, use a `list` (`[...]`).",
+        learnMore: "To change values in `coords`, convert it to a list: `coords_list = list(coords)`, modify it, then convert back: `tuple(coords_list)`.",
+        optionNotes: ["`coords` is a valid variable identifier.", "Index 0 exists (it holds the number `10`), but cannot be changed in a tuple.", null, "Parentheses and tuples can hold numbers and any other Python data types."],
         hint: "Tuples are immutable.",
         type: "bug",
         difficulty: "VERY EASY"
     },
-    // Q15
     {
         id: "l3-output-005",
+        concept: "Zero-Based Indexing",
         question: "What will this list index lookup print?",
         code: "nums = [10, 20, 30]\nprint(nums[1])",
-        options: ["10", "20", "30", "IndexError"],
-        correct: 1,
-        explanation: "Python uses 0-based indexing: `nums[0]` is `10`, and `nums[1]` is `20`.",
+        options: ["20", "10", "30", "IndexError"],
+        correct: 0,
+        explanation: "Python lists use zero-based indexing: `nums[0]` is `10`, `nums[1]` is `20`, and `nums[2]` is `30`. Accessing `nums[1]` prints `20`.",
+        takeaway: "Indexing starts at `0`: the first element is at index `0`, the second at index `1`.",
+        learnMore: "Remember: index `n` always accesses the `(n + 1)`-th element in the list.",
+        optionNotes: [null, "`10` is at index `0` (the first element).", "`30` is at index `2` (the third element).", "Index 1 is valid in a 3-element list and raises no error."],
         hint: "Lists start at index 0.",
         type: "output",
         difficulty: "VERY EASY"
     },
-    // Q16
     {
         id: "l3-code-004",
+        concept: "Class Initializer (__init__)",
         question: "Which special method is the constructor used to initialize newly created class instances?",
-        options: ["__start__()", "__init__()", "__new__()", "__create__()"],
-        correct: 1,
-        explanation: "`__init__()` is Python's initialization constructor method called when an object is instantiated.",
+        options: ["__start__()", "__create__()", "__new__()", "__init__()"],
+        correct: 3,
+        explanation: "`__init__()` (with two leading and two trailing underscores, known as a 'dunder' method) is Python's instance initialization constructor.",
+        takeaway: "Define `def __init__(self, ...):` to initialize new objects when creating instances of a class.",
+        learnMore: "Python automatically calls `__init__()` immediately after `__new__()` creates the object instance.",
+        optionNotes: ["`__start__()` is not a special method in Python.", "`__create__()` does not exist in Python.", "`__new__()` creates the object instance, but `__init__()` is the initializer constructor.", null],
         hint: "Short for initialize with double underscores.",
         type: "code-choice",
         difficulty: "VERY EASY"
     },
-    // Q17
     {
         id: "l3-output-006",
+        concept: "List Growth with append()",
         question: "What is the output after appending an element to this list?",
         code: "colors = ['red', 'green']\ncolors.append('blue')\nprint(len(colors))",
-        options: ["2", "3", "4", "Error"],
-        correct: 1,
-        explanation: "`colors` originally has 2 items. Appending `'blue'` increases the length to `3`.",
+        options: ["2", "4", "3", "Error"],
+        correct: 2,
+        explanation: "`colors` begins with 2 elements (`'red'`, `'green'`). Calling `colors.append('blue')` adds `'blue'`, increasing the list length to `3`.",
+        takeaway: "`list.append()` increases the length of the list by exactly 1.",
+        learnMore: "Appending to the end of a list has an average time complexity of O(1) (constant time) in Python.",
+        optionNotes: ["`2` was the initial length before calling `.append('blue')`.", "`4` would require appending two more items.", null, "Appending to a list and calling `len()` raises no error."],
         hint: "2 original items plus 1 appended item.",
         type: "output",
         difficulty: "VERY EASY"
     },
-    // Q18
     {
         id: "l3-mcq-006",
+        concept: "Dictionary Membership (in)",
         question: "Which keyword checks whether a specific key exists in a dictionary?",
-        options: ["has", "exists", "in", "contains"],
-        correct: 2,
-        explanation: "The `in` keyword checks membership (e.g., `'model' in car`).",
+        options: ["has", "exists", "contains", "in"],
+        correct: 3,
+        explanation: "The `in` keyword checks whether a key exists in a dictionary (e.g. `'name' in user` returns `True` or `False`).",
+        takeaway: "Use `key in dictionary` to check if a key exists before trying to access it.",
+        learnMore: "Checking key membership with `in` is extremely fast (average O(1) lookup time) because dictionaries use hash tables.",
+        optionNotes: ["`has` is not a Python keyword (nor is `has_key()`, which was removed in Python 3).", "`exists` is not a keyword or method in Python.", "`contains` is not a Python keyword (the dunder method is `__contains__`).", null],
         hint: "A 2-letter keyword: 'in'.",
         type: "mcq",
         difficulty: "VERY EASY"
     },
-    // Q19
     {
         id: "l3-bug-003",
+        concept: "Missing Keys (KeyError)",
         question: "What exception is raised when looking up a key that does not exist in a dictionary?",
         code: "profile = {'name': 'Ada'}\nprint(profile['age'])",
-        options: ["IndexError", "KeyError", "ValueError", "AttributeError"],
-        correct: 1,
-        explanation: "Accessing a non-existent dictionary key directly with `[]` raises a `KeyError`.",
+        options: ["KeyError", "IndexError", "ValueError", "AttributeError"],
+        correct: 0,
+        explanation: "Accessing a dictionary key that does not exist using bracket notation `profile['age']` causes Python to raise a `KeyError: 'age'`.",
+        takeaway: "Looking up a missing key with `[]` raises a `KeyError`; use `.get(key)` to provide a safe fallback.",
+        learnMore: "`profile.get('age', 0)` returns `0` if `'age'` is not found, avoiding the `KeyError` entirely.",
+        optionNotes: [null, "`IndexError` occurs when accessing an out-of-range index in a sequence like a list.", "`ValueError` occurs when an argument has the right type but inappropriate value.", "`AttributeError` occurs when accessing an attribute that an object doesn't have."],
         hint: "It has 'Key' in the name of the error.",
         type: "bug",
         difficulty: "VERY EASY"
     },
-    // Q20
     {
         id: "l3-output-007",
+        concept: "Tuple Indexing",
         question: "What will accessing index 0 of this tuple print?",
         code: "point = (4, 9)\nprint(point[0])",
-        options: ["4", "9", "(4, 9)", "Error"],
-        correct: 0,
-        explanation: "Tuples support 0-based indexing: `point[0]` accesses the first item, which is `4`.",
+        options: ["9", "4", "(4, 9)", "Error"],
+        correct: 1,
+        explanation: "Tuples support the same 0-based indexing as lists: `point[0]` retrieves the first element from `point = (4, 9)`, which is `4`.",
+        takeaway: "Access tuple elements by index using square brackets `tuple[index]`, just like lists.",
+        learnMore: "While you can read elements from a tuple with indexing, you cannot reassign them (e.g. `point[0] = 5` raises `TypeError`).",
+        optionNotes: ["`9` is at index `1` (the second element).", null, "'(4, 9)' is the entire tuple representation, not the single indexed item.", "Index 0 is valid for any non-empty tuple and raises no error."],
         hint: "The first item in the tuple.",
         type: "output",
         difficulty: "VERY EASY"
+    },
+    {
+        id: "l3-bld-001",
+        concept: "Dictionaries",
+        question: "Which statement correctly creates a dictionary mapping \"core\" to 100 and \"online\" to True?",
+        type: "mcq",
+        difficulty: "HARD",
+        builderTokens: ["status", "=", "{\"core\":", "100,", "\"online\":", "True}", "{\"core\" =", "dict("],
+        correctOrder: ["status", "=", "{\"core\":", "100,", "\"online\":", "True}"],
+        solutionCode: "status = {\"core\": 100, \"online\": True}",
+        explanation: "Dictionaries in Python use curly braces {} with key: value pairs separated by commas.",
+        takeaway: "Dictionary syntax: {key1: val1, key2: val2}. Colons separate keys from values.",
+        learnMore: "Dictionary keys must be immutable types like strings, numbers, or tuples.",
+        options: ["status = (\"core\": 100, \"online\": True)", "status = {\"core\" = 100, \"online\" = True}", "status = [\"core\": 100, \"online\": True]", "status = {\"core\": 100, \"online\": True}"],
+        correct: 3,
+        optionNotes: ["Parentheses () define tuples, not dictionaries.", "Dictionaries use colons : to map keys to values, not equals signs.", "Square brackets [] define lists, not dictionaries.", null],
+        hint: "Curly braces with colon separating key and value."
+    },
+    {
+        id: "l3-bld-002",
+        concept: "Classes",
+        question: "Which header correctly defines the constructor method for a Python class?",
+        type: "mcq",
+        difficulty: "HARD",
+        builderTokens: ["def", "__init__(", "self,", "model", "):", "constructor(", "init("],
+        correctOrder: ["def", "__init__(", "self,", "model", "):"],
+        solutionCode: "def __init__(self, model):",
+        explanation: "In Python classes, the constructor method is defined with def __init__(self, ...): with double underscores (dunder) and self as the first parameter.",
+        takeaway: "__init__ with double underscores is the special constructor method in Python classes.",
+        learnMore: "self refers to the specific instance being created and allows binding instance variables like self.model = model.",
+        options: ["def __init__(self, model):", "def constructor(self, model):", "def init(self, model):", "class __init__(self, model):"],
+        correct: 0,
+        optionNotes: [null, "constructor is used in JS/TypeScript; Python uses __init__.", "init without double underscores is just a regular method, not the constructor.", "Methods are defined with def, not class."],
+        hint: "Starts with def and uses double underscores around init."
+    },
+    {
+        id: "l3-cmp-001",
+        concept: "Lists",
+        question: "Complete the code to add a new sensor \"thermal\" to the end of the robotic inventory list:",
+        code: "sensors = [\"optical\", \"sonar\"]\nsensors.____(\"thermal\")",
+        type: "code-completion",
+        difficulty: "EASY",
+        options: ["push", "add", "append", "insert_last"],
+        correct: 2,
+        explanation: "The .append() method adds a single item to the end of a list in-place.",
+        takeaway: "Use list.append(item) to append elements to lists in Python.",
+        learnMore: "Python lists do not have .push() (JavaScript) or .add() (Sets).",
+        optionNotes: ["push() is JavaScript/PHP syntax.", "add() is for Python Sets, not Lists.", null, "insert_last is not a Python method."],
+        hint: "The standard Python list method for adding to the end."
+    },
+    {
+        id: "l3-cmp-002",
+        concept: "Dictionaries",
+        question: "Complete the code to safely retrieve \"armor\" from the dictionary with a default fallback of 0:",
+        code: "stats = {\"hp\": 100, \"speed\": 50}\narmor_val = stats.____(\"armor\", 0)",
+        type: "code-completion",
+        difficulty: "MEDIUM",
+        options: ["find", "get", "lookup", "fetch"],
+        correct: 1,
+        explanation: "dict.get(key, default) retrieves the value if the key exists, or returns the default value without raising a KeyError.",
+        takeaway: "Use dict.get(key, default) to safely read dictionary keys with fallback values.",
+        learnMore: "Accessing stats[\"armor\"] directly would raise a KeyError because \"armor\" is not in the dictionary.",
+        optionNotes: ["find() is a string method, not a dictionary method.", null, "lookup() does not exist in standard Python dictionaries.", "fetch() is not a Python dictionary method."],
+        hint: "Three-letter dictionary method for safe retrieval."
+    },
+    {
+        id: "l3-rev-001",
+        concept: "Lists",
+        question: "What will be the output of reversing a list using slice step syntax [::-1]?",
+        code: "chassis = [\"Alpha\", \"Beta\", \"Gamma\"]\nprint(chassis[::-1])",
+        type: "output",
+        difficulty: "MEDIUM",
+        options: ["['Gamma', 'Beta', 'Alpha']", "['Alpha', 'Beta', 'Gamma']", "['Gamma']", "Error: invalid slice"],
+        correct: 0,
+        explanation: "The slice [::-1] uses a negative step of -1 to traverse the list in reverse order, returning a reversed shallow copy.",
+        takeaway: "[::-1] is the Pythonic idiom to create a reversed copy of any sequence.",
+        learnMore: "Unlike list.reverse(), which mutates the list in place and returns None, slice [::-1] returns a new reversed list.",
+        optionNotes: [null, "The step -1 reverses the entire order.", "It does not slice only one element; the omission of start and stop covers the entire list.", "Negative slice steps are standard and fully supported in Python."],
+        hint: "Step of -1 reverses the sequence."
+    },
+    {
+        id: "l3-rev-002",
+        concept: "Tuples",
+        question: "What is the value of y after this tuple unpacking operation?",
+        code: "coords = (10, 20, 30)\nx, y, z = coords\nprint(y)",
+        type: "output",
+        difficulty: "EASY",
+        options: ["10", "20", "30", "(10, 20, 30)"],
+        correct: 1,
+        explanation: "Tuple unpacking assigns elements to variables in positional order. x gets 10, y gets 20, and z gets 30.",
+        takeaway: "Tuple unpacking assigns each element positionally to corresponding variables.",
+        learnMore: "The number of variables on the left must exactly match the number of elements in the tuple, or a ValueError is raised.",
+        optionNotes: ["10 was assigned to the first variable x.", null, "30 was assigned to the third variable z.", "y is unpacked into a single integer, not the whole tuple."],
+        hint: "y is the second variable in the assignment."
+    },
+    {
+        id: "l3-rev-003",
+        concept: "Dictionaries",
+        question: "What happens when you update an existing key in a dictionary?",
+        code: "firmware = {\"v\": 1, \"patch\": 0}\nfirmware[\"v\"] = 2\nprint(firmware[\"v\"])",
+        type: "output",
+        difficulty: "EASY",
+        options: ["{\"v\": 2}", "1", "Error: key already exists", "2"],
+        correct: 3,
+        explanation: "Dictionary keys are unique. Assigning to an existing key overwrites its previous value in-place.",
+        takeaway: "Assigning to an existing dictionary key updates its value.",
+        learnMore: "If the key does not exist, assigning creates a new key-value pair.",
+        optionNotes: ["Accessing firmware[\"v\"] returns the value 2, not a dictionary object.", "The previous value 1 was overwritten.", "Dictionaries do not error on duplicate key assignments; they update the value.", null],
+        hint: "Assigning to an existing key updates its value."
+    },
+    {
+        id: "l3-rev-004",
+        concept: "Classes",
+        question: "What will this method call print when accessing self attributes?",
+        code: "class Droid:\n    def __init__(self, name):\n        self.name = name\n    def ping(self):\n        return \"Hi \" + self.name\n\nd = Droid(\"R2\")\nprint(d.ping())",
+        type: "output",
+        difficulty: "MEDIUM",
+        options: ["Hi Droid", "Hi self.name", "Hi R2", "Error: self not defined"],
+        correct: 2,
+        explanation: "d is an instance of Droid with self.name set to \"R2\". d.ping() accesses self.name and returns \"Hi R2\".",
+        takeaway: "Instance methods access instance variables using self.attribute.",
+        learnMore: "Python automatically passes the instance d as the first argument (self) when calling d.ping().",
+        optionNotes: ["Droid is the class name, not the instance name attribute.", "self.name evaluates to the stored instance string \"R2\".", null, "Python passes self automatically; no error occurs."],
+        hint: "self.name was initialized to \"R2\"."
     }
 ];
+
+
+// ==================================================
+// DEDICATED CHAPTER BOSS QUESTION POOLS
+// ==================================================
+const HOUSE_BOSS_QUESTIONS = [
+    {
+        id: "h-boss-001",
+        concept: "Python Fundamentals",
+        question: "👑 HOUSE BOSS: Combine variables, strings, and types to determine the final output:",
+        code: "style = \"Nordic\"\nstories = 2\nbanner = style + \" \" + str(stories) + \"-Story\"\nprint(banner.upper())",
+        options: ["Nordic 2-Story", "NORDIC 2 STORY", "NORDIC 2-STORY", "Error: cannot concatenate int"],
+        correct: 2,
+        explanation: "First, str(stories) converts 2 to \"2\". Concatenation produces \"Nordic 2-Story\". Then banner.upper() converts all characters to uppercase: \"NORDIC 2-STORY\".",
+        takeaway: "Complex Python expressions compose variables, type casting, concatenation, and methods into a reliable pipeline.",
+        learnMore: "str() explicit casting prevents TypeErrors when joining numbers with strings.",
+        optionNotes: ["upper() converts all characters to uppercase.", "The hyphen in \"-Story\" is preserved.", null, "str(stories) explicitly casts the integer to a string."],
+        hint: "Trace the string concatenation and the uppercase method.",
+        type: "mcq",
+        difficulty: "BOSS",
+        isBoss: true
+    },
+    {
+        id: "h-boss-002",
+        concept: "Arithmetic & Type Formatting",
+        question: "👑 HOUSE BOSS: Trace the arithmetic calculation and string output for the roof framing:",
+        code: "base = 10\nheight = 4\nroof_area = (base * height) // 2\nprint(\"Roof Area: \" + str(roof_area))",
+        options: ["Roof Area: 20", "Roof Area: 40", "Roof Area: 20.0", "Roof Area: 10"],
+        correct: 0,
+        explanation: "(10 * 4) is 40. The floor division operator // divides 40 by 2 to yield integer 20. str(20) concatenates to produce \"Roof Area: 20\".",
+        takeaway: "Use integer floor division // when you need a whole number result without decimal float conversion.",
+        learnMore: "Single division / always produces a float (20.0), while // produces an int (20).",
+        optionNotes: [null, "The area formula divides base * height by 2.", "Floor division // returns integer 20, not float 20.0.", "10 is just the base dimension."],
+        hint: "Calculate (10 * 4) // 2 first, then cast to string.",
+        type: "mcq",
+        difficulty: "BOSS",
+        isBoss: true
+    },
+    {
+        id: "h-boss-003",
+        concept: "String Repetition & Concatenation",
+        question: "👑 HOUSE BOSS: What exact wall pattern will this Python code assemble and display?",
+        code: "brick = \"[]\"\nwall = brick * 3\ndoor = \"[D]\"\nprint(wall + door + wall)",
+        options: ["[][][D][][]", "[][][][][D]", "[D][][][][][][]", "[][][][D][][][]"],
+        correct: 3,
+        explanation: "brick * 3 creates \"[][][]\". Concatenating wall + door + wall joins 3 bricks, then the door, then 3 bricks: \"[][][][D][][][]\".",
+        takeaway: "String repetition with * duplicates patterns, which can then be combined with other strings using +.",
+        learnMore: "String multiplication in Python preserves exact characters and order without inserting spaces.",
+        optionNotes: ["Both walls have 3 bricks each, totaling 6 bricks.", "The door is placed in the center between the two walls.", "The door is between the walls, not at the beginning.", null],
+        hint: "Count the number of brick units on each side of the door.",
+        type: "mcq",
+        difficulty: "BOSS",
+        isBoss: true
+    },
+    {
+        id: "h-boss-004",
+        concept: "Variables & Comparisons",
+        question: "👑 HOUSE BOSS: Evaluate the construction budget to determine if the condition is True or False:",
+        code: "budget = 100\ncost = 45 + 30\nremaining = budget - cost\nprint(remaining >= 25)",
+        options: ["False", "True", "25", "Error"],
+        correct: 1,
+        explanation: "cost evaluates to 75. budget - cost is 100 - 75 = 25. The comparison 25 >= 25 is True.",
+        takeaway: "Comparison operators like >= evaluate mathematical relations to Boolean True or False.",
+        learnMore: ">= means greater than or equal to, so equal values evaluate to True.",
+        optionNotes: ["25 is equal to 25, so >= evaluates to True.", null, "Comparisons return Booleans, not numbers.", "Arithmetic and comparison between numbers is valid."],
+        hint: "Check if 25 is greater than or equal to 25.",
+        type: "mcq",
+        difficulty: "BOSS",
+        isBoss: true
+    },
+    {
+        id: "l1-boss-001",
+        concept: "String Methods & Casting",
+        question: "👑 HOUSE BOSS: Combine variables and string methods to determine the banner output:",
+        code: "plan = \"villa\"\nrooms = 3\nprint(plan.upper() + \"-\" + str(rooms))",
+        options: ["villa-3", "VILLA-3", "VILLA 3", "Error: str cannot add int"],
+        correct: 1,
+        explanation: "plan.upper() produces \"VILLA\". Concatenating \"-\" and str(rooms) (\"3\") yields \"VILLA-3\".",
+        takeaway: "Uppercase transformation combined with string formatting creates clean identifiers.",
+        learnMore: "upper() returns a new string and does not modify the original variable.",
+        optionNotes: ["upper() converts villa to uppercase VILLA.", null, "The hyphen '-' was specified, not a space.", "str(rooms) casts integer 3 to string."],
+        hint: "Convert villa to uppercase and append -3.",
+        type: "mcq",
+        difficulty: "BOSS",
+        isBoss: true
+    }
+];
+
+const ROCKET_BOSS_QUESTIONS = [
+    {
+        id: "r-boss-001",
+        concept: "Loops & Functions",
+        question: "👑 ROCKET BOSS: Trace the function, loop, and modulo operations to calculate thruster output:",
+        code: "def boost(power):\n    total = 0\n    for i in range(1, 4):\n        if i % 2 == 1:\n            total += power * i\n    return total\nprint(boost(10))",
+        options: ["60", "40", "30", "10"],
+        correct: 1,
+        explanation: "range(1, 4) produces 1, 2, 3. When i=1 (odd), total becomes 10*1=10. When i=2 (even), it is skipped. When i=3 (odd), total += 10*3 (30), yielding 40.",
+        takeaway: "Loops combined with modulo checks let you selectively process specific iterations.",
+        learnMore: "i % 2 == 1 is the standard idiom in Python for checking if an integer is odd.",
+        optionNotes: ["60 would sum all steps without the modulo condition.", null, "30 is only the iteration when i=3.", "10 is only the iteration when i=1."],
+        hint: "Only odd values of i (1 and 3) add to the total.",
+        type: "mcq",
+        difficulty: "BOSS",
+        isBoss: true
+    },
+    {
+        id: "r-boss-002",
+        concept: "String Indexing & Loops",
+        question: "👑 ROCKET BOSS: What flight telemetry code string is generated by this function?",
+        code: "def stage_code(name, stages):\n    code = \"\"\n    for s in range(stages):\n        code += name[s] + str(s + 1)\n    return code\nprint(stage_code(\"APOLLO\", 3))",
+        options: ["A1P1O1", "APOLLO3", "A0P1O2", "A1P2O3"],
+        correct: 3,
+        explanation: "For s=0: name[0]='A' + '1' -> 'A1'. For s=1: name[1]='P' + '2' -> 'P2'. For s=2: name[2]='O' + '3' -> 'O3'. Final string is 'A1P2O3'.",
+        takeaway: "Loop indices can both access sequence characters and format sequential labels.",
+        learnMore: "range(3) runs with s=0, 1, 2, matching zero-based string indexing perfectly.",
+        optionNotes: ["The stage numbers increment with s + 1 (1, 2, 3).", "The function constructs individual stage characters, not the full name.", "s + 1 produces 1-indexed numbers (1, 2, 3), not 0-indexed.", null],
+        hint: "Index 0 is 'A', index 1 is 'P', index 2 is 'O'.",
+        type: "mcq",
+        difficulty: "BOSS",
+        isBoss: true
+    },
+    {
+        id: "r-boss-003",
+        concept: "While Loops & Break",
+        question: "👑 ROCKET BOSS: How many burn cycles complete before the fuel threshold triggers a break?",
+        code: "fuel = 20\nburns = 0\nwhile fuel > 0:\n    fuel -= 6\n    burns += 1\n    if fuel <= 5:\n        break\nprint(burns)",
+        options: ["3", "4", "2", "1"],
+        correct: 0,
+        explanation: "Cycle 1: fuel becomes 14, burns=1. Cycle 2: fuel becomes 8, burns=2. Cycle 3: fuel becomes 2, burns=3. Since 2 <= 5, break terminates the loop. Output is 3.",
+        takeaway: "The break statement exits the loop immediately, preventing any further iterations.",
+        learnMore: "Without break, a fourth cycle would have run, reducing fuel below zero.",
+        optionNotes: [null, "4 burns would occur without the break threshold.", "At 2 burns, fuel is 8, which is greater than 5, so loop continues.", "1 burn leaves fuel at 14."],
+        hint: "Track fuel: 20 -> 14 -> 8 -> 2 (triggers break).",
+        type: "mcq",
+        difficulty: "BOSS",
+        isBoss: true
+    },
+    {
+        id: "r-boss-004",
+        concept: "Logical Operators & Parameters",
+        question: "👑 ROCKET BOSS: What boolean status does the launch clearance function return?",
+        code: "def ready_to_launch(fuel_pct, systems_ok, crew_ready):\n    return fuel_pct >= 90 and systems_ok and crew_ready\nprint(ready_to_launch(95, True, False))",
+        options: ["True", "None", "False", "Error"],
+        correct: 2,
+        explanation: "The and operator requires ALL operands to be True. Since crew_ready is False, the entire expression evaluates to False.",
+        takeaway: "In Python, x and y and z is True only if every single condition is True.",
+        learnMore: "Python uses short-circuit evaluation: if any term is False, it immediately stops evaluating.",
+        optionNotes: ["crew_ready is False, so the 'and' chain cannot be True.", "The function returns a boolean, not None.", null, "All arguments and boolean operators are valid."],
+        hint: "All three conditions must be True for 'and' to return True.",
+        type: "mcq",
+        difficulty: "BOSS",
+        isBoss: true
+    },
+    {
+        id: "l2-boss-001",
+        concept: "Loops & Modulo Accumulation",
+        question: "👑 ROCKET BOSS: Trace the function, loop, and modulo operations to determine orbital telemetry:",
+        code: "def thrust_calc(cycles):\n    total = 0\n    for c in range(1, cycles + 1):\n        if c % 2 == 0:\n            total += c * 10\n    return total\nprint(thrust_calc(4))",
+        options: ["100", "40", "60", "20"],
+        correct: 2,
+        explanation: "range(1, 5) produces 1, 2, 3, 4. Even numbers are 2 and 4. total += 2*10 (20) + 4*10 (40) = 60.",
+        takeaway: "Loops and modulo checks filter and accumulate specific algorithmic iterations.",
+        learnMore: "range(1, 5) stops before 5.",
+        optionNotes: ["100 includes odd numbers.", "40 is only the second even iteration.", null, "20 is only the first even iteration."],
+        hint: "Sum even cycles: 2*10 + 4*10.",
+        type: "mcq",
+        difficulty: "BOSS",
+        isBoss: true
+    }
+];
+
+const ROBOT_BOSS_QUESTIONS = [
+    {
+        id: "b-boss-001",
+        concept: "Classes & Dictionaries",
+        question: "👑 ROBOT BOSS: Trace the object instantiation, method call, and dictionary state:",
+        code: "class Android:\n    def __init__(self, name):\n        self.data = {\"status\": \"standby\", \"power\": 100}\n    def activate(self):\n        self.data[\"status\"] = \"online\"\n        self.data[\"power\"] -= 15\nbot = Android(\"Atlas\")\nbot.activate()\nprint(bot.data[\"power\"])",
+        options: ["85", "100", "online", "70"],
+        correct: 0,
+        explanation: "Android initializes self.data[\"power\"] to 100. activate() subtracts 15, leaving 85. bot.data[\"power\"] prints 85.",
+        takeaway: "Instance methods can modify complex internal object attributes like dictionaries.",
+        learnMore: "self ensures that changes apply specifically to the instance bot without affecting other Android objects.",
+        optionNotes: [null, "100 was the starting power before activate() was called.", "online is the value of status, not power.", "Only 15 power was deducted (100 - 15 = 85)."],
+        hint: "Starting power is 100, then activate() subtracts 15.",
+        type: "mcq",
+        difficulty: "BOSS",
+        isBoss: true
+    },
+    {
+        id: "b-boss-002",
+        concept: "Lists & Dictionaries",
+        question: "👑 ROBOT BOSS: What total sensor reading is calculated by iterating over the list keys?",
+        code: "sensors = [\"temp\", \"gyro\", \"radar\"]\nvalues = {\"temp\": 20, \"gyro\": 50, \"radar\": 30}\ntotal = 0\nfor s in sensors:\n    total += values[s]\nprint(total)",
+        options: ["50", "80", "100", "0"],
+        correct: 2,
+        explanation: "The loop iterates through each sensor name and looks up its value: 20 + 50 + 30 = 100.",
+        takeaway: "Lists of keys are commonly used to iterate over and access values stored in dictionaries.",
+        learnMore: "Dict lookups via key run in O(1) average time complexity in Python.",
+        optionNotes: ["50 is only the gyro reading.", "80 misses the radar sensor (30).", null, "The loop successfully accumulates each value."],
+        hint: "Sum the three values: 20 + 50 + 30.",
+        type: "mcq",
+        difficulty: "BOSS",
+        isBoss: true
+    },
+    {
+        id: "b-boss-003",
+        concept: "OOP Methods & Returns",
+        question: "👑 ROBOT BOSS: What final coordinate string does the navigation system return?",
+        code: "class Rover:\n    def __init__(self):\n        self.x = 0\n        self.y = 0\n    def move(self, dx, dy):\n        self.x += dx\n        self.y += dy\n        return f\"({self.x},{self.y})\"\nr = Rover()\nr.move(2, 3)\nprint(r.move(1, 2))",
+        options: ["(1,2)", "(2,3)", "(3,4)", "(3,5)"],
+        correct: 3,
+        explanation: "First move(2, 3) sets x=2, y=3. Second move(1, 2) adds to existing coordinates: x=2+1=3, y=3+2=5. Output is (3,5).",
+        takeaway: "State persists across multiple method calls on the same object instance.",
+        learnMore: "Each instance has its own self.x and self.y attributes that retain their values between invocations.",
+        optionNotes: ["(1,2) is only the displacement of the second move.", "(2,3) was the position after the first move.", "(3,4) has an arithmetic error in y (3 + 2 = 5).", null],
+        hint: "Add the coordinates: (0+2+1, 0+3+2).",
+        type: "mcq",
+        difficulty: "BOSS",
+        isBoss: true
+    },
+    {
+        id: "b-boss-004",
+        concept: "Dictionary Operations",
+        question: "👑 ROBOT BOSS: What is the output when retrieving keys using the get() method with defaults?",
+        code: "bot = {\"id\": \"RX-9\", \"fuel\": 75}\nprint(bot.get(\"shield\", 100) + bot.get(\"fuel\", 0))",
+        options: ["75", "175", "100", "Error"],
+        correct: 1,
+        explanation: "bot does not have 'shield', so bot.get('shield', 100) returns 100. bot has 'fuel', so bot.get('fuel', 0) returns 75. 100 + 75 = 175.",
+        takeaway: "dict.get(key, default) safely returns a fallback value if the key does not exist.",
+        learnMore: "Using get() avoids KeyError exceptions when accessing optional dictionary keys.",
+        optionNotes: ["75 is only the fuel value without shield default.", null, "100 is only the shield default without fuel.", "get() with defaults is safe and does not raise an error."],
+        hint: "'shield' defaults to 100 and 'fuel' is 75.",
+        type: "mcq",
+        difficulty: "BOSS",
+        isBoss: true
+    },
+    {
+        id: "l3-boss-001",
+        concept: "OOP & Dictionary State",
+        question: "👑 ROBOT BOSS: Trace the object instantiation, dictionary attribute update, and method computation:",
+        code: "class CyberCore:\n    def __init__(self):\n        self.modules = {\"ai\": 10, \"drive\": 20}\n    def upgrade(self, mod, bonus):\n        self.modules[mod] = self.modules.get(mod, 0) + bonus\n        return sum(self.modules.values())\n\nbot = CyberCore()\nprint(bot.upgrade(\"ai\", 30))",
+        options: ["60", "40", "50", "30"],
+        correct: 0,
+        explanation: "Initial self.modules = {\"ai\": 10, \"drive\": 20}. bot.upgrade(\"ai\", 30) updates \"ai\" to 10 + 30 = 40. Then sum(self.modules.values()) sums 40 + 20 = 60.",
+        takeaway: "Advanced Python systems seamlessly integrate OOP classes, dictionary attributes, and built-in aggregation functions.",
+        learnMore: "self.modules.values() returns a view of the values [40, 20], which sum() aggregates to 60.",
+        optionNotes: [null, "40 is only the updated \"ai\" module, forgetting \"drive\" (20).", "50 would be 20 + 30 without adding the initial 10.", "30 is only the bonus value."],
+        hint: "\"ai\" becomes 10 + 30 = 40. Then sum 40 + 20.",
+        type: "mcq",
+        difficulty: "BOSS",
+        isBoss: true
+    }
+];
+
+const BOSS_POOLS = [
+    HOUSE_BOSS_QUESTIONS,
+    ROCKET_BOSS_QUESTIONS,
+    ROBOT_BOSS_QUESTIONS
+];
+
+let seenBossQuestionIds = new Set();
+
+function getNextBossQuestion(buildIndex) {
+    const pool = BOSS_POOLS[buildIndex] || HOUSE_BOSS_QUESTIONS;
+    let unseen = pool.filter(function (q) {
+        return !seenBossQuestionIds.has(q.id);
+    });
+    if (unseen.length === 0) {
+        pool.forEach(function (q) { seenBossQuestionIds.delete(q.id); });
+        unseen = pool.slice();
+    }
+    const chosen = unseen[0];
+    seenBossQuestionIds.add(chosen.id);
+    return chosen;
+}
+
+// ==================================================
+// DAILY CHALLENGE QUESTION POOL (12 Varied MCQs: 3 A, 3 B, 3 C, 3 D)
+// ==================================================
+const DAILY_CHALLENGE_POOL = [
+    {
+        id: "dc-001",
+        concept: "Variables & Concatenation",
+        question: "📅 DAILY CHALLENGE: What will this Python code display in the console?",
+        code: "material = \"Oak\"\nquantity = 4\nprint(material + \" x \" + str(quantity))",
+        options: ["Oak x 4", "Oak x quantity", "Oak 4", "Error: cannot add str and int"],
+        correct: 0,
+        explanation: "str(quantity) converts the number 4 to \"4\". Concatenating \"Oak\", \" x \", and \"4\" yields \"Oak x 4\".",
+        takeaway: "Always convert numbers to strings using str() before concatenating them with other strings.",
+        learnMore: "You can also use Python f-strings like f\"{material} x {quantity}\" for string formatting.",
+        optionNotes: [null, "The variable quantity was converted to its numeric value 4, not the variable name.", "The ' x ' string literal was included in the concatenation.", "str(quantity) successfully casts the int to a string, avoiding TypeError."],
+        hint: "str(quantity) turns 4 into '4'.",
+        type: "mcq",
+        difficulty: "EASY"
+    },
+    {
+        id: "dc-002",
+        concept: "Loop Accumulator",
+        question: "📅 DAILY CHALLENGE: What is the final value of velocity printed by this loop?",
+        code: "velocity = 0\nfor stage in range(1, 4):\n    velocity += stage * 10\nprint(velocity)",
+        options: ["30", "60", "100", "40"],
+        correct: 1,
+        explanation: "range(1, 4) produces 1, 2, 3. The loop adds 10, then 20, then 30: 10 + 20 + 30 = 60.",
+        takeaway: "range(start, stop) excludes the stop value, running up to stop - 1.",
+        learnMore: "The accumulator pattern adds values to a running total variable across loop iterations.",
+        optionNotes: ["30 is only the final iteration (3 * 10) without accumulating.", null, "100 would include an iteration of 4, but range(1, 4) stops at 3.", "40 is not the sum of 10 + 20 + 30."],
+        hint: "Add up 1*10 + 2*10 + 3*10.",
+        type: "mcq",
+        difficulty: "MEDIUM"
+    },
+    {
+        id: "dc-003",
+        concept: "Dictionary Length",
+        question: "📅 DAILY CHALLENGE: What will len(systems) evaluate to after adding the new key?",
+        code: "systems = {\"radar\": True}\nsystems[\"sonar\"] = False\nprint(len(systems))",
+        options: ["1", "3", "2", "Error: dictionary cannot be resized"],
+        correct: 2,
+        explanation: "The dictionary starts with 1 key ('radar'). Assigning to 'sonar' adds a second key. len(systems) is 2.",
+        takeaway: "Assigning a value to a new key in a dictionary inserts that key-value pair.",
+        learnMore: "Dictionaries in Python are dynamic and mutable, growing as needed.",
+        optionNotes: ["1 was the initial length before adding 'sonar'.", "3 would require 3 unique keys.", null, "Python dictionaries are dynamically mutable."],
+        hint: "Count the number of keys now in the dictionary.",
+        type: "mcq",
+        difficulty: "EASY"
+    },
+    {
+        id: "dc-004",
+        concept: "List Methods",
+        question: "📅 DAILY CHALLENGE: What is the result of applying .pop() to this list?",
+        code: "items = [\"gear\", \"cog\", \"bolt\"]\nremoved = items.pop()\nprint(removed)",
+        options: ["gear", "cog", "['gear', 'cog']", "bolt"],
+        correct: 3,
+        explanation: "Without arguments, list.pop() removes and returns the last item in the list: 'bolt'.",
+        takeaway: "list.pop() removes and returns the last element by default.",
+        learnMore: "You can also pass an index like list.pop(0) to remove and return a specific element.",
+        optionNotes: ["'gear' is at index 0, but pop() removes from the end by default.", "'cog' is the middle element.", "['gear', 'cog'] is what remains in items, not what pop() returned.", null],
+        hint: "pop() removes the last element.",
+        type: "mcq",
+        difficulty: "EASY"
+    },
+    {
+        id: "dc-005",
+        concept: "String Slicing",
+        question: "📅 DAILY CHALLENGE: What substring is produced by word[:4]?",
+        code: "word = \"PYTHONIC\"\nprint(word[:4])",
+        options: ["PYTH", "PYTHO", "YTHO", "PYTHON"],
+        correct: 0,
+        explanation: "word[:4] slices from the beginning (index 0) up to index 4 (exclusive): characters at 0, 1, 2, 3 = 'PYTH'.",
+        takeaway: "Slice notation [:n] extracts the first n characters of a sequence.",
+        learnMore: "Slicing does not raise an IndexError even if the stop index exceeds the string length.",
+        optionNotes: [null, "Index 4 is exclusive, so character at index 4 ('O') is not included.", "Slicing with omitted start starts at index 0, not 1.", "PYTHON is 6 characters long."],
+        hint: "Take the first 4 characters.",
+        type: "mcq",
+        difficulty: "EASY"
+    },
+    {
+        id: "dc-006",
+        concept: "Functions & Defaults",
+        question: "📅 DAILY CHALLENGE: What will this function call output when using its default argument?",
+        code: "def greet(name, prefix=\"Dr.\"):\n    return prefix + \" \" + name\nprint(greet(\"Ada\"))",
+        options: ["Ada", "Dr. Ada", "prefix Ada", "None"],
+        correct: 1,
+        explanation: "Because no second argument was provided, prefix defaults to 'Dr.', producing 'Dr. Ada'.",
+        takeaway: "Default parameter values are used whenever a caller omits that argument.",
+        learnMore: "Default arguments must follow non-default arguments in Python function definitions.",
+        optionNotes: ["The default prefix 'Dr.' is included.", null, "The prefix variable contains 'Dr.', not literal 'prefix'.", "The function explicitly returns a string."],
+        hint: "prefix defaults to 'Dr.'.",
+        type: "mcq",
+        difficulty: "EASY"
+    },
+    {
+        id: "dc-007",
+        concept: "Boolean Expressions",
+        question: "📅 DAILY CHALLENGE: Which of the following expressions evaluates to True in Python?",
+        code: "# Test boolean logic",
+        options: ["bool(0)", "bool(\"\")", "bool(\"False\")", "bool([])"],
+        correct: 2,
+        explanation: "Any non-empty string in Python evaluates to True in boolean context, even if the text inside happens to be 'False'!",
+        takeaway: "Empty collections, 0, and empty strings are falsy; any non-empty string is truthy.",
+        learnMore: "bool('0') is also True because the string contains a character.",
+        optionNotes: ["0 is falsy (bool(0) is False).", "An empty string \"\" is falsy.", null, "An empty list [] is falsy."],
+        hint: "Any non-empty string evaluates to True.",
+        type: "mcq",
+        difficulty: "MEDIUM"
+    },
+    {
+        id: "dc-008",
+        concept: "Loops & range() Step",
+        question: "📅 DAILY CHALLENGE: What list of numbers is generated by range(0, 10, 3)?",
+        code: "print(list(range(0, 10, 3)))",
+        options: ["[0, 1, 2]", "[3, 6, 9]", "[0, 3, 6]", "[0, 3, 6, 9]"],
+        correct: 3,
+        explanation: "range(start, stop, step) begins at 0 and adds 3 each step: 0, 3, 6, 9 (stops before 10).",
+        takeaway: "The third argument to range() specifies the step size between numbers.",
+        learnMore: "Negative step sizes can be used to count backward (e.g. range(10, 0, -1)).",
+        optionNotes: ["Step size is 3, not 1.", "Starts at 0, not 3.", "9 is less than 10, so it is included in the sequence.", null],
+        hint: "Count by 3 starting at 0: 0, 3, 6, 9.",
+        type: "mcq",
+        difficulty: "EASY"
+    },
+    {
+        id: "dc-009",
+        concept: "List Comprehensions / Filtering",
+        question: "📅 DAILY CHALLENGE: What is the sum of even numbers produced by this loop?",
+        code: "evens = []\nfor n in range(1, 6):\n    if n % 2 == 0:\n        evens.append(n)\nprint(sum(evens))",
+        options: ["6", "12", "9", "4"],
+        correct: 0,
+        explanation: "range(1, 6) contains 1, 2, 3, 4, 5. The even numbers are 2 and 4. sum([2, 4]) is 6.",
+        takeaway: "Modulo condition n % 2 == 0 filters for even integers.",
+        learnMore: "sum() is a built-in Python function that totals numeric iterables.",
+        optionNotes: [null, "12 would include odd numbers.", "9 is the sum of odd numbers (1 + 3 + 5).", "4 is only the second even number."],
+        hint: "The even numbers between 1 and 5 are 2 and 4. Add them.",
+        type: "mcq",
+        difficulty: "MEDIUM"
+    },
+    {
+        id: "dc-010",
+        concept: "Tuple Immutability",
+        question: "📅 DAILY CHALLENGE: What happens when executing point[0] = 5 on a tuple?",
+        code: "point = (10, 20)\npoint[0] = 5",
+        options: ["point becomes (5, 20)", "TypeError: 'tuple' object does not support item assignment", "SyntaxError", "ValueError"],
+        correct: 1,
+        explanation: "Tuples are immutable in Python; attempting to modify an item raises a TypeError.",
+        takeaway: "Tuples cannot be altered after creation; use lists if you need mutable collections.",
+        learnMore: "Immutability makes tuples safe to use as dictionary keys.",
+        optionNotes: ["Tuples cannot be modified in-place.", null, "The syntax is valid; the error happens at runtime.", "TypeError is raised, not ValueError."],
+        hint: "Tuples cannot be modified after creation.",
+        type: "mcq",
+        difficulty: "MEDIUM"
+    },
+    {
+        id: "dc-011",
+        concept: "Set Operations",
+        question: "📅 DAILY CHALLENGE: How many unique elements does set([1, 2, 2, 3, 3, 3]) contain?",
+        code: "s = set([1, 2, 2, 3, 3, 3])\nprint(len(s))",
+        options: ["6", "1", "3", "Error"],
+        correct: 2,
+        explanation: "Sets in Python automatically eliminate duplicates. The unique elements are {1, 2, 3}, so len(s) is 3.",
+        takeaway: "Sets store only unique items and automatically discard duplicate values.",
+        learnMore: "Converting a list to a set is the most common Python idiom for removing duplicates.",
+        optionNotes: ["6 is the length of the original list with duplicates.", "There are three distinct values (1, 2, and 3).", null, "set() successfully converts lists to sets."],
+        hint: "Count only the distinct numbers: 1, 2, and 3.",
+        type: "mcq",
+        difficulty: "EASY"
+    },
+    {
+        id: "dc-012",
+        concept: "String Formatting & Methods",
+        question: "📅 DAILY CHALLENGE: What does the .replace() method produce in this statement?",
+        code: "msg = \"Python 2.7\"\nprint(msg.replace(\"2.7\", \"3.12\"))",
+        options: ["Python 2.7", "2.7", "Python", "Python 3.12"],
+        correct: 3,
+        explanation: "str.replace(old, new) returns a new copy of the string where occurrences of old are replaced with new.",
+        takeaway: "str.replace() returns a new updated string without modifying the original in place.",
+        learnMore: "Strings in Python are immutable, so methods like replace() always return a brand new string.",
+        optionNotes: ["The substring '2.7' is replaced with '3.12'.", "The prefix 'Python ' is retained.", "The full replaced string is returned, not just the prefix.", null],
+        hint: "Replaces '2.7' with '3.12'.",
+        type: "mcq",
+        difficulty: "EASY"
+    }
+];
+
+function getDailyQuestionsForDate(dateStr) {
+    let hash = 0;
+    for (let i = 0; i < dateStr.length; i++) {
+        hash = ((hash << 5) - hash) + dateStr.charCodeAt(i);
+        hash |= 0;
+    }
+    const dayIndex = Math.abs(hash);
+    const startIdx = (dayIndex * 3) % DAILY_CHALLENGE_POOL.length;
+    return [
+        DAILY_CHALLENGE_POOL[startIdx],
+        DAILY_CHALLENGE_POOL[(startIdx + 1) % DAILY_CHALLENGE_POOL.length],
+        DAILY_CHALLENGE_POOL[(startIdx + 2) % DAILY_CHALLENGE_POOL.length]
+    ];
+}
+const DAILY_BUILD_QUESTIONS = DAILY_CHALLENGE_POOL; // Alias for backward compatibility
 
 // ==================================================
 // LEVEL CONFIGURATIONS (Flexible & Extensible)
 // ==================================================
 
+// ==================================================
+// SCALABLE MULTI-WORLD ARCHITECTURE
+// Architecture: WORLD -> CHAPTER/STAGE -> CHALLENGE -> LEARNING -> BUILD -> MASTERY -> UNLOCK
+// ==================================================
+
+let currentWorldId = "python";
+
+const WORLDS = [
+    {
+        id: "python",
+        name: "Python World",
+        shortName: "Python",
+        icon: "🐍",
+        status: "active",
+        badge: "WORLD 1 • ACTIVE",
+        tagline: "From First Line to Complete Systems",
+        description: "Your journey starts with the absolute basics of Python and scales into sequences, functions, data structures, and object-oriented architecture.",
+        difficultySummary: "Beginner → Basic → Intermediate → Advanced → Mastery",
+        chapters: null // Attached below to BUILDS
+    },
+    {
+        id: "sql",
+        name: "SQL World",
+        shortName: "SQL",
+        icon: "🗄️",
+        status: "locked",
+        badge: "WORLD 2 • COMING LATER",
+        tagline: "Relational Databases & Query Architecture",
+        description: "SQL Basics → Filtering → Sorting → Aggregations → Multi-Table Joins → Advanced Database Architecture.",
+        chaptersCount: 3,
+        buildMilestones: "Bridge, Fortress, Metropolis",
+        comingSoonNotice: "Under construction. Complete Python World to master programming foundations first!"
+    },
+    {
+        id: "javascript",
+        name: "JavaScript World",
+        shortName: "JavaScript",
+        icon: "⚡",
+        status: "locked",
+        badge: "WORLD 3 • COMING LATER",
+        tagline: "Interactive Web & Event-Driven Systems",
+        description: "Variables & Types → DOM Manipulation → Event Listeners → Async/Await → Full Web Application Architecture.",
+        chaptersCount: 3,
+        buildMilestones: "Clocktower, Cyber-Car, Space Station",
+        comingSoonNotice: "In design on the Build World roadmap. Python World provides the logical foundation!"
+    },
+    {
+        id: "ai_ml",
+        name: "AI & Machine Learning World",
+        shortName: "AI / ML",
+        icon: "🧠",
+        status: "locked",
+        badge: "WORLD 4 • COMING LATER",
+        tagline: "Data Pipelines, Models & Neural Networks",
+        description: "Data Preparation → Statistical Models → Training Loops → Loss & Evaluation → AI Production Systems.",
+        chaptersCount: 3,
+        buildMilestones: "Neural Node, Quantum Core, Synth Android",
+        comingSoonNotice: "Future world planned for advanced software engineers."
+    },
+    {
+        id: "java",
+        name: "Java World",
+        shortName: "Java",
+        icon: "☕",
+        status: "locked",
+        badge: "WORLD 5 • COMING LATER",
+        tagline: "Object-Oriented Enterprise Architecture",
+        description: "Syntax & Compilation → OOP & Interfaces → Collections & Streams → Concurrency & Enterprise Systems.",
+        chaptersCount: 3,
+        buildMilestones: "Citadel, Locomotive, Mega-Carrier",
+        comingSoonNotice: "Future world planned for enterprise software engineering."
+    }
+];
+
+function getCurrentWorld() {
+    return WORLDS.find(function (w) { return w.id === currentWorldId; }) || WORLDS[0];
+}
+
 const BUILDS = [
     {
         id: "house",
         levelNumber: 1,
-        name: "House",
+        name: "Python Basics",
+        buildTheme: "House",
         icon: "🏠",
         title: "🏠 BUILD YOUR HOUSE",
-        topicName: "LEVEL 1 — 🏠 HOUSE",
-        description: "Python Fundamentals, Variables & Print",
+        topicName: "CHAPTER 1 — 🏠 PYTHON BASICS",
+        description: "Python Introduction, print(), Strings, Numbers, Variables & Types",
         questions: houseQuestions,
         pieces: housePieces,
         sceneElement: houseScene,
-        completionTitle: "🏆 LEVEL 1 COMPLETE!",
-        completionDesc: "You completed Level 1 and established your first permanent checkpoint!",
-        unlockNext: "🔓 LEVEL 2 UNLOCKED: 🚀 ROCKET"
+        completionTitle: "🏆 CHAPTER 1 COMPLETE!",
+        completionDesc: "You completed Chapter 1 and built the Foundation House!",
+        unlockNext: "🔓 CHAPTER 2 UNLOCKED: 🚀 LOGIC & LOOPS",
+        missions: [
+            { id: "h_m1", name: "1. Python Basics", icon: "🌱", pieceRange: [1, 2], desc: "What Python is and how print() works" },
+            { id: "h_m2", name: "2. Text & Numbers", icon: "🧱", pieceRange: [3, 4], desc: "Working with strings and numbers" },
+            { id: "h_m3", name: "3. Variables & Types", icon: "🔤", pieceRange: [5, 6], desc: "Storing values and data types" },
+            { id: "h_m4", name: "4. Arithmetic & Operators", icon: "⚡", pieceRange: [7, 8], desc: "Calculations and assignment operators" },
+            { id: "h_m5", name: "5. House Finale", icon: "👑", pieceRange: [9, 10], desc: "Combined fundamentals & House Boss", isBoss: true }
+        ],
+        pieceDetails: [
+            { name: "Foundation Base", desc: "Variables anchor the foundational blueprint" },
+            { name: "Foundation Slab", desc: "Print functions solidify the concrete slab" },
+            { name: "Walls Lower", desc: "String variables frame the lower wall structure" },
+            { name: "Walls Upper", desc: "String concatenation erects the upper walls" },
+            { name: "Front Door", desc: "Boolean conditions install the entrance doorway" },
+            { name: "Window Left", desc: "Type casting opens the left panoramic window" },
+            { name: "Window Right", desc: "Debugged syntax seats the right window frame" },
+            { name: "Main Roof", desc: "Resolved errors erect the main roof rafters" },
+            { name: "Roof Trim & Chimney", desc: "String methods finish the roof trim" },
+            { name: "Garden & Complete Estate", desc: "Python fundamentals complete the entire house!" }
+        ]
     },
     {
         id: "rocket",
         levelNumber: 2,
-        name: "Rocket",
+        name: "Logic & Loops",
+        buildTheme: "Rocket",
         icon: "🚀",
         title: "🚀 BUILD YOUR ROCKET",
-        topicName: "LEVEL 2 — 🚀 ROCKET",
-        description: "Strings, Operators, Loops & Functions",
+        topicName: "CHAPTER 2 — 🚀 LOGIC & LOOPS",
+        description: "Operators, Conditions, Loops & Functions",
         questions: rocketQuestions,
         pieces: rocketPieces,
         sceneElement: rocketScene,
-        completionTitle: "🏆 LEVEL 2 COMPLETE!",
-        completionDesc: "You completed Level 2 and reached the orbital checkpoint!",
-        unlockNext: "🔓 LEVEL 3 UNLOCKED: 🤖 ROBOT"
+        completionTitle: "🏆 CHAPTER 2 COMPLETE!",
+        completionDesc: "You completed Chapter 2 and built the Orbital Rocket!",
+        unlockNext: "🔓 CHAPTER 3 UNLOCKED: 🤖 COLLECTIONS & CLASSES",
+        missions: [
+            { id: "r_m1", name: "1. String Methods & Math", icon: "🚀", pieceRange: [1, 2], desc: "String manipulation and operators" },
+            { id: "r_m2", name: "2. If-Else Decisions", icon: "⚡", pieceRange: [3, 4], desc: "Conditions and branching logic" },
+            { id: "r_m3", name: "3. While & For Loops", icon: "🔄", pieceRange: [5, 6], desc: "Iteration and repeating actions" },
+            { id: "r_m4", name: "4. Writing Functions", icon: "🧪", pieceRange: [7, 8], desc: "def, parameters, and return values" },
+            { id: "r_m5", name: "5. Rocket Finale", icon: "👑", pieceRange: [9, 10], desc: "Combined logic & loop mastery", isBoss: true }
+        ],
+        pieceDetails: [
+            { name: "Lower Fuselage", desc: "String slicing machines the lower booster stage" },
+            { name: "Upper Fuselage", desc: "String methods assemble the pressurized cabin fuselage" },
+            { name: "Left Guidance Fin", desc: "Arithmetic operators calibrate the left stabilizing fin" },
+            { name: "Right Guidance Fin", desc: "Comparison operators balance aerodynamic right fin trim" },
+            { name: "Cockpit Viewport", desc: "Iteration logic seats the reinforced cockpit viewport" },
+            { name: "Engine Bell Nozzle", desc: "While loops forge the high-temperature engine nozzle" },
+            { name: "Attitude Thrusters", desc: "Modular functions link the attitude control thrusters" },
+            { name: "Supersonic Nose Cone", desc: "Return statements sharpen the supersonic nose cone" },
+            { name: "Avionics Array", desc: "Debugged telemetry activates navigation avionics" },
+            { name: "Ignition & Launch Pad", desc: "Combined propulsion systems trigger orbital launch ignition!" }
+        ]
     },
     {
         id: "robot",
         levelNumber: 3,
-        name: "Robot",
+        name: "Collections & Classes",
+        buildTheme: "Robot",
         icon: "🤖",
         title: "🤖 BUILD YOUR ROBOT",
-        topicName: "LEVEL 3 — 🤖 ROBOT",
-        description: "Lists, Tuples, Dictionaries & Classes",
+        topicName: "CHAPTER 3 — 🤖 COLLECTIONS & CLASSES",
+        description: "Lists, Tuples, Dictionaries, Classes & Python Mastery",
         questions: robotQuestions,
         pieces: robotPieces,
         sceneElement: robotScene,
-        completionTitle: "🏆 LEVEL 3 COMPLETE!",
-        completionDesc: "You conquered Level 3 and completed the entire Build World!",
-        unlockNext: "🏆 BUILD WORLD COMPLETED!"
+        completionTitle: "🏆 CHAPTER 3 COMPLETE!",
+        completionDesc: "You conquered Chapter 3 and completed Python World!",
+        unlockNext: "🏆 PYTHON WORLD MASTERED!",
+        missions: [
+            { id: "b_m1", name: "1. Lists & Sequences", icon: "📋", pieceRange: [1, 2], desc: "Ordered lists, indexing, and append" },
+            { id: "b_m2", name: "2. Tuples & Records", icon: "📦", pieceRange: [3, 4], desc: "Immutable tuples and data packing" },
+            { id: "b_m3", name: "3. Dictionaries", icon: "🗄️", pieceRange: [5, 6], desc: "Key-value pairs and lookups" },
+            { id: "b_m4", name: "4. Classes & Objects", icon: "⚙️", pieceRange: [7, 8], desc: "Object-oriented programming & methods" },
+            { id: "b_m5", name: "5. Python World Mastery", icon: "👑", pieceRange: [9, 10], desc: "Full cybernetic system integration", isBoss: true }
+        ],
+        pieceDetails: [
+            { name: "Chassis Torso Base", desc: "Dynamic lists store the mechanical chassis components" },
+            { name: "Arc Reactor Core", desc: "List manipulation mounts the central power reactor core" },
+            { name: "Cranial Chassis", desc: "Immutable tuples anchor the titanium cranial framework" },
+            { name: "Telemetry Antenna", desc: "Tuple unpacking extends the multi-frequency antennas" },
+            { name: "Optical Visor Eyes", desc: "Dictionary keys map sensory visual perception bands" },
+            { name: "Manipulator Left Arm", desc: "Dictionary lookup powers the precision left manipulator" },
+            { name: "Hydraulic Right Arm", desc: "OOP classes instantiate the high-torque right arm" },
+            { name: "Bipedal Leg System", desc: "Class inheritance constructs the bipedal leg hydraulics" },
+            { name: "Exoskeleton Armor", desc: "Encapsulated logic seals the protective exoskeleton" },
+            { name: "Autonomous AI Online", desc: "Cybernetic systems activate autonomous AI consciousness!" }
+        ]
     }
 ];
 
@@ -1160,6 +2366,59 @@ const AudioManager = {
                     gain.connect(AudioManager.audioCtx.destination);
                     osc.start(noteTime);
                     osc.stop(noteTime + 0.15);
+                });
+            } else if (type === "bossStart") {
+                const osc = AudioManager.audioCtx.createOscillator();
+                const gain = AudioManager.audioCtx.createGain();
+                osc.type = "sawtooth";
+                osc.frequency.setValueAtTime(320, now);
+                osc.frequency.exponentialRampToValueAtTime(110, now + 0.35);
+                gain.gain.setValueAtTime(0.18, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
+                osc.connect(gain);
+                gain.connect(AudioManager.audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else if (type === "bossVictory") {
+                const fanfare = [261.63, 329.63, 392.00, 523.25];
+                fanfare.forEach(function (freq, i) {
+                    const noteTime = now + (i * 0.12);
+                    const osc = AudioManager.audioCtx.createOscillator();
+                    const gain = AudioManager.audioCtx.createGain();
+                    osc.type = "triangle";
+                    osc.frequency.setValueAtTime(freq, noteTime);
+                    gain.gain.setValueAtTime(0.16, noteTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, noteTime + 0.22);
+                    osc.connect(gain);
+                    gain.connect(AudioManager.audioCtx.destination);
+                    osc.start(noteTime);
+                    osc.stop(noteTime + 0.24);
+                });
+            } else if (type === "builderSnap") {
+                const osc = AudioManager.audioCtx.createOscillator();
+                const gain = AudioManager.audioCtx.createGain();
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(800, now);
+                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.03);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
+                osc.connect(gain);
+                gain.connect(AudioManager.audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.04);
+            } else if (type === "dailyBuildWin") {
+                const chord = [440, 554.37, 659.25];
+                chord.forEach(function (freq) {
+                    const osc = AudioManager.audioCtx.createOscillator();
+                    const gain = AudioManager.audioCtx.createGain();
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(freq, now);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                    osc.connect(gain);
+                    gain.connect(AudioManager.audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.38);
                 });
             } else if (type === "wrong") {
                 // Distinct descending dual-tone error buzz (A3 220Hz -> E3 165Hz)
@@ -1733,6 +2992,62 @@ const ACHIEVEMENTS = [
         }
     },
     {
+        id: "boss_slayer",
+        title: "BOSS SLAYER",
+        rarity: "RARE",
+        type: "Boss Victory",
+        hidden: false,
+        icon: "👑",
+        description: "Defeat any level Boss Challenge to prove your combined concept mastery.",
+        rewardId: "boss_slayer_aura",
+        condition: "Conquer a level Boss challenge.",
+        getProgressText: function (state) {
+            return (state.unlockedAchievements && state.unlockedAchievements.includes("boss_slayer")) ? "Completed" : "Defeat a level Boss";
+        }
+    },
+    {
+        id: "code_artisan",
+        title: "CODE ARTISAN",
+        rarity: "UNCOMMON",
+        type: "Construction",
+        hidden: false,
+        icon: "🧩",
+        description: "Successfully assemble correct Python code in a Code Builder challenge.",
+        rewardId: "code_artisan_glow",
+        condition: "Correctly assemble a Code Builder statement.",
+        getProgressText: function (state) {
+            return (state.unlockedAchievements && state.unlockedAchievements.includes("code_artisan")) ? "Completed" : "Assemble a Code Builder challenge";
+        }
+    },
+    {
+        id: "daily_architect",
+        title: "DAILY ARCHITECT",
+        rarity: "RARE",
+        type: "Daily Challenge",
+        hidden: false,
+        icon: "📅",
+        description: "Complete a 3-challenge Daily Build sequence across all domains.",
+        rewardId: "daily_architect_spark",
+        condition: "Complete a Daily Build challenge.",
+        getProgressText: function (state) {
+            return (state.unlockedAchievements && state.unlockedAchievements.includes("daily_architect")) ? "Completed" : "Complete a Daily Build";
+        }
+    },
+    {
+        id: "concept_master",
+        title: "CONCEPT MASTER",
+        rarity: "EPIC",
+        type: "Mastery",
+        hidden: false,
+        icon: "⭐",
+        description: "Reach 'Mastered' status in any core programming concept.",
+        rewardId: "concept_master_crown",
+        condition: "Achieve Mastered status in at least one concept domain.",
+        getProgressText: function (state) {
+            return (state.unlockedAchievements && state.unlockedAchievements.includes("concept_master")) ? "Completed" : "Reach Mastered on any concept";
+        }
+    },
+    {
         id: "secret_last_spark",
         title: "THE LAST SPARK",
         rarity: "LEGENDARY",
@@ -1749,6 +3064,31 @@ const ACHIEVEMENTS = [
 ];
 
 const REWARDS = {
+    boss_slayer_aura: {
+        id: "boss_slayer_aura",
+        title: "Boss Slayer Aura",
+        description: "A fierce golden crown aura illuminates your construction stage.",
+        cssClass: "effect-boss-aura"
+    },
+    code_artisan_glow: {
+        id: "code_artisan_glow",
+        title: "Code Artisan Glow",
+        description: "Syntactic cyan highlights pulse along your assembled components.",
+        cssClass: "effect-code-artisan"
+    },
+    daily_architect_spark: {
+        id: "daily_architect_spark",
+        title: "Daily Architect Spark",
+        description: "A brilliant calendar constellation shines over your daily builds.",
+        cssClass: "effect-daily-spark"
+    },
+    concept_master_crown: {
+        id: "concept_master_crown",
+        title: "Concept Master Crown",
+        description: "A luminous star crest marks your comprehensive programming mastery.",
+        cssClass: "effect-concept-crown"
+    },
+
     build_spark: {
         id: "build_spark",
         title: "Build Spark",
@@ -1840,9 +3180,9 @@ function showToast(type, tag, title, desc, icon) {
     item.innerHTML =
         '<div class="toast-icon">' + (icon || "🏆") + '</div>' +
         '<div class="toast-content">' +
-            '<span class="toast-tag">' + escapeHtml(tag || "NOTIFICATION") + '</span>' +
-            '<span class="toast-title">' + escapeHtml(title) + '</span>' +
-            (desc ? '<span class="toast-desc">' + escapeHtml(desc) + '</span>' : '') +
+        '<span class="toast-tag">' + escapeHtml(tag || "NOTIFICATION") + '</span>' +
+        '<span class="toast-title">' + escapeHtml(title) + '</span>' +
+        (desc ? '<span class="toast-desc">' + escapeHtml(desc) + '</span>' : '') +
         '</div>';
 
     toastContainer.appendChild(item);
@@ -2031,6 +3371,8 @@ function validateSaveData(data) {
         completedLevelStats: validatedStats,
         personalRecords: validatedRecords,
         dailyStreak: validatedDaily,
+        conceptMastery: data.conceptMastery && typeof data.conceptMastery === "object" ? data.conceptMastery : null,
+        dailyBuild: data.dailyBuild && typeof data.dailyBuild === "object" ? data.dailyBuild : null,
         metrics: data.metrics && typeof data.metrics === "object" ? data.metrics : null
     };
 }
@@ -2065,6 +3407,13 @@ function updateStartScreenUI(hasProgress) {
 
     if (homeAchievementsBadge && typeof unlockedAchievements !== "undefined") {
         homeAchievementsBadge.textContent = unlockedAchievements.size + "/" + ACHIEVEMENTS.length;
+    }
+
+    if (typeof DailyBuildManager !== "undefined") {
+        DailyBuildManager.updateUI();
+    }
+    if (typeof renderPersonalGoals === "function") {
+        renderPersonalGoals();
     }
 }
 
@@ -2114,6 +3463,8 @@ function saveGameProgress() {
                 bestChallengeAccuracy: Object.assign({}, sessionPersonalRecords.bestChallengeAccuracy)
             },
             dailyStreak: streakData,
+            conceptMastery: ConceptMasteryManager.getData(),
+            dailyBuild: DailyBuildManager.getData(),
             metrics: {
                 totalQuestionsAttempted: totalQuestionsAttempted,
                 totalCorrectAnswers: totalCorrectAnswers,
@@ -2148,6 +3499,7 @@ function loadGameProgress() {
             currentQuestionIndex = 0;
             currentQuestion = null;
             seenQuestionIds.clear();
+    seenBossQuestionIds.clear();
             unlockedAchievements.clear();
             unlockedRewards.clear();
             updateStartScreenUI(false);
@@ -2237,6 +3589,14 @@ function loadGameProgress() {
             levelCorrectHistory.push(h);
         });
         bestNoHintLevelScore = valid.bestNoHintLevelScore || 0;
+
+        // Restore concept mastery & daily build
+        if (valid.conceptMastery) {
+            ConceptMasteryManager.setData(valid.conceptMastery);
+        }
+        if (valid.dailyBuild) {
+            DailyBuildManager.setData(valid.dailyBuild);
+        }
 
         // Restore extended metrics
         if (valid.metrics) {
@@ -2461,7 +3821,991 @@ function unlockReward(rewardId) {
     saveGameProgress();
 }
 
+
+// ==================================================
+// CONCEPT MASTERY & WEAK CONCEPT ENGINE
+// ==================================================
+const CORE_CONCEPTS = [
+    "Variables", "Strings", "Data Types", "Operators",
+    "Loops", "Functions", "Lists", "Tuples",
+    "Dictionaries", "Classes", "Debugging", "Output Reasoning"
+];
+
+const ConceptMasteryManager = {
+    data: {},
+
+    init() {
+        CORE_CONCEPTS.forEach(function (c) {
+            if (!ConceptMasteryManager.data[c]) {
+                ConceptMasteryManager.data[c] = { attempts: 0, correct: 0 };
+            }
+        });
+    },
+
+    getData() {
+        return Object.assign({}, this.data);
+    },
+
+    setData(saved) {
+        if (saved && typeof saved === "object") {
+            CORE_CONCEPTS.forEach(function (c) {
+                if (saved[c] && typeof saved[c].attempts === "number" && typeof saved[c].correct === "number") {
+                    ConceptMasteryManager.data[c] = {
+                        attempts: Math.max(0, saved[c].attempts),
+                        correct: Math.max(0, Math.min(saved[c].attempts, saved[c].correct))
+                    };
+                } else if (!ConceptMasteryManager.data[c]) {
+                    ConceptMasteryManager.data[c] = { attempts: 0, correct: 0 };
+                }
+            });
+        }
+    },
+
+    normalizeConcept(conceptStr) {
+        if (!conceptStr) return "Variables";
+        const lower = conceptStr.toLowerCase();
+        if (lower.includes("var") || lower.includes("print")) return "Variables";
+        if (lower.includes("string") || lower.includes("quote") || lower.includes("slice") || lower.includes("concat")) return "Strings";
+        if (lower.includes("data") || lower.includes("type") || lower.includes("bool") || lower.includes("int") || lower.includes("float")) return "Data Types";
+        if (lower.includes("operator") || lower.includes("arithmetic") || lower.includes("modulo") || lower.includes("precedence")) return "Operators";
+        if (lower.includes("loop") || lower.includes("range") || lower.includes("for") || lower.includes("while") || lower.includes("break")) return "Loops";
+        if (lower.includes("func") || lower.includes("def") || lower.includes("return") || lower.includes("param")) return "Functions";
+        if (lower.includes("list") || lower.includes("append")) return "Lists";
+        if (lower.includes("tuple") || lower.includes("immutab")) return "Tuples";
+        if (lower.includes("dict") || lower.includes("key") || lower.includes("pair")) return "Dictionaries";
+        if (lower.includes("class") || lower.includes("oop") || lower.includes("self") || lower.includes("method")) return "Classes";
+        if (lower.includes("bug") || lower.includes("syntax") || lower.includes("error") || lower.includes("debug")) return "Debugging";
+        return "Output Reasoning";
+    },
+
+    recordAttempt(rawConcept, isCorrect) {
+        const c = this.normalizeConcept(rawConcept);
+        if (!this.data[c]) this.data[c] = { attempts: 0, correct: 0 };
+        this.data[c].attempts += 1;
+        if (isCorrect) this.data[c].correct += 1;
+
+        if (this.getTier(c) === "Mastered") {
+            checkAchievements("concept_mastered");
+        }
+    },
+
+    getTier(concept) {
+        const item = this.data[concept] || { attempts: 0, correct: 0 };
+        const correct = item.correct;
+        const attempts = item.attempts;
+        const acc = attempts > 0 ? (correct / attempts) : 0;
+
+        if (correct >= 6 && acc >= 0.75) return "Mastered";
+        if (correct >= 4) return "Strong";
+        if (correct >= 2) return "Practicing";
+        return "Learning";
+    },
+
+    detectWeakest() {
+        let candidate = null;
+        let lowestAcc = 1.1;
+
+        CORE_CONCEPTS.forEach(function (c) {
+            const item = ConceptMasteryManager.data[c];
+            if (item && item.attempts >= 2) {
+                const acc = item.correct / item.attempts;
+                if (acc < 0.65 && acc < lowestAcc) {
+                    lowestAcc = acc;
+                    candidate = c;
+                }
+            }
+        });
+
+        if (candidate) {
+            return {
+                concept: candidate,
+                tip: candidate + " need more practice. Keep experimenting with code challenges to strengthen this skill!",
+                isWeak: true
+            };
+        }
+
+        let strongest = "Variables";
+        let bestCorrect = -1;
+        CORE_CONCEPTS.forEach(function (c) {
+            const item = ConceptMasteryManager.data[c];
+            if (item && item.correct > bestCorrect) {
+                bestCorrect = item.correct;
+                strongest = c;
+            }
+        });
+
+        return {
+            concept: strongest,
+            tip: strongest + " are becoming your strength! Keep building to master all 12 domains.",
+            isWeak: false
+        };
+    },
+
+    renderMasteryGrid() {
+        if (!conceptMasteryGrid) return;
+        let html = "";
+        CORE_CONCEPTS.forEach(function (c) {
+            const item = ConceptMasteryManager.data[c] || { attempts: 0, correct: 0 };
+            const tier = ConceptMasteryManager.getTier(c);
+            const tierClass = "tier-" + tier.toLowerCase();
+            const pct = item.attempts > 0 ? Math.round((item.correct / item.attempts) * 100) : 0;
+            const tierIcon = (tier === "Mastered") ? "⭐" : (tier === "Strong" ? "🟢" : (tier === "Practicing" ? "🔵" : "⚪"));
+
+            html += '<div class="concept-card">' +
+                '<div class="concept-card-top">' +
+                '<span class="concept-name">' + escapeHtml(c) + '</span>' +
+                '<span class="concept-tier ' + tierClass + '">' + tierIcon + ' ' + tier + '</span>' +
+                '</div>' +
+                '<div class="concept-progress-bar">' +
+                '<div class="concept-progress-fill" style="width: ' + pct + '%; background: ' + (tier === "Mastered" ? "#fbbf24" : (tier === "Strong" ? "#4ade80" : "#38bdf8")) + '"></div>' +
+                '</div>' +
+                '<div class="concept-stats-text">' +
+                '<span>' + item.correct + ' / ' + item.attempts + ' Correct</span>' +
+                '<span>' + pct + '%</span>' +
+                '</div>' +
+                '</div>';
+        });
+        conceptMasteryGrid.innerHTML = html;
+
+        if (mapWeakConceptText) {
+            const advice = ConceptMasteryManager.detectWeakest();
+            mapWeakConceptText.textContent = advice.tip;
+        }
+    }
+};
+
+ConceptMasteryManager.init();
+
+// ==================================================
+// DAILY BUILD SYSTEM (Once Per Calendar Day Challenge)
+// ==================================================
+const DailyBuildManager = {
+    dailyData: {
+        lastCompletedDate: "",
+        streak: 0,
+        bestStreak: 0
+    },
+
+    activeRunIndex: 0,
+    activeRunScore: 0,
+    isRunActive: false,
+    isReplayMode: false,
+    currentQuestions: [],
+
+    getData() {
+        return Object.assign({}, this.dailyData);
+    },
+
+    setData(saved) {
+        if (saved && typeof saved === "object") {
+            if (typeof saved.lastCompletedDate === "string") this.dailyData.lastCompletedDate = saved.lastCompletedDate;
+            if (typeof saved.streak === "number") this.dailyData.streak = saved.streak;
+            if (typeof saved.bestStreak === "number") this.dailyData.bestStreak = saved.bestStreak;
+        }
+    },
+
+    isCompletedToday() {
+        const today = DailyStreakManager.getTodayDateString();
+        return this.dailyData.lastCompletedDate === today;
+    },
+
+    updateUI() {
+        const completed = this.isCompletedToday();
+        if (homeDailyBadge) {
+            if (completed) {
+                homeDailyBadge.textContent = "COMPLETED";
+                homeDailyBadge.className = "home-badge-mini daily-badge-done";
+            } else {
+                homeDailyBadge.textContent = "READY";
+                homeDailyBadge.className = "home-badge-mini daily-badge-active";
+            }
+        }
+        if (mapDailyBuildBtn) {
+            if (completed) {
+                mapDailyBuildBtn.textContent = "📅 DAILY CHALLENGE (COMPLETED • PLAY AGAIN)";
+                mapDailyBuildBtn.classList.add("daily-btn-done");
+            } else {
+                mapDailyBuildBtn.textContent = "📅 PLAY DAILY CHALLENGE (+25 XP)";
+                mapDailyBuildBtn.classList.remove("daily-btn-done");
+            }
+        }
+    },
+
+    openModal() {
+        if (!dailyBuildModal || !dailyModalBody) return;
+        const completed = this.isCompletedToday();
+        const streak = this.dailyData.streak || 0;
+        const best = this.dailyData.bestStreak || 0;
+
+        let nextMilestone = 5;
+        if (streak >= 15) nextMilestone = 30;
+        else if (streak >= 10) nextMilestone = 15;
+        else if (streak >= 5) nextMilestone = 10;
+
+        let bodyHtml =
+            '<div class="daily-streak-status-banner">' +
+            '<div class="daily-streak-left">' +
+            '<span>🔥 DAILY CHALLENGE STREAK: ' + streak + ' DAYS</span>' +
+            '</div>' +
+            '<div class="daily-next-milestone">' +
+            '<span>Next Milestone: ' + nextMilestone + ' Days (Best: ' + best + ')</span>' +
+            '</div>' +
+            '</div>';
+
+        if (completed) {
+            bodyHtml +=
+                '<div class="daily-card-body">' +
+                '<div style="text-align: center; padding: 20px 0;">' +
+                '<div style="font-size: 2.8rem; margin-bottom: 10px;">🎉</div>' +
+                '<h3 style="color: #4ade80; margin-bottom: 8px;">TODAY\'S DAILY CHALLENGE COMPLETE!</h3>' +
+                '<p style="color: #fbbf24; font-weight: 700; margin-bottom: 6px;">⭐ Today\'s reward (+25 XP) already claimed</p>' +
+                '<p style="color: #cbd5e1; max-width: 440px; margin: 0 auto 16px;">You conquered today\'s 3 daily engineering challenges. Replay anytime for practice!</p>' +
+                '<div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">' +
+                '<button class="btn-action primary-btn" type="button" id="daily-replay-btn">PLAY AGAIN ↺</button>' +
+                '<button class="btn-action secondary-btn" type="button" id="daily-done-close-btn">CLOSE</button>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+        } else {
+            bodyHtml +=
+                '<div class="daily-card-body">' +
+                '<p>Answer today\'s 3 Python MCQ challenges to earn bonus XP and advance your Daily Streak!</p>' +
+                '<div class="daily-run-tracker">' +
+                '<div class="daily-run-dot" id="db-dot-0">1</div>' +
+                '<div class="daily-run-dot" id="db-dot-1">2</div>' +
+                '<div class="daily-run-dot" id="db-dot-2">3</div>' +
+                '</div>' +
+                '<div id="daily-challenge-mount"></div>' +
+                '<div style="text-align: center; margin-top: 18px;" id="daily-action-mount">' +
+                '<button id="start-daily-run-btn" class="btn-action primary-btn" type="button">START 3-CHALLENGE RUN (+25 XP) ➔</button>' +
+                '</div>' +
+                '</div>';
+        }
+
+        dailyModalBody.innerHTML = bodyHtml;
+        dailyBuildModal.style.display = "flex";
+
+        const doneCloseBtn = document.getElementById("daily-done-close-btn");
+        if (doneCloseBtn) {
+            doneCloseBtn.addEventListener("click", function () {
+                DailyBuildManager.closeModal();
+            });
+        }
+
+        const replayBtn = document.getElementById("daily-replay-btn");
+        if (replayBtn) {
+            replayBtn.addEventListener("click", function () {
+                DailyBuildManager.startRun(true);
+            });
+        }
+
+        const startBtn = document.getElementById("start-daily-run-btn");
+        if (startBtn) {
+            startBtn.addEventListener("click", function () {
+                DailyBuildManager.startRun(false);
+            });
+        }
+    },
+
+    closeModal() {
+        if (dailyBuildModal) dailyBuildModal.style.display = "none";
+        this.updateUI();
+    },
+
+    startRun(isReplay) {
+        const today = DailyStreakManager.getTodayDateString();
+        this.currentQuestions = getDailyQuestionsForDate(today);
+        this.isReplayMode = !!isReplay;
+        this.activeRunIndex = 0;
+        this.activeRunScore = 0;
+        this.isRunActive = true;
+
+        if (dailyModalBody && this.isReplayMode) {
+            dailyModalBody.innerHTML =
+                '<div class="daily-streak-status-banner">' +
+                '<div class="daily-streak-left">' +
+                '<span>🎯 DAILY CHALLENGE — PRACTICE REPLAY</span>' +
+                '</div>' +
+                '<div class="daily-next-milestone">' +
+                '<span>Today\'s reward already claimed • Practice Mode</span>' +
+                '</div>' +
+                '</div>' +
+                '<div class="daily-card-body">' +
+                '<div class="daily-run-tracker">' +
+                '<div class="daily-run-dot" id="db-dot-0">1</div>' +
+                '<div class="daily-run-dot" id="db-dot-1">2</div>' +
+                '<div class="daily-run-dot" id="db-dot-2">3</div>' +
+                '</div>' +
+                '<div id="daily-challenge-mount"></div>' +
+                '</div>';
+        }
+
+        this.renderChallengeStep();
+    },
+
+    renderChallengeStep() {
+        const mount = document.getElementById("daily-challenge-mount");
+        const actMount = document.getElementById("daily-action-mount");
+        if (!mount) return;
+        if (actMount) actMount.style.display = "none";
+
+        for (let i = 0; i < 3; i++) {
+            const dot = document.getElementById("db-dot-" + i);
+            if (dot) {
+                dot.className = "daily-run-dot" + (i < this.activeRunIndex ? " done" : (i === this.activeRunIndex ? " active" : ""));
+            }
+        }
+
+        if (this.activeRunIndex >= this.currentQuestions.length) {
+            this.finishRun();
+            return;
+        }
+
+        const q = this.currentQuestions[this.activeRunIndex];
+        let codeHtml = "";
+        if (q.code) {
+            codeHtml = '<div class="code-snippet-box" style="margin: 10px 0;"><pre><code>' + escapeHtml(q.code) + '</code></pre></div>';
+        }
+
+        let optsHtml = '<div class="answers-grid" style="margin-top: 12px;">';
+        q.options.forEach(function (opt, idx) {
+            optsHtml += '<button class="answer-btn db-opt-btn" type="button" data-idx="' + idx + '">' + escapeHtml(opt) + '</button>';
+        });
+        optsHtml += '</div>';
+
+        const modeBadge = this.isReplayMode ? '<span class="status-badge" style="background: rgba(148, 163, 184, 0.2); color: #94a3b8; font-size: 0.75rem; margin-left: 8px;">PRACTICE REPLAY</span>' : '';
+
+        mount.innerHTML =
+            '<div class="question-card" style="margin: 10px 0; padding: 14px;">' +
+            '<div style="display: flex; justify-content: space-between; align-items: center;">' +
+            '<span class="question-badge">QUESTION ' + (this.activeRunIndex + 1) + ' OF 3</span>' +
+            modeBadge +
+            '</div>' +
+            '<p style="font-weight: 700; color: #f8fafc; margin-top: 8px;">' + escapeHtml(q.question) + '</p>' +
+            codeHtml +
+            optsHtml +
+            '</div>';
+
+        const btns = mount.querySelectorAll(".db-opt-btn");
+        btns.forEach(function (b) {
+            b.addEventListener("click", function () {
+                const sel = parseInt(b.getAttribute("data-idx"), 10);
+                const isCorrect = (sel === q.correct);
+                btns.forEach(function (btn) { btn.disabled = true; });
+
+                if (isCorrect) {
+                    b.classList.add("btn-correct");
+                    AudioManager.playSound("correct");
+                    DailyBuildManager.activeRunScore += 1;
+                } else {
+                    b.classList.add("btn-wrong");
+                    btns[q.correct].classList.add("btn-correct");
+                    AudioManager.playSound("wrong");
+                }
+
+                setTimeout(function () {
+                    DailyBuildManager.activeRunIndex += 1;
+                    DailyBuildManager.renderChallengeStep();
+                }, 1100);
+            });
+        });
+    },
+
+    finishRun() {
+        const mount = document.getElementById("daily-challenge-mount");
+        const today = DailyStreakManager.getTodayDateString();
+        const yesterday = DailyStreakManager.getYesterdayDateString();
+
+        if (!this.isReplayMode) {
+            // First successful run today: record completion, update streak and award XP
+            if (this.dailyData.lastCompletedDate === yesterday) {
+                this.dailyData.streak += 1;
+            } else if (this.dailyData.lastCompletedDate !== today) {
+                this.dailyData.streak = 1;
+            }
+            if (this.dailyData.streak > this.dailyData.bestStreak) {
+                this.dailyData.bestStreak = this.dailyData.streak;
+            }
+            this.dailyData.lastCompletedDate = today;
+
+            totalXp += 25;
+            if (scoreDisplay) scoreDisplay.textContent = "⭐ " + totalXp + " XP";
+
+            DailyStreakManager.recordActivity();
+            checkAchievements("daily_build_complete");
+            AudioManager.playSound("dailyBuildWin");
+            saveGameProgress();
+            this.updateUI();
+
+            if (mount) {
+                mount.innerHTML =
+                    '<div style="text-align: center; padding: 24px 0;">' +
+                    '<div style="font-size: 3rem; margin-bottom: 12px;">🎉</div>' +
+                    '<h3 style="color: #fbbf24; margin-bottom: 8px;">TODAY\'S DAILY CHALLENGE COMPLETE!</h3>' +
+                    '<p style="color: #4ade80; font-weight: 800; font-size: 1.1rem; margin-bottom: 6px;">⭐ +25 BONUS XP EARNED!</p>' +
+                    '<p style="color: #cbd5e1; margin-bottom: 16px;">🔥 Daily Streak: ' + this.dailyData.streak + ' Days • Accuracy: ' + this.activeRunScore + ' / 3</p>' +
+                    '<div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">' +
+                    '<button class="btn-action primary-btn" type="button" id="daily-replay-again-btn">PLAY AGAIN ↺</button>' +
+                    '<button class="btn-action secondary-btn" type="button" id="daily-collect-reward-btn">CLOSE</button>' +
+                    '</div>' +
+                    '</div>';
+
+                const replayAgainBtn = document.getElementById("daily-replay-again-btn");
+                if (replayAgainBtn) {
+                    replayAgainBtn.addEventListener("click", function () {
+                        DailyBuildManager.startRun(true);
+                    });
+                }
+
+                const colBtn = document.getElementById("daily-collect-reward-btn");
+                if (colBtn) {
+                    colBtn.addEventListener("click", function () {
+                        DailyBuildManager.closeModal();
+                    });
+                }
+            }
+        } else {
+            // Replay mode: practice only, zero extra rewards, streak unchanged
+            AudioManager.playSound("dailyBuildWin");
+            if (mount) {
+                mount.innerHTML =
+                    '<div style="text-align: center; padding: 24px 0;">' +
+                    '<div style="font-size: 3rem; margin-bottom: 12px;">🎯</div>' +
+                    '<h3 style="color: #4ade80; margin-bottom: 8px;">PRACTICE RUN COMPLETE!</h3>' +
+                    '<p style="color: #cbd5e1; margin-bottom: 6px;">You completed today\'s 3 challenges with score: ' + this.activeRunScore + ' / 3</p>' +
+                    '<p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 16px;">Practice replay mode — today\'s reward was already claimed.</p>' +
+                    '<div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">' +
+                    '<button class="btn-action primary-btn" type="button" id="daily-replay-again-btn">PLAY AGAIN ↺</button>' +
+                    '<button class="btn-action secondary-btn" type="button" id="daily-collect-reward-btn">CLOSE</button>' +
+                    '</div>' +
+                    '</div>';
+
+                const replayAgainBtn = document.getElementById("daily-replay-again-btn");
+                if (replayAgainBtn) {
+                    replayAgainBtn.addEventListener("click", function () {
+                        DailyBuildManager.startRun(true);
+                    });
+                }
+
+                const colBtn = document.getElementById("daily-collect-reward-btn");
+                if (colBtn) {
+                    colBtn.addEventListener("click", function () {
+                        DailyBuildManager.closeModal();
+                    });
+                }
+            }
+        }
+    }
+};
+
+// ==================================================
+// PERSONAL GOALS ENGINE
+// ==================================================
+function renderPersonalGoals() {
+    if (!homeGoalsItemsRow) return;
+
+    const build = BUILDS[currentBuildIndex];
+    const mIdx = Math.min(4, Math.floor(successfulCorrectAnswers / 2));
+    const activeMission = build.missions ? build.missions[mIdx] : null;
+    const missionName = activeMission ? activeMission.name : "Level Missions";
+
+    const advice = ConceptMasteryManager.detectWeakest();
+    if (homeGoalsWeakConcept) {
+        homeGoalsWeakConcept.textContent = advice.isWeak
+            ? "💡 Tip: " + advice.concept + " need more practice"
+            : "⭐ Strength: " + advice.concept + " are mastered";
+    }
+
+    const goal1Done = (mIdx > 0);
+    const goal1Pct = Math.min(100, Math.round(((successfulCorrectAnswers % 2) / 2) * 100));
+
+    const streakTarget = 5;
+    const streakDone = (streak >= streakTarget || bestStreak >= streakTarget);
+    const streakPct = Math.min(100, Math.round((Math.min(streakTarget, Math.max(streak, bestStreak)) / streakTarget) * 100));
+
+    const levelDone = !!completedLevels[currentBuildIndex];
+    const levelPct = Math.min(100, successfulCorrectAnswers * 10);
+
+    homeGoalsItemsRow.innerHTML =
+        '<div class="goal-item-chip">' +
+        '<div class="goal-item-header">' +
+        '<span>🎯 ' + escapeHtml(missionName) + '</span>' +
+        '<span class="goal-badge-status ' + (goal1Done ? 'goal-status-complete' : 'goal-status-active') + '">' + (goal1Done ? 'DONE' : 'ACTIVE') + '</span>' +
+        '</div>' +
+        '<span class="goal-desc">Progress through the ' + build.name + ' missions</span>' +
+        '<div class="goal-track"><div class="goal-fill" style="width: ' + (goal1Done ? 100 : goal1Pct) + '%;"></div></div>' +
+        '</div>' +
+        '<div class="goal-item-chip">' +
+        '<div class="goal-item-header">' +
+        '<span>🔥 5-Answer Streak</span>' +
+        '<span class="goal-badge-status ' + (streakDone ? 'goal-status-complete' : 'goal-status-active') + '">' + (streakDone ? 'DONE' : (Math.max(streak, bestStreak) + '/5')) + '</span>' +
+        '</div>' +
+        '<span class="goal-desc">Answer 5 questions consecutively correct</span>' +
+        '<div class="goal-track"><div class="goal-fill" style="width: ' + streakPct + '%;"></div></div>' +
+        '</div>' +
+        '<div class="goal-item-chip">' +
+        '<div class="goal-item-header">' +
+        '<span>🏗️ Complete Level ' + build.levelNumber + '</span>' +
+        '<span class="goal-badge-status ' + (levelDone ? 'goal-status-complete' : 'goal-status-active') + '">' + (levelDone ? 'SAVED' : (successfulCorrectAnswers + '/10')) + '</span>' +
+        '</div>' +
+        '<span class="goal-desc">Build all 10 pieces of the ' + build.name + '</span>' +
+        '<div class="goal-track"><div class="goal-fill" style="width: ' + (levelDone ? 100 : levelPct) + '%;"></div></div>' +
+        '</div>';
+}
+
+// ==================================================
+// MISSION PROGRESSION TRACKER ENGINE
+// ==================================================
+function updateMissionTracker() {
+    if (!missionTracker) return;
+    const build = BUILDS[currentBuildIndex];
+    if (!build || !build.missions) return;
+
+    const currentMissionIdx = Math.min(4, Math.floor(successfulCorrectAnswers / 2));
+    const activeMission = build.missions[currentMissionIdx];
+
+    if (trackerMissionName && activeMission) {
+        trackerMissionName.textContent = activeMission.name;
+    }
+
+    if (trackerPieceTarget) {
+        const pieceIdx = Math.min(9, successfulCorrectAnswers);
+        const pName = (build.pieceDetails && build.pieceDetails[pieceIdx]) ? build.pieceDetails[pieceIdx].name : ("Piece " + (pieceIdx + 1));
+        trackerPieceTarget.textContent = "🎯 Piece " + (pieceIdx + 1) + "/10 • " + pName;
+    }
+
+    if (missionStepsRow) {
+        let html = "";
+        build.missions.forEach(function (m, idx) {
+            let stateClass = "locked";
+            let stateIcon = m.icon;
+            if (idx < currentMissionIdx) {
+                stateClass = "completed";
+                stateIcon = "✓";
+            } else if (idx === currentMissionIdx) {
+                stateClass = "active";
+                stateIcon = "▶";
+            }
+            if (m.isBoss) {
+                stateClass += " boss-step";
+            }
+
+            html += '<div class="mission-step-pill ' + stateClass + '" title="' + escapeHtml(m.name) + '">' +
+                '<span class="step-pill-icon">' + stateIcon + '</span>' +
+                '<span class="step-pill-title">' + escapeHtml(m.name.replace(/^\d+\.\s*/, "")) + '</span>' +
+                '</div>';
+        });
+        missionStepsRow.innerHTML = html;
+    }
+}
+
+// ==================================================
+// CODE BUILDER INTERACTIVE CHALLENGE ENGINE
+// ==================================================
+let builderPlacedTokens = [];
+let builderAvailableTokens = [];
+let activeBuilderQuestion = null;
+
+function getAssembledCodeString(tokens) {
+    if (!tokens || tokens.length === 0) return "";
+    let result = "";
+    for (let i = 0; i < tokens.length; i++) {
+        const token = tokens[i].trim();
+        if (i === 0) {
+            result = token;
+        } else {
+            const prev = tokens[i - 1].trim();
+            if (prev.endsWith("(") || prev.endsWith("[") || prev.endsWith("{") ||
+                token.startsWith(")") || token.startsWith("]") || token.startsWith("}") ||
+                token.startsWith(",") || token.startsWith(":") ||
+                prev.endsWith(".") || token.startsWith(".")) {
+                result += token;
+            } else {
+                result += " " + token;
+            }
+        }
+    }
+    return result;
+}
+
+function normalizeCode(code) {
+    if (!code) return "";
+    return code
+        .replace(/\s+/g, " ")
+        .replace(/\s*([()[\]{},=+\-*\/%&|^<>!:])\s*/g, "$1")
+        .trim();
+}
+
+function initCodeBuilder(question) {
+    activeBuilderQuestion = question;
+    builderPlacedTokens = [];
+    builderAvailableTokens = (question.builderTokens && Array.isArray(question.builderTokens))
+        ? question.builderTokens.slice()
+        : [];
+    renderCodeBuilderSlots();
+    renderCodeBuilderTokens();
+}
+
+function renderCodeBuilderSlots() {
+    if (!codeBuilderSlots) return;
+    if (builderPlacedTokens.length === 0) {
+        codeBuilderSlots.innerHTML = '<span class="slots-placeholder">Tap tokens below to assemble your code...</span>';
+    } else {
+        let tokensHtml = "";
+        builderPlacedTokens.forEach(function (token, idx) {
+            tokensHtml += '<span class="connected-token" data-idx="' + idx + '" role="button" tabindex="0" title="Tap to remove ' + escapeHtml(token) + '" aria-label="Token ' + escapeHtml(token) + '. Tap to remove.">' +
+                '<span class="token-text">' + escapeHtml(token) + '</span>' +
+                '<span class="token-del-btn" aria-hidden="true">✕</span>' +
+                '</span>';
+        });
+
+        codeBuilderSlots.innerHTML =
+            '<div class="assembled-code-line">' +
+                '<span class="code-line-prefix">&gt;&gt;&gt;&nbsp;</span>' +
+                '<div class="assembled-tokens-flow">' + tokensHtml + '</div>' +
+            '</div>';
+
+        const placedChips = codeBuilderSlots.querySelectorAll(".connected-token");
+        placedChips.forEach(function (chip) {
+            const removeAction = function () {
+                if (isAnswerLocked) return;
+                const idx = parseInt(chip.getAttribute("data-idx"), 10);
+                const removed = builderPlacedTokens.splice(idx, 1)[0];
+                builderAvailableTokens.push(removed);
+                AudioManager.playSound("click");
+                renderCodeBuilderSlots();
+                renderCodeBuilderTokens();
+            };
+            chip.addEventListener("click", removeAction);
+            chip.addEventListener("keydown", function (e) {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    removeAction();
+                }
+            });
+        });
+    }
+
+    if (builderSubmitBtn) {
+        builderSubmitBtn.disabled = (builderPlacedTokens.length === 0 || isAnswerLocked);
+    }
+}
+
+function renderCodeBuilderTokens() {
+    if (!codeBuilderTokens) return;
+    let html = "";
+    builderAvailableTokens.forEach(function (token, idx) {
+        html += '<button type="button" class="code-token-chip" data-idx="' + idx + '" aria-label="Token ' + escapeHtml(token) + '. Tap to add to code.">' +
+            escapeHtml(token) +
+            '</button>';
+    });
+    codeBuilderTokens.innerHTML = html;
+
+    const tokenChips = codeBuilderTokens.querySelectorAll(".code-token-chip");
+    tokenChips.forEach(function (chip) {
+        chip.addEventListener("click", function () {
+            if (isAnswerLocked) return;
+            const idx = parseInt(chip.getAttribute("data-idx"), 10);
+            const token = builderAvailableTokens.splice(idx, 1)[0];
+            builderPlacedTokens.push(token);
+            AudioManager.playSound("builderSnap");
+            renderCodeBuilderSlots();
+            renderCodeBuilderTokens();
+        });
+    });
+}
+
+// RESET BUTTON: completely clears current assembly and returns all tokens to available with 0 stat changes
+if (builderResetBtn) {
+    builderResetBtn.addEventListener("click", function () {
+        if (isAnswerLocked || !activeBuilderQuestion) return;
+        builderPlacedTokens = [];
+        builderAvailableTokens = (activeBuilderQuestion.builderTokens && Array.isArray(activeBuilderQuestion.builderTokens))
+            ? activeBuilderQuestion.builderTokens.slice()
+            : [];
+        AudioManager.playSound("click");
+        renderCodeBuilderSlots();
+        renderCodeBuilderTokens();
+    });
+}
+
+// SUBMIT BUTTON: validates exact assembled code against expected solution
+if (builderSubmitBtn) {
+    builderSubmitBtn.addEventListener("click", function () {
+        if (isAnswerLocked || !activeBuilderQuestion || builderPlacedTokens.length === 0) return;
+
+        const assembledStr = getAssembledCodeString(builderPlacedTokens);
+        const normalizedAssembled = normalizeCode(assembledStr);
+
+        const expectedStr = activeBuilderQuestion.solutionCode ||
+            (activeBuilderQuestion.correctOrder ? getAssembledCodeString(activeBuilderQuestion.correctOrder) : "");
+        const normalizedExpected = normalizeCode(expectedStr);
+
+        // Check if token order exactly matches
+        let isMatch = false;
+        if (activeBuilderQuestion.correctOrder && Array.isArray(activeBuilderQuestion.correctOrder)) {
+            if (builderPlacedTokens.length === activeBuilderQuestion.correctOrder.length) {
+                isMatch = builderPlacedTokens.every(function (t, i) {
+                    return t.trim() === activeBuilderQuestion.correctOrder[i].trim();
+                });
+            }
+        }
+
+        // Also check normalized string equality
+        if (!isMatch && normalizedAssembled && normalizedExpected) {
+            if (normalizedAssembled === normalizedExpected) {
+                isMatch = true;
+            }
+        }
+
+        // Also check accepted solutions list if provided
+        if (!isMatch && activeBuilderQuestion.acceptedSolutions && Array.isArray(activeBuilderQuestion.acceptedSolutions)) {
+            isMatch = activeBuilderQuestion.acceptedSolutions.some(function (sol) {
+                return normalizeCode(sol) === normalizedAssembled;
+            });
+        }
+
+        handleCodeBuilderAnswer(isMatch, assembledStr, expectedStr, activeBuilderQuestion);
+    });
+}
+
+function handleCodeBuilderAnswer(isCorrect, assembledCode, expectedCode, question) {
+    if (isAnswerLocked) return;
+    isAnswerLocked = true;
+
+    if (builderSubmitBtn) builderSubmitBtn.disabled = true;
+    if (builderResetBtn) builderResetBtn.disabled = true;
+
+    const build = BUILDS[currentBuildIndex];
+    questionAttempts++;
+    sessionQuestionsAnswered++;
+    if (sessionQuestionsAnswered === 5) {
+        DailyStreakManager.recordActivity();
+    }
+
+    const resultLifeTag = document.getElementById("result-life-tag");
+    const resultPieceTag = document.getElementById("result-piece-tag");
+
+    totalQuestionsAttempted++;
+    attemptsByType["code-builder"] = (attemptsByType["code-builder"] || 0) + 1;
+    levelAttemptsByType["code-builder"] = (levelAttemptsByType["code-builder"] || 0) + 1;
+
+    if (isCorrect) {
+        totalCorrectAnswers++;
+        correctByType["code-builder"] = (correctByType["code-builder"] || 0) + 1;
+        levelCorrectByType["code-builder"] = (levelCorrectByType["code-builder"] || 0) + 1;
+
+        successfulCorrectAnswers++;
+        currentQuestionIndex = successfulCorrectAnswers;
+
+        totalXp += 10;
+        scoreDisplay.textContent = "⭐ " + totalXp + " XP";
+        showFloatingXp(builderSubmitBtn || scoreDisplay, "+10 XP");
+        AudioManager.playSound("correct");
+
+        streak += 1;
+        if (streak > bestStreak) bestStreak = streak;
+        streakDisplay.textContent = "🔥 " + streak;
+
+        if (lives === 1 && reachedOneLifeInLevel) {
+            postOneLifeConsecutiveCorrect++;
+        }
+
+        checkStreakMilestone(streak);
+
+        buildPieces[currentBuildIndex] = successfulCorrectAnswers;
+        updateBuilding(successfulCorrectAnswers - 1);
+        AudioManager.playSound("build");
+
+        checkAchievements("answer");
+        checkAchievements("code_builder_success");
+
+        if (question.concept) {
+            ConceptMasteryManager.recordAttempt(question.concept, true);
+        }
+
+        resultBox.className = "result-box result-correct";
+        resultStatus.textContent = "✅ CORRECT CODE ASSEMBLED!";
+        resultXpTag.textContent = "+10 XP";
+        resultXpTag.className = "result-pill xp-pill xp-earned";
+
+        if (resultLifeTag) resultLifeTag.style.display = "none";
+
+        if (resultPieceTag) {
+            const pieceIdx = Math.min(9, successfulCorrectAnswers - 1);
+            const pInfo = (build.pieceDetails && build.pieceDetails[pieceIdx]) ? build.pieceDetails[pieceIdx] : null;
+            if (pInfo) {
+                resultPieceTag.textContent = "🧱 Built: " + pInfo.name + " (" + pInfo.desc + ")";
+            } else {
+                resultPieceTag.textContent = "🧱 Piece Added to Build!";
+            }
+            resultPieceTag.style.display = "inline-flex";
+        }
+
+        if (streak > 1) {
+            resultStreakTag.textContent = "🔥 Streak: " + streak + " in a row!";
+            resultStreakTag.style.display = "inline-flex";
+        } else {
+            resultStreakTag.textContent = "🔥 Streak Started!";
+            resultStreakTag.style.display = "inline-flex";
+        }
+
+        resultCorrectAnswer.innerHTML = '<span class="correct-label">Assembled Code:</span> <code class="correct-val-code">' + escapeHtml(assembledCode) + '</code>';
+        resultCorrectAnswer.style.display = "block";
+
+        if (resultWrongChoiceNote) resultWrongChoiceNote.style.display = "none";
+
+        if (resultConceptBar && question.concept) {
+            resultConceptText.textContent = question.concept;
+            resultConceptBar.style.display = "inline-flex";
+        } else if (resultConceptBar) {
+            resultConceptBar.style.display = "none";
+        }
+
+        if (resultExplanationHeading) resultExplanationHeading.textContent = "WHY IT WORKS";
+        resultExplanation.textContent = question.explanation;
+
+        if (resultTakeawayBox && question.takeaway) {
+            resultTakeawayText.textContent = question.takeaway;
+            resultTakeawayBox.style.display = "flex";
+        } else if (resultTakeawayBox) {
+            resultTakeawayBox.style.display = "none";
+        }
+
+        if (resultLearnMoreWrap && question.learnMore) {
+            resultLearnMoreText.textContent = question.learnMore;
+            resultLearnMoreDrawer.style.display = "none";
+            if (resultLearnMoreToggle) resultLearnMoreToggle.setAttribute("aria-expanded", "false");
+            if (learnMoreChevron) learnMoreChevron.textContent = "▾";
+            resultLearnMoreWrap.style.display = "block";
+        } else if (resultLearnMoreWrap) {
+            resultLearnMoreWrap.style.display = "none";
+        }
+
+        if (successfulCorrectAnswers === 10) {
+            continueButton.textContent = "COMPLETE LEVEL " + build.levelNumber + " ➔";
+        } else {
+            continueButton.textContent = "CONTINUE ➔";
+        }
+
+    } else {
+        levelMistakes++;
+        flawlessRunBroken = true;
+
+        runMistakes.push({
+            levelIndex: currentBuildIndex,
+            levelNumber: build.levelNumber,
+            levelName: build.name,
+            questionText: question.question,
+            code: null,
+            type: "code-builder",
+            concept: question.concept || "Python Code Assembly",
+            userAnswer: assembledCode,
+            userAnswerFlaw: "The assembled statement does not match the required Python syntax or order.",
+            correctAnswer: expectedCode,
+            explanation: question.explanation,
+            takeaway: question.takeaway || "",
+            learnMore: question.learnMore || ""
+        });
+
+        if (question.concept) {
+            ConceptMasteryManager.recordAttempt(question.concept, false);
+            pendingRevengeConcept = question.concept;
+        }
+
+        lives = Math.max(0, lives - 1);
+        minLivesInLevel = Math.min(minLivesInLevel, lives);
+        streak = 0;
+        streakDisplay.textContent = "🔥 0";
+        updateLivesDisplay();
+
+        AudioManager.playSound("wrong");
+
+        const livesStat = document.querySelector(".stat-lives") || (livesDisplay ? livesDisplay.parentElement : null);
+        if (livesStat) {
+            livesStat.classList.remove("lives-hit");
+            void livesStat.offsetWidth;
+            livesStat.classList.add("lives-hit");
+        }
+
+        resultBox.className = "result-box result-wrong";
+        resultStatus.textContent = "❌ INCORRECT CODE";
+        resultXpTag.textContent = "+0 XP";
+        resultXpTag.className = "result-pill xp-pill xp-zero";
+
+        if (resultLifeTag) {
+            resultLifeTag.textContent = "💔 -1 Life (" + lives + " left)";
+            resultLifeTag.style.display = "inline-flex";
+        }
+
+        if (resultPieceTag) resultPieceTag.style.display = "none";
+
+        resultStreakTag.textContent = "🔥 Streak Reset to 0";
+        resultStreakTag.style.display = "inline-flex";
+
+        resultCorrectAnswer.innerHTML = '<span class="correct-label">Expected Solution:</span> <code class="correct-val-code">' + escapeHtml(expectedCode) + '</code>';
+        resultCorrectAnswer.style.display = "block";
+
+        if (resultWrongChoiceNote) {
+            resultWrongChoiceText.textContent = "You assembled: " + assembledCode;
+            resultWrongChoiceNote.style.display = "flex";
+        }
+
+        if (resultConceptBar && question.concept) {
+            resultConceptText.textContent = question.concept;
+            resultConceptBar.style.display = "inline-flex";
+        } else if (resultConceptBar) {
+            resultConceptBar.style.display = "none";
+        }
+
+        if (resultExplanationHeading) resultExplanationHeading.textContent = "SOLUTION BREAKDOWN";
+        resultExplanation.textContent = question.explanation;
+
+        if (resultTakeawayBox && question.takeaway) {
+            resultTakeawayText.textContent = question.takeaway;
+            resultTakeawayBox.style.display = "flex";
+        } else if (resultTakeawayBox) {
+            resultTakeawayBox.style.display = "none";
+        }
+
+        if (resultLearnMoreWrap && question.learnMore) {
+            resultLearnMoreText.textContent = question.learnMore;
+            resultLearnMoreDrawer.style.display = "none";
+            if (resultLearnMoreToggle) resultLearnMoreToggle.setAttribute("aria-expanded", "false");
+            if (learnMoreChevron) learnMoreChevron.textContent = "▾";
+            resultLearnMoreWrap.style.display = "block";
+        } else if (resultLearnMoreWrap) {
+            resultLearnMoreWrap.style.display = "none";
+        }
+
+        continueButton.textContent = "CONTINUE ➔";
+    }
+
+    resultBox.style.display = "block";
+    resultBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
 function checkAchievements(trigger, payload) {
+    // 13. BOSS SLAYER
+    if (trigger === "boss_defeat") {
+        unlockAchievement("boss_slayer");
+    }
+
+    // 14. CODE ARTISAN
+    if (trigger === "code_builder_success") {
+        unlockAchievement("code_artisan");
+    }
+
+    // 15. DAILY ARCHITECT
+    if (trigger === "daily_build_complete") {
+        unlockAchievement("daily_architect");
+    }
+
+    // 16. CONCEPT MASTER
+    if (trigger === "concept_mastered") {
+        unlockAchievement("concept_master");
+    }
+
     const totalPiecesBuilt = buildPieces.reduce(function (sum, count) {
         return sum + count;
     }, 0);
@@ -2614,36 +4958,36 @@ function renderAchievementsGrid() {
         if (isUnlocked) {
             html +=
                 '<div class="achievement-card unlocked ' + rarityClass + '" id="ach-card-' + ach.id + '">' +
-                    '<div class="ach-icon-wrap">' + ach.icon + '</div>' +
-                    '<div class="ach-info">' +
-                        '<div class="ach-title-row">' +
-                            '<span class="ach-name">' + escapeHtml(ach.title) + '</span>' +
-                            '<span class="ach-status-badge">✓ UNLOCKED</span>' +
-                        '</div>' +
-                        '<div class="ach-badges-row">' +
-                            '<span class="ach-rarity-badge ' + rarityClass + '">' + escapeHtml(ach.rarity) + '</span>' +
-                        '</div>' +
-                        '<span class="ach-desc">' + escapeHtml(ach.description) + '</span>' +
-                        (reward ? '<span class="ach-reward-tag">🎁 Reward: ' + escapeHtml(reward.title) + '</span>' : '') +
-                    '</div>' +
+                '<div class="ach-icon-wrap">' + ach.icon + '</div>' +
+                '<div class="ach-info">' +
+                '<div class="ach-title-row">' +
+                '<span class="ach-name">' + escapeHtml(ach.title) + '</span>' +
+                '<span class="ach-status-badge">✓ UNLOCKED</span>' +
+                '</div>' +
+                '<div class="ach-badges-row">' +
+                '<span class="ach-rarity-badge ' + rarityClass + '">' + escapeHtml(ach.rarity) + '</span>' +
+                '</div>' +
+                '<span class="ach-desc">' + escapeHtml(ach.description) + '</span>' +
+                (reward ? '<span class="ach-reward-tag">🎁 Reward: ' + escapeHtml(reward.title) + '</span>' : '') +
+                '</div>' +
                 '</div>';
         } else if (ach.hidden) {
             // Secret achievement locked view: masked title with spark, ??? description, secret badge
             html +=
                 '<div class="achievement-card locked secret ' + rarityClass + '" id="ach-card-' + ach.id + '">' +
-                    '<div class="ach-icon-wrap">🔒</div>' +
-                    '<div class="ach-info">' +
-                        '<div class="ach-title-row">' +
-                            '<span class="ach-name">⚡ THE LAST SPARK</span>' +
-                            '<span class="ach-status-badge">🔒 SECRET</span>' +
-                        '</div>' +
-                        '<div class="ach-badges-row">' +
-                            '<span class="ach-rarity-badge ' + rarityClass + '">' + escapeHtml(ach.rarity) + '</span>' +
-                        '</div>' +
-                        '<span class="ach-desc">???</span>' +
-                        '<div class="ach-progress-row"><span class="ach-progress-badge secret-pill">🔒 Secret achievement</span></div>' +
-                        (reward ? '<span class="ach-reward-tag">🎁 Reward: ' + escapeHtml(reward.title) + '</span>' : '') +
-                    '</div>' +
+                '<div class="ach-icon-wrap">🔒</div>' +
+                '<div class="ach-info">' +
+                '<div class="ach-title-row">' +
+                '<span class="ach-name">⚡ THE LAST SPARK</span>' +
+                '<span class="ach-status-badge">🔒 SECRET</span>' +
+                '</div>' +
+                '<div class="ach-badges-row">' +
+                '<span class="ach-rarity-badge ' + rarityClass + '">' + escapeHtml(ach.rarity) + '</span>' +
+                '</div>' +
+                '<span class="ach-desc">???</span>' +
+                '<div class="ach-progress-row"><span class="ach-progress-badge secret-pill">🔒 Secret achievement</span></div>' +
+                (reward ? '<span class="ach-reward-tag">🎁 Reward: ' + escapeHtml(reward.title) + '</span>' : '') +
+                '</div>' +
                 '</div>';
         } else {
             let progressHtml = "";
@@ -2655,10 +4999,10 @@ function renderAchievementsGrid() {
                 const bug = corr.bug || 0;
                 progressHtml =
                     '<div class="ach-challenge-grid">' +
-                        '<span class="ach-type-pill' + (mcq >= 5 ? ' is-done' : '') + '">MCQ ' + mcq + '/5' + (mcq >= 5 ? ' ✓' : '') + '</span>' +
-                        '<span class="ach-type-pill' + (out >= 5 ? ' is-done' : '') + '">OUTPUT ' + out + '/5' + (out >= 5 ? ' ✓' : '') + '</span>' +
-                        '<span class="ach-type-pill' + (code >= 5 ? ' is-done' : '') + '">CODE ' + code + '/5' + (code >= 5 ? ' ✓' : '') + '</span>' +
-                        '<span class="ach-type-pill' + (bug >= 5 ? ' is-done' : '') + '">BUG ' + bug + '/5' + (bug >= 5 ? ' ✓' : '') + '</span>' +
+                    '<span class="ach-type-pill' + (mcq >= 5 ? ' is-done' : '') + '">MCQ ' + mcq + '/5' + (mcq >= 5 ? ' ✓' : '') + '</span>' +
+                    '<span class="ach-type-pill' + (out >= 5 ? ' is-done' : '') + '">OUTPUT ' + out + '/5' + (out >= 5 ? ' ✓' : '') + '</span>' +
+                    '<span class="ach-type-pill' + (code >= 5 ? ' is-done' : '') + '">CODE ' + code + '/5' + (code >= 5 ? ' ✓' : '') + '</span>' +
+                    '<span class="ach-type-pill' + (bug >= 5 ? ' is-done' : '') + '">BUG ' + bug + '/5' + (bug >= 5 ? ' ✓' : '') + '</span>' +
                     '</div>';
             } else {
                 const progressText = (typeof ach.getProgressText === "function") ? ach.getProgressText(currentState) : "";
@@ -2673,19 +5017,19 @@ function renderAchievementsGrid() {
 
             html +=
                 '<div class="achievement-card locked ' + rarityClass + '" id="ach-card-' + ach.id + '">' +
-                    '<div class="ach-icon-wrap">' + ach.icon + '</div>' +
-                    '<div class="ach-info">' +
-                        '<div class="ach-title-row">' +
-                            '<span class="ach-name">' + escapeHtml(ach.title) + '</span>' +
-                            '<span class="ach-status-badge">🔒 LOCKED</span>' +
-                        '</div>' +
-                        '<div class="ach-badges-row">' +
-                            '<span class="ach-rarity-badge ' + rarityClass + '">' + escapeHtml(ach.rarity) + '</span>' +
-                        '</div>' +
-                        '<span class="ach-desc">' + escapeHtml(ach.description) + '</span>' +
-                        progressHtml +
-                        (reward ? '<span class="ach-reward-tag">🎁 Reward: ' + escapeHtml(reward.title) + '</span>' : '') +
-                    '</div>' +
+                '<div class="ach-icon-wrap">' + ach.icon + '</div>' +
+                '<div class="ach-info">' +
+                '<div class="ach-title-row">' +
+                '<span class="ach-name">' + escapeHtml(ach.title) + '</span>' +
+                '<span class="ach-status-badge">🔒 LOCKED</span>' +
+                '</div>' +
+                '<div class="ach-badges-row">' +
+                '<span class="ach-rarity-badge ' + rarityClass + '">' + escapeHtml(ach.rarity) + '</span>' +
+                '</div>' +
+                '<span class="ach-desc">' + escapeHtml(ach.description) + '</span>' +
+                progressHtml +
+                (reward ? '<span class="ach-reward-tag">🎁 Reward: ' + escapeHtml(reward.title) + '</span>' : '') +
+                '</div>' +
                 '</div>';
         }
     });
@@ -2812,10 +5156,10 @@ function updateBuildWorldBar() {
         html += '<div id="world-item-' + build.id + '" class="world-item ' + statusClass + '">' +
             '<span class="world-icon">' + build.icon + '</span>' +
             '<div class="world-info">' +
-                '<span class="world-name">L' + build.levelNumber + ': ' + escapeHtml(build.name) + '</span>' +
-                '<span class="world-status">' + statusText + '</span>' +
+            '<span class="world-name">L' + build.levelNumber + ': ' + escapeHtml(build.name) + '</span>' +
+            '<span class="world-status">' + statusText + '</span>' +
             '</div>' +
-        '</div>';
+            '</div>';
     });
 
     container.innerHTML = html;
@@ -2830,7 +5174,58 @@ function renderWorldMap() {
     const journeyContainer = worldMapJourney || document.getElementById("world-map-journey");
     if (!journeyContainer) return;
 
-    // Update Header summary stats
+    // 1. Render Multi-World Tabs
+    const navEl = worldSelectorNav || document.getElementById("world-selector-nav");
+    if (navEl) {
+        let tabsHtml = "";
+        WORLDS.forEach(function (world) {
+            const isActive = (world.id === currentWorldId);
+            const isLocked = (world.status === "locked");
+            tabsHtml += '<button type="button" class="world-selector-tab ' + (isActive ? 'active' : '') + '" data-world="' + world.id + '" role="tab" aria-selected="' + (isActive ? 'true' : 'false') + '">' +
+                '<span>' + (isLocked ? '🔒 ' : '') + world.icon + ' ' + escapeHtml(world.name.toUpperCase()) + '</span>' +
+                '<span class="world-tab-badge">' + escapeHtml(world.badge) + '</span>' +
+                '</button>';
+        });
+        navEl.innerHTML = tabsHtml;
+
+        const tabs = navEl.querySelectorAll(".world-selector-tab");
+        tabs.forEach(function (tab) {
+            tab.addEventListener("click", function () {
+                const wid = tab.getAttribute("data-world");
+                const targetWorld = WORLDS.find(function (w) { return w.id === wid; });
+                if (!targetWorld) return;
+                if (targetWorld.status === "locked") {
+                    showToast("info", "WORLD LOCKED 🔒", targetWorld.name, targetWorld.comingSoonNotice, targetWorld.icon);
+                    AudioManager.playSound("click");
+                    return;
+                }
+                currentWorldId = wid;
+                AudioManager.playSound("click");
+                renderWorldMap();
+            });
+        });
+    }
+
+    // 2. Render Future Worlds Roadmap Cards
+    const fwGrid = futureWorldsGrid || document.getElementById("future-worlds-grid");
+    if (fwGrid) {
+        let fwHtml = "";
+        const futureList = WORLDS.filter(function (w) { return w.status === "locked"; });
+        futureList.forEach(function (fw) {
+            fwHtml += '<div class="future-world-card">' +
+                '<div class="future-card-header">' +
+                    '<span class="future-card-icon">' + fw.icon + '</span>' +
+                    '<span class="future-lock-badge">🔒 COMING LATER</span>' +
+                '</div>' +
+                '<h4 class="future-world-title">' + escapeHtml(fw.name) + '</h4>' +
+                '<p class="future-world-desc">' + escapeHtml(fw.description) + '</p>' +
+                '<div class="future-world-road">Planned Milestones: ' + escapeHtml(fw.buildMilestones || "3 Progressive Chapters") + '</div>' +
+            '</div>';
+        });
+        fwGrid.innerHTML = fwHtml;
+    }
+
+    // 3. Update Header summary stats
     const xpEl = mapTotalXp || document.getElementById("map-total-xp");
     if (xpEl) {
         xpEl.textContent = "⭐ " + totalXp + " XP";
@@ -2894,57 +5289,67 @@ function renderWorldMap() {
             const isConnectorActive = completedLevels[index - 1];
             html += '<div class="map-path-connector ' + (isConnectorActive ? 'active' : '') + '">' +
                 '<div class="connector-track">' +
-                    '<div class="connector-line"></div>' +
-                    '<div class="connector-arrow">' + (isConnectorActive ? '↓' : '▼') + '</div>' +
+                '<div class="connector-line"></div>' +
+                '<div class="connector-arrow">' + (isConnectorActive ? '↓' : '▼') + '</div>' +
                 '</div>' +
-            '</div>';
+                '</div>';
         }
 
         // Build Node Card
         const unlockPulseClass = (index === lastUnlockedBuildIndex) ? " node-unlock-pulse" : "";
         html += '<div class="map-node-wrapper">' +
             '<div class="map-node-card ' + stateClass + unlockPulseClass + '" id="map-node-' + build.id + '" data-level="' + index + '" data-state="' + state + '">' +
-                '<div class="node-header">' +
-                    '<span class="node-level-tag">LEVEL ' + build.levelNumber + '</span>' +
-                    '<span class="node-state-pill ' + stateClass + '">' + stateBadgeText + '</span>' +
-                '</div>' +
-                '<div class="node-body">' +
-                    '<div class="node-icon-wrap ' + stateClass + '">' +
-                        '<span class="node-icon">' + build.icon + '</span>' +
-                        (isCompleted ? '<span class="node-badge-corner check">✓</span>' : '') +
-                        (state === "locked" ? '<span class="node-badge-corner lock">🔒</span>' : '') +
-                    '</div>' +
-                    '<div class="node-content">' +
-                        '<h3 class="node-title">' + escapeHtml(build.name.toUpperCase()) + '</h3>' +
-                        '<p class="node-topic">' + escapeHtml(build.description || "") + '</p>' +
-                        '<div class="node-meta-row">' +
-                            '<span class="node-meta-chip">🎯 10 Correct to Build</span>' +
-                            '<span class="node-meta-chip">🧱 ' + (isCompleted ? totalPieces : currentPieces) + ' / ' + totalPieces + ' Pieces</span>' +
-                        '</div>' +
-                    '</div>' +
-                '</div>';
+            '<div class="node-header">' +
+            '<span class="node-level-tag">LEVEL ' + build.levelNumber + '</span>' +
+            '<span class="node-state-pill ' + stateClass + '">' + stateBadgeText + '</span>' +
+            '</div>' +
+            '<div class="node-body">' +
+            '<div class="node-icon-wrap ' + stateClass + '">' +
+            '<span class="node-icon">' + build.icon + '</span>' +
+            (isCompleted ? '<span class="node-badge-corner check">✓</span>' : '') +
+            (state === "locked" ? '<span class="node-badge-corner lock">🔒</span>' : '') +
+            '</div>' +
+            '<div class="node-content">' +
+            '<h3 class="node-title">' + escapeHtml(build.name.toUpperCase()) + '</h3>' +
+            '<p class="node-topic">' + escapeHtml(build.description || "") + '</p>' +
+            '<div class="node-meta-row">' +
+            '<span class="node-meta-chip">🎯 10 Correct to Build</span>' +
+            '<span class="node-meta-chip">🧱 ' + (isCompleted ? totalPieces : currentPieces) + ' / ' + totalPieces + ' Pieces</span>' +
+            '</div>' +
+            '<div class="node-missions-mini" style="margin-top: 8px; font-size: 0.72rem; color: #94a3b8;">' +
+            (build.missions ? build.missions.map(function (m, mIdx) {
+                const mDone = isCompleted || (index === currentBuildIndex && successfulCorrectAnswers >= m.pieceRange[1]);
+                const mAct = (index === currentBuildIndex && !isCompleted && successfulCorrectAnswers >= m.pieceRange[0] - 1 && successfulCorrectAnswers < m.pieceRange[1]);
+                const mIcon = mDone ? "✓" : (mAct ? "▶" : (m.isBoss ? "★" : "🔒"));
+                const mColor = mDone ? "#4ade80" : (mAct ? "#38bdf8" : (m.isBoss ? "#fbbf24" : "#64748b"));
+                return '<span style="color:' + mColor + '; margin-right: 6px;">' + mIcon + ' ' + escapeHtml(m.name.replace(/^\\d+\\.\\s*/, "")) + '</span>';
+            }).join("") : "") +
+            '</div>' +
+            '</div>' +
+            '</div>';
 
         // Node Footer (Action or Status message)
         if (state === "unlocked" || state === "current") {
             html += '<div class="node-footer">' +
                 '<button class="btn-action primary-btn node-action-btn" type="button" data-level="' + index + '">' +
-                    btnLabel +
+                btnLabel +
                 '</button>' +
-            '</div>';
+                '</div>';
         } else if (state === "completed") {
             html += '<div class="node-footer">' +
                 '<div class="node-status-bar completed">' +
-                    '<span class="status-icon">✓</span>' +
-                    '<span class="status-text">' + escapeHtml(statusMsg) + '</span>' +
+                '<span class="status-icon">✓</span>' +
+                '<span class="status-text">' + escapeHtml(statusMsg) + '</span>' +
                 '</div>' +
-            '</div>';
+                '<button class="replay-level-btn" type="button" data-replay="' + index + '">🔄 REPLAY LEVEL ' + build.levelNumber + '</button>' +
+                '</div>';
         } else {
             html += '<div class="node-footer">' +
                 '<div class="node-status-bar locked">' +
-                    '<span class="status-icon">🔒</span>' +
-                    '<span class="status-text">' + escapeHtml(statusMsg) + '</span>' +
+                '<span class="status-icon">🔒</span>' +
+                '<span class="status-text">' + escapeHtml(statusMsg) + '</span>' +
                 '</div>' +
-            '</div>';
+                '</div>';
         }
 
         html += '</div></div>'; // End map-node-card & map-node-wrapper
@@ -3308,6 +5713,8 @@ function escapeHtml(str) {
 // QUESTION SELECTION & PROGRESSION ENGINE
 // ==================================================
 
+let pendingRevengeConcept = null;
+
 function getNextUnseenQuestion(buildIndex) {
     const build = BUILDS[buildIndex];
     const pool = build.questions;
@@ -3316,18 +5723,199 @@ function getNextUnseenQuestion(buildIndex) {
     });
 
     if (unseen.length === 0) {
-        // Fallback safeguard (pool has 20 questions, max possible seen per attempt is 12)
         return pool[0];
     }
 
-    const selectedQuestion = unseen[0];
-    seenQuestionIds.add(selectedQuestion.id);
-    return selectedQuestion;
+    // 1. REVENGE / PRACTICE CHALLENGE PRIORITY:
+    if (pendingRevengeConcept) {
+        const conceptLower = pendingRevengeConcept.toLowerCase();
+        const revengeMatch = unseen.find(function (q) {
+            const qc = (q.concept || "").toLowerCase();
+            return (qc.includes(conceptLower) || conceptLower.includes(qc)) && !q.isBoss;
+        });
+
+        if (revengeMatch) {
+            pendingRevengeConcept = null;
+            revengeMatch.isRevenge = true;
+            seenQuestionIds.add(revengeMatch.id);
+            return revengeMatch;
+        }
+        pendingRevengeConcept = null;
+    }
+
+    // 2. BOSS / CHAPTER FINALE TRIGGER:
+    // When on piece 10 (successfulCorrectAnswers === 9), strictly present a fresh Chapter Boss Challenge!
+    if (successfulCorrectAnswers === 9) {
+        return getNextBossQuestion(buildIndex);
+    }
+
+    // 3. CURRICULUM ORDERING FOR CHAPTER 1 (Python Basics):
+    // For a beginner progressing through stages 1 to 10 of Chapter 1,
+    // deliver the stage curriculum question (index 0 to 9) if not seen yet!
+    if (buildIndex === 0 && successfulCorrectAnswers < 10) {
+        const targetQ = pool[successfulCorrectAnswers];
+        if (targetQ && !seenQuestionIds.has(targetQ.id)) {
+            seenQuestionIds.add(targetQ.id);
+            return targetQ;
+        }
+    }
+
+    // 4. PROGRESSIVE DIFFICULTY ALIGNMENT:
+    let preferredDiff = "VERY EASY";
+    if (successfulCorrectAnswers >= 6) {
+        preferredDiff = (buildIndex === 2) ? "HARD" : "MEDIUM";
+    } else if (successfulCorrectAnswers >= 4) {
+        preferredDiff = (buildIndex === 0) ? "EASY" : "MEDIUM";
+    } else if (successfulCorrectAnswers >= 2) {
+        preferredDiff = (buildIndex === 0) ? "VERY EASY" : "EASY";
+    }
+
+    const matchingDiff = unseen.filter(function (q) {
+        return !q.isBoss && q.difficulty === preferredDiff;
+    });
+
+    const candidate = (matchingDiff.length > 0)
+        ? matchingDiff[0]
+        : (unseen.find(function (q) { return !q.isBoss; }) || unseen[0]);
+
+    seenQuestionIds.add(candidate.id);
+    return candidate;
 }
 
 // ==================================================
 // QUESTION LOADING & UI UPDATES
 // ==================================================
+
+function updateOrientationBar() {
+    if (!challengeOrientationBar) return;
+    const world = getCurrentWorld();
+    const chapter = BUILDS[currentBuildIndex] || BUILDS[0];
+    if (orientationWorldTag) {
+        orientationWorldTag.textContent = world.icon + " " + world.name.toUpperCase();
+    }
+    if (orientationStageTag) {
+        orientationStageTag.textContent = "CHAPTER " + chapter.levelNumber + ": " + chapter.name.toUpperCase();
+    }
+    const currentMission = (chapter.missions && chapter.missions.length > 0)
+        ? (chapter.missions.find(function (m) {
+            return successfulCorrectAnswers >= m.pieceRange[0] - 1 && successfulCorrectAnswers < m.pieceRange[1];
+        }) || chapter.missions[chapter.missions.length - 1])
+        : null;
+    if (orientationMissionTag) {
+        orientationMissionTag.textContent = currentMission ? currentMission.name : "Python Journey";
+    }
+}
+
+function renderStandardOptionButtons(question, isTerminalStyle) {
+    const prefixes = ["A", "B", "C", "D"];
+    const nums = ["1", "2", "3", "4"];
+    const isCodeChoice = (question.type === "code-choice");
+    answerButtons.forEach(function (button, index) {
+        if (!question.options || question.options[index] === undefined) {
+            button.style.display = "none";
+            return;
+        }
+        button.style.display = "flex";
+        button.disabled = false;
+
+        const badgeHtml = '<span class="ans-badge">' +
+            '<span class="keycap-num">[' + nums[index] + ']</span> ' +
+            '<span class="keycap-letter">[' + prefixes[index] + ']</span>' +
+            '</span>';
+
+        button.innerHTML = badgeHtml + '<span class="ans-text">' + escapeHtml(question.options[index]) + '</span>';
+        button.className = isCodeChoice ? "answer-btn code-choice-btn" : (isTerminalStyle ? "answer-btn term-output-btn" : "answer-btn");
+    });
+}
+
+function renderMCQChallenge(question) {
+    if (challengeTypeBadge) {
+        challengeTypeBadge.textContent = question.isBoss ? "👑 CHAPTER FINALE" : "🎯 MULTIPLE CHOICE";
+        challengeTypeBadge.className = question.isBoss ? "challenge-type-badge type-boss" : "challenge-type-badge type-mcq";
+    }
+    if (codeSnippetBox) {
+        if (question.code) {
+            codeSnippetBox.style.display = "block";
+            const codeEl = document.getElementById("code-snippet-text");
+            if (codeEl) codeEl.textContent = question.code;
+        } else {
+            codeSnippetBox.style.display = "none";
+        }
+    }
+    if (outputChallengeContainer) outputChallengeContainer.style.display = "none";
+    if (debugChallengeContainer) debugChallengeContainer.style.display = "none";
+    if (codeBuilderContainer) codeBuilderContainer.style.display = "none";
+
+    const answersGrid = document.querySelector(".answers-grid");
+    if (answersGrid) {
+        answersGrid.style.display = "grid";
+        answersGrid.className = "answers-grid mode-mcq";
+    }
+    renderStandardOptionButtons(question, false);
+}
+
+function renderOutputChallenge(question) {
+    if (challengeTypeBadge) {
+        challengeTypeBadge.textContent = "⚡ PREDICT OUTPUT";
+        challengeTypeBadge.className = "challenge-type-badge type-output";
+    }
+    if (codeSnippetBox) codeSnippetBox.style.display = "none";
+    if (debugChallengeContainer) debugChallengeContainer.style.display = "none";
+    if (codeBuilderContainer) codeBuilderContainer.style.display = "none";
+
+    if (outputChallengeContainer) {
+        outputChallengeContainer.style.display = "block";
+        if (outputTerminalCode) outputTerminalCode.textContent = question.code || "";
+        if (outputPromptText) outputPromptText.textContent = "Predict what will be printed to the console:";
+    }
+
+    const answersGrid = document.querySelector(".answers-grid");
+    if (answersGrid) {
+        answersGrid.style.display = "grid";
+        answersGrid.className = "answers-grid mode-output";
+    }
+    renderStandardOptionButtons(question, true);
+}
+
+function renderDebugChallenge(question) {
+    if (challengeTypeBadge) {
+        challengeTypeBadge.textContent = "🔍 BUG HUNT / FIX CODE";
+        challengeTypeBadge.className = "challenge-type-badge type-bug";
+    }
+    if (codeSnippetBox) codeSnippetBox.style.display = "none";
+    if (outputChallengeContainer) outputChallengeContainer.style.display = "none";
+    if (codeBuilderContainer) codeBuilderContainer.style.display = "none";
+
+    if (debugChallengeContainer) {
+        debugChallengeContainer.style.display = "block";
+        if (debugCodeText) debugCodeText.textContent = question.code || "";
+    }
+
+    const answersGrid = document.querySelector(".answers-grid");
+    if (answersGrid) {
+        answersGrid.style.display = "grid";
+        answersGrid.className = "answers-grid mode-debug";
+    }
+    renderStandardOptionButtons(question, false);
+}
+
+function renderCodeBuilderChallenge(question) {
+    if (challengeTypeBadge) {
+        challengeTypeBadge.textContent = "🧩 CODE BUILDER";
+        challengeTypeBadge.className = "challenge-type-badge type-code-choice";
+    }
+    if (codeSnippetBox) codeSnippetBox.style.display = "none";
+    if (outputChallengeContainer) outputChallengeContainer.style.display = "none";
+    if (debugChallengeContainer) debugChallengeContainer.style.display = "none";
+
+    const answersGrid = document.querySelector(".answers-grid");
+    if (answersGrid) answersGrid.style.display = "none";
+
+    if (codeBuilderContainer) {
+        codeBuilderContainer.style.display = "block";
+        initCodeBuilder(question);
+    }
+}
 
 function loadQuestion(forceNew) {
     if (forceNew === undefined) forceNew = true;
@@ -3349,27 +5937,56 @@ function loadQuestion(forceNew) {
     const nextPiece = Math.min(10, successfulCorrectAnswers + 1);
     questionNumber.textContent = "🎯 PIECE " + nextPiece + " OF 10";
     difficultyBadge.textContent = question.difficulty || "VERY EASY";
-    difficultyBadge.className = "difficulty-badge badge-easy";
+    // Mission Tracker Update
+    updateMissionTracker();
 
-    // PHASE 5: Dynamic challenge type badge (MCQ, OUTPUT, CODE-CHOICE, BUG)
-    const qType = question.type || "mcq";
-    if (challengeTypeBadge) {
-        if (qType === "output") {
-            challengeTypeBadge.textContent = "⚡ OUTPUT";
-            challengeTypeBadge.className = "challenge-type-badge type-output";
-        } else if (qType === "code-choice") {
-            challengeTypeBadge.textContent = "💻 CODE-CHOICE";
-            challengeTypeBadge.className = "challenge-type-badge type-code-choice";
-        } else if (qType === "bug") {
-            challengeTypeBadge.textContent = "🔍 BUG";
-            challengeTypeBadge.className = "challenge-type-badge type-bug";
+    // Update orientation strip: WHERE AM I? WHAT AM I LEARNING?
+    updateOrientationBar();
+
+    // Revenge Challenge Banner Presentation (Beginner-friendly in early chapters)
+    if (revengeBanner) {
+        if (question.isRevenge) {
+            const titleEl = revengeBanner.querySelector(".revenge-title");
+            if (currentBuildIndex === 0) {
+                if (titleEl) titleEl.textContent = "💡 PRACTICE & TRY AGAIN";
+                if (revengeSubtitle) {
+                    revengeSubtitle.textContent = "Let's practice " + (question.concept || "this concept") + " with a fresh challenge!";
+                }
+            } else {
+                if (titleEl) titleEl.textContent = "⚔️ REVENGE CHALLENGE";
+                if (revengeSubtitle) {
+                    revengeSubtitle.textContent = "Conquer " + (question.concept || "this concept") + " with a fresh challenge!";
+                }
+            }
+            revengeBanner.style.display = "flex";
         } else {
-            challengeTypeBadge.textContent = "🎯 MCQ";
-            challengeTypeBadge.className = "challenge-type-badge type-mcq";
+            revengeBanner.style.display = "none";
         }
     }
 
-    // PHASE 7: Subtle question entrance animation
+    // Boss Challenge Presentation
+    if (question.isBoss) {
+        if (questionCard) questionCard.classList.add("boss-card-active");
+        if (challengeTypeBadge) {
+            challengeTypeBadge.textContent = "👑 BOSS CHALLENGE";
+            challengeTypeBadge.className = "challenge-type-badge type-boss";
+        }
+        if (difficultyBadge) {
+            difficultyBadge.textContent = "BOSS";
+            difficultyBadge.className = "difficulty-badge badge-boss";
+        }
+        AudioManager.playSound("bossStart");
+    } else {
+        if (questionCard) questionCard.classList.remove("boss-card-active");
+        if (difficultyBadge) {
+            difficultyBadge.textContent = question.difficulty || "EASY";
+            difficultyBadge.className = (question.difficulty === "VERY EASY" || question.difficulty === "EASY")
+                ? "difficulty-badge badge-easy"
+                : "difficulty-badge badge-medium";
+        }
+    }
+
+    // Subtle question entrance animation
     if (questionCard) {
         questionCard.classList.remove("question-card-enter");
         void questionCard.offsetWidth;
@@ -3379,37 +5996,8 @@ function loadQuestion(forceNew) {
     // Question text
     questionText.textContent = question.question;
 
-    // Code snippet display
-    if (question.code) {
-        codeSnippetText.textContent = question.code;
-        codeSnippetBox.style.display = "block";
-        if (codeSnippetLang) {
-            if (qType === "bug") {
-                codeSnippetLang.textContent = "Buggy Code • Python";
-            } else if (qType === "output") {
-                codeSnippetLang.textContent = "Code • Python";
-            } else {
-                codeSnippetLang.textContent = "Python";
-            }
-        }
-    } else {
-        codeSnippetText.textContent = "";
-        codeSnippetBox.style.display = "none";
-    }
-
-    // PHASE 1: Populate answer buttons with distinct keycaps [1] [A]
-    const prefixes = ["A", "B", "C", "D"];
-    const nums = ["1", "2", "3", "4"];
-    const isCodeChoice = (qType === "code-choice");
-    answerButtons.forEach(function (button, index) {
-        button.innerHTML = '<span class="ans-badge">' +
-            '<span class="keycap-num">[' + nums[index] + ']</span> ' +
-            '<span class="keycap-letter">[' + prefixes[index] + ']</span>' +
-            '</span><span class="ans-text">' + escapeHtml(question.options[index]) + '</span>';
-        button.disabled = false;
-        button.style.display = "flex";
-        button.className = isCodeChoice ? "answer-btn code-choice-btn" : "answer-btn";
-    });
+    // Dispatch to dedicated challenge renderer (Pure MCQ)
+    renderMCQChallenge(question);
 
     // Reset hint state for current question
     hintUsedForCurrentQuestion = false;
@@ -3417,11 +6005,18 @@ function loadQuestion(forceNew) {
     hintBox.style.display = "none";
     updateHintDisplay();
 
-    // Reset result box
+    // Reset result box (V11-B Learning Depth)
     resultBox.style.display = "none";
     resultBox.className = "result-box";
     resultStreakTag.style.display = "none";
     resultCorrectAnswer.style.display = "none";
+    if (resultConceptBar) resultConceptBar.style.display = "none";
+    if (resultWrongChoiceNote) resultWrongChoiceNote.style.display = "none";
+    if (resultTakeawayBox) resultTakeawayBox.style.display = "none";
+    if (resultLearnMoreWrap) resultLearnMoreWrap.style.display = "none";
+    if (resultLearnMoreDrawer) resultLearnMoreDrawer.style.display = "none";
+    if (resultLearnMoreToggle) resultLearnMoreToggle.setAttribute("aria-expanded", "false");
+    if (learnMoreChevron) learnMoreChevron.textContent = "▾";
     continueButton.textContent = "CONTINUE ➔";
 
     // Unlock answers
@@ -3512,6 +6107,23 @@ function handleAnswer(selectedIndex) {
         answerButtons[selectedIndex].classList.add("btn-correct", "btn-pop");
         checkAchievements("answer");
 
+        // Record concept mastery
+        if (question.concept) {
+            ConceptMasteryManager.recordAttempt(question.concept, true);
+        }
+
+        // Check Code Builder achievement
+        if (qType === "code-builder") {
+            checkAchievements("code_builder_success");
+        }
+
+        // Check Boss Defeat
+        if (question.isBoss) {
+            checkAchievements("boss_defeat");
+            AudioManager.playSound("bossVictory");
+            showToast("achievement", "👑 BOSS DEFEATED!", "Boss Conquered!", "You mastered the combined concepts of " + build.name + "!", "👑");
+        }
+
         // Populate Result Box
         resultBox.className = "result-box result-correct";
         resultStatus.textContent = "✅ CORRECT ANSWER!";
@@ -3523,7 +6135,13 @@ function handleAnswer(selectedIndex) {
         }
 
         if (resultPieceTag) {
-            resultPieceTag.textContent = "🧱 Piece Added to Build!";
+            const pieceIdx = Math.min(9, successfulCorrectAnswers - 1);
+            const pInfo = (build.pieceDetails && build.pieceDetails[pieceIdx]) ? build.pieceDetails[pieceIdx] : null;
+            if (pInfo) {
+                resultPieceTag.textContent = "🧱 Built: " + pInfo.name + " (" + pInfo.desc + ")";
+            } else {
+                resultPieceTag.textContent = "🧱 Piece Added to Build!";
+            }
             resultPieceTag.style.display = "inline-flex";
         }
 
@@ -3536,7 +6154,39 @@ function handleAnswer(selectedIndex) {
         }
 
         resultCorrectAnswer.style.display = "none";
+        if (resultWrongChoiceNote) resultWrongChoiceNote.style.display = "none";
+
+        // V11-B Learning Depth: Concept label
+        if (resultConceptBar && question.concept) {
+            resultConceptText.textContent = question.concept;
+            resultConceptBar.style.display = "inline-flex";
+        } else if (resultConceptBar) {
+            resultConceptBar.style.display = "none";
+        }
+
+        if (resultExplanationHeading) {
+            resultExplanationHeading.textContent = "WHY IT WORKS";
+        }
         resultExplanation.textContent = question.explanation;
+
+        // V11-B Learning Depth: Practical Takeaway
+        if (resultTakeawayBox && question.takeaway) {
+            resultTakeawayText.textContent = question.takeaway;
+            resultTakeawayBox.style.display = "flex";
+        } else if (resultTakeawayBox) {
+            resultTakeawayBox.style.display = "none";
+        }
+
+        // V11-B Learning Depth: Optional Learn More
+        if (resultLearnMoreWrap && question.learnMore) {
+            resultLearnMoreText.textContent = question.learnMore;
+            resultLearnMoreDrawer.style.display = "none";
+            if (resultLearnMoreToggle) resultLearnMoreToggle.setAttribute("aria-expanded", "false");
+            if (learnMoreChevron) learnMoreChevron.textContent = "▾";
+            resultLearnMoreWrap.style.display = "block";
+        } else if (resultLearnMoreWrap) {
+            resultLearnMoreWrap.style.display = "none";
+        }
 
         if (successfulCorrectAnswers === 10) {
             continueButton.textContent = "COMPLETE LEVEL " + build.levelNumber + " ➔";
@@ -3550,7 +6200,17 @@ function handleAnswer(selectedIndex) {
         levelMistakes++;
         flawlessRunBroken = true;
 
-        // Store mistake details for learning review mode
+        // V11-B Learning Depth: Specific distractor flaw reasoning
+        let userFlawReason = null;
+        if (question.optionNotes && question.optionNotes[selectedIndex]) {
+            userFlawReason = question.optionNotes[selectedIndex];
+        } else if (qType === "bug") {
+            userFlawReason = "That choice does not fix the bug or creates an invalid statement.";
+        } else if (qType === "code-choice") {
+            userFlawReason = "That syntax is invalid or behaves differently in Python.";
+        }
+
+        // Store mistake details for learning review mode (V11-B enriched)
         runMistakes.push({
             levelIndex: currentBuildIndex,
             levelNumber: build.levelNumber,
@@ -3558,10 +6218,20 @@ function handleAnswer(selectedIndex) {
             questionText: question.question,
             code: question.code || null,
             type: qType,
+            concept: question.concept || "Python Fundamentals",
             userAnswer: question.options[selectedIndex],
+            userAnswerFlaw: userFlawReason,
             correctAnswer: question.options[question.correct],
-            explanation: question.explanation
+            explanation: question.explanation,
+            takeaway: question.takeaway || "",
+            learnMore: question.learnMore || ""
         });
+
+        // Record concept mastery & queue revenge challenge
+        if (question.concept) {
+            ConceptMasteryManager.recordAttempt(question.concept, false);
+            pendingRevengeConcept = question.concept;
+        }
 
         lives = Math.max(0, lives - 1);
         minLivesInLevel = Math.min(minLivesInLevel, lives);
@@ -3596,7 +6266,11 @@ function handleAnswer(selectedIndex) {
 
         // Populate Result Box
         resultBox.className = "result-box result-wrong";
-        resultStatus.textContent = "❌ INCORRECT";
+        if (question.isBoss) {
+            resultStatus.textContent = "❌ BOSS NOT DEFEATED";
+        } else {
+            resultStatus.textContent = "❌ INCORRECT";
+        }
         resultXpTag.textContent = "+0 XP";
         resultXpTag.className = "result-pill xp-pill xp-zero";
 
@@ -3618,11 +6292,52 @@ function handleAnswer(selectedIndex) {
             : '<span class="correct-val">' + escapeHtml(question.options[question.correct]) + '</span>';
         resultCorrectAnswer.innerHTML = '<span class="correct-label">Correct answer:</span> ' + correctValHtml;
         resultCorrectAnswer.style.display = "block";
+
+        // V11-B Learning Depth: Concept label for wrong answer
+        if (resultConceptBar && question.concept) {
+            resultConceptText.textContent = question.concept;
+            resultConceptBar.style.display = "inline-flex";
+        } else if (resultConceptBar) {
+            resultConceptBar.style.display = "none";
+        }
+
+        // V11-B Learning Depth: Explain why the player's selected answer was wrong
+        if (resultWrongChoiceNote && userFlawReason) {
+            resultWrongChoiceText.textContent = userFlawReason;
+            resultWrongChoiceNote.style.display = "flex";
+        } else if (resultWrongChoiceNote) {
+            resultWrongChoiceNote.style.display = "none";
+        }
+
+        if (resultExplanationHeading) {
+            resultExplanationHeading.textContent = (question.type === "bug") ? "THE BUG & FIX" : "WHY THE CORRECT ANSWER WORKS";
+        }
         resultExplanation.textContent = question.explanation;
+
+        // V11-B Learning Depth: Practical Takeaway
+        if (resultTakeawayBox && question.takeaway) {
+            resultTakeawayText.textContent = question.takeaway;
+            resultTakeawayBox.style.display = "flex";
+        } else if (resultTakeawayBox) {
+            resultTakeawayBox.style.display = "none";
+        }
+
+        // V11-B Learning Depth: Optional Learn More
+        if (resultLearnMoreWrap && question.learnMore) {
+            resultLearnMoreText.textContent = question.learnMore;
+            resultLearnMoreDrawer.style.display = "none";
+            if (resultLearnMoreToggle) resultLearnMoreToggle.setAttribute("aria-expanded", "false");
+            if (learnMoreChevron) learnMoreChevron.textContent = "▾";
+            resultLearnMoreWrap.style.display = "block";
+        } else if (resultLearnMoreWrap) {
+            resultLearnMoreWrap.style.display = "none";
+        }
 
         // If lives reach 0, update continue button text
         if (lives === 0) {
             continueButton.textContent = "SEE RESULTS 💀";
+        } else if (question.isBoss) {
+            continueButton.textContent = "TRY NEXT BOSS CHALLENGE ➔";
         } else {
             continueButton.textContent = "CONTINUE ➔";
         }
@@ -3897,16 +6612,16 @@ function completeCurrentLevel() {
         buildCompleteStats.innerHTML =
             '<div class="report-section-title">📈 LEVEL ' + build.levelNumber + ' PERFORMANCE REPORT</div>' +
             '<div class="stat-card-row report-stats-grid">' +
-                '<div class="mini-stat-card"><span class="m-label">LEVEL ACCURACY</span><span class="m-val highlight">' + levelAccuracy + '%</span></div>' +
-                '<div class="mini-stat-card"><span class="m-label">CORRECT ANSWERS</span><span class="m-val">🎯 10 / 10</span></div>' +
-                '<div class="mini-stat-card"><span class="m-label">TOTAL ATTEMPTS</span><span class="m-val">' + questionAttempts + '</span></div>' +
-                '<div class="mini-stat-card"><span class="m-label">WRONG ATTEMPTS</span><span class="m-val">' + levelMistakes + '</span></div>' +
-                '<div class="mini-stat-card"><span class="m-label">LIVES PRESERVED</span><span class="m-val">❤️ ' + lives + ' / 3</span></div>' +
-                '<div class="mini-stat-card"><span class="m-label">LIVES LOST</span><span class="m-val">💔 ' + livesLost + '</span></div>' +
-                '<div class="mini-stat-card"><span class="m-label">HINTS USED</span><span class="m-val">💡 ' + hintsUsed + ' / 1</span></div>' +
-                '<div class="mini-stat-card"><span class="m-label">BEST STREAK</span><span class="m-val">🔥 ' + bestStreak + '</span></div>' +
-                '<div class="mini-stat-card"><span class="m-label">PIECES BUILT</span><span class="m-val">🧱 10 / ' + totalPieces + '</span></div>' +
-                '<div class="mini-stat-card"><span class="m-label">CHECKPOINT XP</span><span class="m-val">⭐ ' + totalXp + ' XP</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">LEVEL ACCURACY</span><span class="m-val highlight">' + levelAccuracy + '%</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">CORRECT ANSWERS</span><span class="m-val">🎯 10 / 10</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">TOTAL ATTEMPTS</span><span class="m-val">' + questionAttempts + '</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">WRONG ATTEMPTS</span><span class="m-val">' + levelMistakes + '</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">LIVES PRESERVED</span><span class="m-val">❤️ ' + lives + ' / 3</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">LIVES LOST</span><span class="m-val">💔 ' + livesLost + '</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">HINTS USED</span><span class="m-val">💡 ' + hintsUsed + ' / 1</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">BEST STREAK</span><span class="m-val">🔥 ' + bestStreak + '</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">PIECES BUILT</span><span class="m-val">🧱 10 / ' + totalPieces + '</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">CHECKPOINT XP</span><span class="m-val">⭐ ' + totalXp + ' XP</span></div>' +
             '</div>';
 
         // Challenge-type breakdown for this completed level
@@ -3925,9 +6640,9 @@ function completeCurrentLevel() {
             const pct = att > 0 ? Math.round((corr / att) * 100) : 0;
             chalHtml +=
                 '<div class="challenge-stat-card">' +
-                    '<span class="c-stat-type">' + typeNames[type] + '</span>' +
-                    '<div class="c-stat-progress">Correct: <strong>' + corr + ' / ' + att + '</strong></div>' +
-                    '<div class="c-stat-pct">' + pct + '%</div>' +
+                '<span class="c-stat-type">' + typeNames[type] + '</span>' +
+                '<div class="c-stat-progress">Correct: <strong>' + corr + ' / ' + att + '</strong></div>' +
+                '<div class="c-stat-pct">' + pct + '%</div>' +
                 '</div>';
         });
         chalHtml += '</div>';
@@ -3946,10 +6661,10 @@ function completeCurrentLevel() {
 
         buildUnlockBanner.innerHTML =
             '<div class="next-level-preview-box">' +
-                '<span class="next-level-tag">NEXT LEVEL</span>' +
-                '<div class="next-level-title">' + nextBuild.icon + ' Level ' + nextBuild.levelNumber + ': ' + nextBuild.name + '</div>' +
-                '<div class="next-level-desc">' + (nextBuild.description || "") + '</div>' +
-                '<div class="next-level-perks">❤️ 3 Fresh Lives • 💡 1 Fresh Hint</div>' +
+            '<span class="next-level-tag">NEXT LEVEL</span>' +
+            '<div class="next-level-title">' + nextBuild.icon + ' Level ' + nextBuild.levelNumber + ': ' + nextBuild.name + '</div>' +
+            '<div class="next-level-desc">' + (nextBuild.description || "") + '</div>' +
+            '<div class="next-level-perks">❤️ 3 Fresh Lives • 💡 1 Fresh Hint</div>' +
             '</div>';
 
         nextLevelButton.textContent = "CONTINUE TO LEVEL " + nextBuild.levelNumber + " (" + nextBuild.name.toUpperCase() + ") ➔";
@@ -4033,9 +6748,9 @@ function showLevelFailed() {
 
     gameOverStats.innerHTML =
         '<div class="stat-card-row">' +
-            '<div class="mini-stat-card"><span class="m-label">BUILD PROGRESS</span><span class="m-val">🧱 ' + successfulCorrectAnswers + ' / 10 Built</span></div>' +
-            '<div class="mini-stat-card"><span class="m-label">PIECES BUILT</span><span class="m-val">🧱 ' + buildPieces[currentBuildIndex] + ' / ' + totalPieces + '</span></div>' +
-            '<div class="mini-stat-card"><span class="m-label">SAVED CHECKPOINT XP</span><span class="m-val">⭐ ' + checkpointXp + ' XP</span></div>' +
+        '<div class="mini-stat-card"><span class="m-label">BUILD PROGRESS</span><span class="m-val">🧱 ' + successfulCorrectAnswers + ' / 10 Built</span></div>' +
+        '<div class="mini-stat-card"><span class="m-label">PIECES BUILT</span><span class="m-val">🧱 ' + buildPieces[currentBuildIndex] + ' / ' + totalPieces + '</span></div>' +
+        '<div class="mini-stat-card"><span class="m-label">SAVED CHECKPOINT XP</span><span class="m-val">⭐ ' + checkpointXp + ' XP</span></div>' +
         '</div>' +
         '<p class="checkpoint-preserve-note">💾 <strong>Checkpoints are preserved!</strong> Previous completed levels remain saved. Only Level ' + build.levelNumber + ' will restart with 3 fresh lives and 1 hint.</p>';
 
@@ -4105,12 +6820,12 @@ function showGameComplete() {
             const pieces = buildPieces[index] !== undefined ? buildPieces[index] : totalPieces;
             showcaseHtml +=
                 '<div class="showcase-card">' +
-                    '<span class="showcase-icon">' + build.icon + '</span>' +
-                    '<div class="showcase-text">' +
-                        '<span class="showcase-name">' + escapeHtml(build.name) + ' — Completed</span>' +
-                        '<span class="showcase-sub">Level ' + build.levelNumber + ' • ' + pieces + ' / ' + totalPieces + ' Pieces Built</span>' +
-                    '</div>' +
-                    '<span class="showcase-check">✓</span>' +
+                '<span class="showcase-icon">' + build.icon + '</span>' +
+                '<div class="showcase-text">' +
+                '<span class="showcase-name">' + escapeHtml(build.name) + ' — Completed</span>' +
+                '<span class="showcase-sub">Level ' + build.levelNumber + ' • ' + pieces + ' / ' + totalPieces + ' Pieces Built</span>' +
+                '</div>' +
+                '<span class="showcase-check">✓</span>' +
                 '</div>';
         });
         showcaseContainer.innerHTML = showcaseHtml;
@@ -4176,42 +6891,86 @@ function showGameComplete() {
     const runSuccessfulAnswers = 30; // 3 levels * 10 successful answers
     const runAccuracy = runTotalAttempts > 0 ? Math.round((runSuccessfulAnswers / runTotalAttempts) * 100) : 100;
 
+    // EVOLUTION: Populate 4 Learning Quadrants
+    if (quadWellContent && quadStruggledContent && quadLearnedContent && quadNextContent) {
+        const topConcepts = [];
+        const weakConcepts = [];
+
+        CORE_CONCEPTS.forEach(function (c) {
+            const item = ConceptMasteryManager.data[c];
+            if (item && item.attempts > 0) {
+                const acc = item.correct / item.attempts;
+                if (acc >= 0.75) {
+                    topConcepts.push(c + " (" + Math.round(acc * 100) + "%)");
+                } else if (acc < 0.6) {
+                    weakConcepts.push(c + " (" + Math.round(acc * 100) + "%)");
+                }
+            }
+        });
+
+        quadWellContent.innerHTML =
+            '<ul>' +
+            '<li><strong>Highest World Streak:</strong> ' + bestStreak + ' consecutive answers</li>' +
+            '<li><strong>Overall Accuracy:</strong> ' + runAccuracy + '% across all 30 challenges</li>' +
+            '<li><strong>Strong Domains:</strong> ' + (topConcepts.length > 0 ? topConcepts.slice(0, 3).join(", ") : "Fundamentals, Variables") + '</li>' +
+            '</ul>';
+
+        quadStruggledContent.innerHTML =
+            '<ul>' +
+            '<li><strong>Mistakes Logged:</strong> ' + runMistakes.length + ' questions missed in total</li>' +
+            '<li><strong>Focus Areas:</strong> ' + (weakConcepts.length > 0 ? weakConcepts.join(", ") : "None! Flawless conceptual mastery") + '</li>' +
+            '<li><strong>Hints Used:</strong> ' + runHintsUsed + ' / 3 available</li>' +
+            '</ul>';
+
+        quadLearnedContent.innerHTML =
+            '<ul>' +
+            '<li><strong>House:</strong> Syntax, Variables, Data Types & Print output</li>' +
+            '<li><strong>Rocket:</strong> Slicing, Operators, Loops & Functions</li>' +
+            '<li><strong>Robot:</strong> Lists, Tuples, Dictionaries & OOP Classes</li>' +
+            '</ul>';
+
+        const advice = ConceptMasteryManager.detectWeakest();
+        quadNextContent.innerHTML =
+            '<p style="margin: 0 0 6px 0;"><strong>' + escapeHtml(advice.tip) + '</strong></p>' +
+            '<p style="margin: 0; color: #94a3b8; font-size: 0.78rem;">Take on the Daily Build or replay completed levels from the World Map to reach Mastered tier across all 12 domains!</p>';
+    }
+
     // FEATURE 5: Performance Grade
     const gradeData = calculateRunGrade(runAccuracy, runHintsUsed, runLivesLost);
     if (finalGradeBox) {
         finalGradeBox.innerHTML =
             '<div class="grade-banner grade-' + gradeData.grade.toLowerCase() + '">' +
-                '<div class="grade-badge-circle">' + gradeData.grade + '</div>' +
-                '<div class="grade-content">' +
-                    '<span class="grade-badge-title">OVERALL PERFORMANCE GRADE: ' + gradeData.title + '</span>' +
-                    '<p class="grade-badge-desc">' + gradeData.desc + '</p>' +
-                    '<div class="grade-criteria-details">' +
-                        '<span>Accuracy: <strong>' + runAccuracy + '%</strong></span> • ' +
-                        '<span>Hints Used: <strong>' + runHintsUsed + '</strong></span> • ' +
-                        '<span>Lives Lost: <strong>' + runLivesLost + '</strong></span>' +
-                    '</div>' +
-                '</div>' +
+            '<div class="grade-badge-circle">' + gradeData.grade + '</div>' +
+            '<div class="grade-content">' +
+            '<span class="grade-badge-title">OVERALL PERFORMANCE GRADE: ' + gradeData.title + '</span>' +
+            '<p class="grade-badge-desc">' + gradeData.desc + '</p>' +
+            '<div class="grade-criteria-details">' +
+            '<span>Accuracy: <strong>' + runAccuracy + '%</strong></span> • ' +
+            '<span>Hints Used: <strong>' + runHintsUsed + '</strong></span> • ' +
+            '<span>Lives Lost: <strong>' + runLivesLost + '</strong></span>' +
+            '</div>' +
+            '</div>' +
             '</div>';
     }
 
     // FEATURE 5: Overall Performance Report
     finalStats.innerHTML =
         '<div class="final-score-banner">' +
-            '<span class="score-title">TOTAL XP EARNED</span>' +
-            '<span class="score-number">⭐ ' + totalXp + ' / ' + maxPossibleXp + ' XP</span>' +
+        '<span class="score-title">TOTAL XP EARNED</span>' +
+        '<span class="score-number">⭐ ' + totalXp + ' / ' + maxPossibleXp + ' XP</span>' +
         '</div>' +
         '<div class="report-section-title">📈 OVERALL RUN PERFORMANCE</div>' +
         '<div class="stat-card-row report-stats-grid">' +
-            '<div class="mini-stat-card"><span class="m-label">ACCURACY</span><span class="m-val highlight">' + runAccuracy + '%</span></div>' +
-            '<div class="mini-stat-card"><span class="m-label">SUCCESSFUL ANSWERS</span><span class="m-val">🎯 ' + runSuccessfulAnswers + ' / 30</span></div>' +
-            '<div class="mini-stat-card"><span class="m-label">TOTAL ATTEMPTS</span><span class="m-val">' + runTotalAttempts + '</span></div>' +
-            '<div class="mini-stat-card"><span class="m-label">WRONG ATTEMPTS</span><span class="m-val">' + runWrongAttempts + '</span></div>' +
-            '<div class="mini-stat-card"><span class="m-label">HINTS USED</span><span class="m-val">💡 ' + runHintsUsed + '</span></div>' +
-            '<div class="mini-stat-card"><span class="m-label">BEST STREAK</span><span class="m-val">🔥 ' + bestStreak + '</span></div>' +
-            '<div class="mini-stat-card"><span class="m-label">XP EARNED</span><span class="m-val">⭐ ' + totalXp + ' / ' + maxPossibleXp + '</span></div>' +
-            '<div class="mini-stat-card"><span class="m-label">PIECES BUILT</span><span class="m-val">🧱 ' + totalPiecesBuilt + ' / ' + maxPossiblePieces + '</span></div>' +
-            '<div class="mini-stat-card"><span class="m-label">LIVES LOST</span><span class="m-val">💔 ' + runLivesLost + '</span></div>' +
-            '<div class="mini-stat-card"><span class="m-label">REMAINING LIVES</span><span class="m-val">❤️ ' + lives + ' / 3</span></div>' +
+        '<div class="mini-stat-card"><span class="m-label">ACCURACY</span><span class="m-val highlight">' + runAccuracy + '%</span></div>' +
+        '<div class="mini-stat-card"><span class="m-label">SUCCESSFUL ANSWERS</span><span class="m-val">🎯 ' + runSuccessfulAnswers + ' / 30</span></div>' +
+        '<div class="mini-stat-card"><span class="m-label">TOTAL ATTEMPTS</span><span class="m-val">' + runTotalAttempts + '</span></div>' +
+        '<div class="mini-stat-card"><span class="m-label">WRONG ATTEMPTS</span><span class="m-val">' + runWrongAttempts + '</span></div>' +
+        '<div class="mini-stat-card"><span class="m-label">HINTS USED</span><span class="m-val">💡 ' + runHintsUsed + '</span></div>' +
+        '<div class="mini-stat-card"><span class="m-label">BEST STREAK</span><span class="m-val">🔥 ' + bestStreak + '</span></div>' +
+        '<div class="mini-stat-card"><span class="m-label">XP EARNED</span><span class="m-val">⭐ ' + totalXp + ' / ' + maxPossibleXp + '</span></div>' +
+        '<div class="mini-stat-card"><span class="m-label">PIECES BUILT</span><span class="m-val">🧱 ' + totalPiecesBuilt + ' / ' + maxPossiblePieces + '</span></div>' +
+        '<div class="mini-stat-card"><span class="m-label">LIVES LOST</span><span class="m-val">💔 ' + runLivesLost + '</span></div>' +
+        '<div class="mini-stat-card"><span class="m-label">REMAINING LIVES</span><span class="m-val">❤️ ' + lives + ' / 3</span></div>' +
         '</div>';
 
     // FEATURE 5: Challenge Breakdown
@@ -4230,9 +6989,9 @@ function showGameComplete() {
             const pct = att > 0 ? Math.round((corr / att) * 100) : 0;
             chalHtml +=
                 '<div class="challenge-stat-card">' +
-                    '<span class="c-stat-type">' + typeNames[type] + '</span>' +
-                    '<div class="c-stat-progress">Correct: <strong>' + corr + ' / ' + att + '</strong></div>' +
-                    '<div class="c-stat-pct">' + pct + '%</div>' +
+                '<span class="c-stat-type">' + typeNames[type] + '</span>' +
+                '<div class="c-stat-progress">Correct: <strong>' + corr + ' / ' + att + '</strong></div>' +
+                '<div class="c-stat-pct">' + pct + '%</div>' +
                 '</div>';
         });
         chalHtml += '</div>';
@@ -4289,31 +7048,31 @@ function showGameComplete() {
         finalPersonalRecords.innerHTML =
             '<div class="report-section-title">⭐ PERSONAL RECORDS (CURRENT SESSION)</div>' +
             '<div class="records-grid">' +
-                '<div class="record-card">' +
-                    '<span class="r-label">BEST OVERALL STREAK</span>' +
-                    '<span class="r-val">🔥 ' + sessionPersonalRecords.bestStreak + '</span>' +
-                    (isNewBestStreak ? '<span class="record-new-tag">★ NEW RECORD!</span>' : '') +
-                '</div>' +
-                '<div class="record-card">' +
-                    '<span class="r-label">BEST LEVEL ACCURACY</span>' +
-                    '<span class="r-val">🎯 ' + sessionPersonalRecords.bestLevelAccuracy + '%</span>' +
-                    (isNewBestAcc ? '<span class="record-new-tag">★ NEW RECORD!</span>' : '') +
-                '</div>' +
-                '<div class="record-card">' +
-                    '<span class="r-label">MOST XP IN ONE RUN</span>' +
-                    '<span class="r-val">⭐ ' + sessionPersonalRecords.mostXpRun + ' XP</span>' +
-                    (isNewMostXp ? '<span class="record-new-tag">★ NEW RECORD!</span>' : '') +
-                '</div>' +
-                '<div class="record-card">' +
-                    '<span class="r-label">FEWEST WRONG ATTEMPTS</span>' +
-                    '<span class="r-val">🛡️ ' + (sessionPersonalRecords.fewestWorldWrongAttempts !== null ? sessionPersonalRecords.fewestWorldWrongAttempts : 0) + '</span>' +
-                    (isNewFewestWrong ? '<span class="record-new-tag">★ NEW RECORD!</span>' : '') +
-                '</div>' +
-                '<div class="record-card">' +
-                    '<span class="r-label">MOST PIECES BUILT</span>' +
-                    '<span class="r-val">🧱 ' + sessionPersonalRecords.mostPiecesRun + ' / 30</span>' +
-                    (isNewPieces ? '<span class="record-new-tag">★ NEW RECORD!</span>' : '') +
-                '</div>' +
+            '<div class="record-card">' +
+            '<span class="r-label">BEST OVERALL STREAK</span>' +
+            '<span class="r-val">🔥 ' + sessionPersonalRecords.bestStreak + '</span>' +
+            (isNewBestStreak ? '<span class="record-new-tag">★ NEW RECORD!</span>' : '') +
+            '</div>' +
+            '<div class="record-card">' +
+            '<span class="r-label">BEST LEVEL ACCURACY</span>' +
+            '<span class="r-val">🎯 ' + sessionPersonalRecords.bestLevelAccuracy + '%</span>' +
+            (isNewBestAcc ? '<span class="record-new-tag">★ NEW RECORD!</span>' : '') +
+            '</div>' +
+            '<div class="record-card">' +
+            '<span class="r-label">MOST XP IN ONE RUN</span>' +
+            '<span class="r-val">⭐ ' + sessionPersonalRecords.mostXpRun + ' XP</span>' +
+            (isNewMostXp ? '<span class="record-new-tag">★ NEW RECORD!</span>' : '') +
+            '</div>' +
+            '<div class="record-card">' +
+            '<span class="r-label">FEWEST WRONG ATTEMPTS</span>' +
+            '<span class="r-val">🛡️ ' + (sessionPersonalRecords.fewestWorldWrongAttempts !== null ? sessionPersonalRecords.fewestWorldWrongAttempts : 0) + '</span>' +
+            (isNewFewestWrong ? '<span class="record-new-tag">★ NEW RECORD!</span>' : '') +
+            '</div>' +
+            '<div class="record-card">' +
+            '<span class="r-label">MOST PIECES BUILT</span>' +
+            '<span class="r-val">🧱 ' + sessionPersonalRecords.mostPiecesRun + ' / 30</span>' +
+            (isNewPieces ? '<span class="record-new-tag">★ NEW RECORD!</span>' : '') +
+            '</div>' +
             '</div>';
     }
 
@@ -4493,11 +7252,11 @@ function showMissionBriefing(levelIndex) {
     const buildVal = document.getElementById("briefing-build");
     const startBtn = document.getElementById("briefing-start-btn");
 
-    if (chip) chip.textContent = "LEVEL " + build.levelNumber;
+    if (chip) chip.textContent = "CHAPTER " + build.levelNumber;
     if (title) title.textContent = (build.topicName || build.name).toUpperCase();
     if (desc) desc.textContent = build.description || "Master engineering challenges to complete this build.";
     if (buildVal) buildVal.textContent = build.icon + " " + build.name.toUpperCase();
-    if (startBtn) startBtn.textContent = "START LEVEL " + build.levelNumber + " (" + build.name.toUpperCase() + ") ➔";
+    if (startBtn) startBtn.textContent = "START CHAPTER " + build.levelNumber + " (" + build.name.toUpperCase() + ") ➔";
 
     if (missionBriefingCard) {
         missionBriefingCard.style.display = "block";
@@ -4547,9 +7306,9 @@ function renderMistakeReview() {
         if (mistakeCounterText) mistakeCounterText.textContent = "0 of 0";
         reviewContent.innerHTML =
             '<div class="review-empty-state">' +
-                '<div class="empty-icon">🌟</div>' +
-                '<h4 class="empty-title">NO MISTAKES TO REVIEW</h4>' +
-                '<p class="empty-desc">Perfect run! You answered every question correctly without any errors.</p>' +
+            '<div class="empty-icon">🌟</div>' +
+            '<h4 class="empty-title">NO MISTAKES TO REVIEW</h4>' +
+            '<p class="empty-desc">Perfect run! You answered every question correctly without any errors.</p>' +
             '</div>';
         if (prevMistakeBtn) prevMistakeBtn.style.display = "none";
         if (nextMistakeBtn) nextMistakeBtn.style.display = "none";
@@ -4580,28 +7339,48 @@ function renderMistakeReview() {
         codeBlockHtml = '<div class="code-snippet-box review-code-box"><div class="code-header"><span class="code-lang">python</span></div><pre><code>' + escapeHtml(mistake.code) + '</code></pre></div>';
     }
 
+    const conceptHtml = mistake.concept
+        ? '<span class="review-concept-chip"><span class="review-concept-prefix">CONCEPT</span> <span class="review-concept-name">' + escapeHtml(mistake.concept) + '</span></span>'
+        : '';
+
+    const flawHtml = mistake.userAnswerFlaw
+        ? '<div class="ans-flaw-note">⚠️ ' + escapeHtml(mistake.userAnswerFlaw) + '</div>'
+        : '';
+
+    const takeawayHtml = mistake.takeaway
+        ? '<div class="review-takeaway-box"><span class="takeaway-label">🎯 KEY TAKEAWAY</span><p class="review-takeaway-text">' + escapeHtml(mistake.takeaway) + '</p></div>'
+        : '';
+
+    const learnMoreHtml = mistake.learnMore
+        ? '<div class="review-learn-more-box"><span class="learn-more-label">📖 DEEPER DIVE</span><p class="review-learn-more-text">' + escapeHtml(mistake.learnMore) + '</p></div>'
+        : '';
+
     reviewContent.innerHTML =
         '<div class="review-item-card">' +
-            '<div class="review-meta-bar">' +
-                '<span class="review-type-chip chip-' + escapeHtml(mistake.type) + '">' + typeLabel + '</span>' +
-                '<span class="review-level-chip">LEVEL ' + mistake.levelNumber + ': ' + escapeHtml(mistake.levelName.toUpperCase()) + '</span>' +
-            '</div>' +
-            '<div class="review-question-text">' + escapeHtml(mistake.questionText) + '</div>' +
-            codeBlockHtml +
-            '<div class="review-answers-grid">' +
-                '<div class="review-answer-box your-answer">' +
-                    '<span class="ans-label">❌ YOUR ANSWER</span>' +
-                    '<div class="ans-text">' + escapeHtml(mistake.userAnswer) + '</div>' +
-                '</div>' +
-                '<div class="review-answer-box correct-answer">' +
-                    '<span class="ans-label">✅ CORRECT ANSWER</span>' +
-                    '<div class="ans-text">' + escapeHtml(mistake.correctAnswer) + '</div>' +
-                '</div>' +
-            '</div>' +
-            '<div class="review-explanation-box">' +
-                '<span class="exp-label">💡 WHY IT IS CORRECT</span>' +
-                '<p class="exp-text">' + escapeHtml(mistake.explanation) + '</p>' +
-            '</div>' +
+        '<div class="review-meta-bar">' +
+        '<span class="review-type-chip chip-' + escapeHtml(mistake.type) + '">' + typeLabel + '</span>' +
+        conceptHtml +
+        '<span class="review-level-chip">LEVEL ' + mistake.levelNumber + ': ' + escapeHtml(mistake.levelName.toUpperCase()) + '</span>' +
+        '</div>' +
+        '<div class="review-question-text">' + escapeHtml(mistake.questionText) + '</div>' +
+        codeBlockHtml +
+        '<div class="review-answers-grid">' +
+        '<div class="review-answer-box your-answer">' +
+        '<span class="ans-label">❌ YOUR ANSWER</span>' +
+        '<div class="ans-text">' + escapeHtml(mistake.userAnswer) + '</div>' +
+        flawHtml +
+        '</div>' +
+        '<div class="review-answer-box correct-answer">' +
+        '<span class="ans-label">✅ CORRECT ANSWER</span>' +
+        '<div class="ans-text">' + escapeHtml(mistake.correctAnswer) + '</div>' +
+        '</div>' +
+        '</div>' +
+        '<div class="review-explanation-box">' +
+        '<span class="exp-label">💡 WHY IT IS CORRECT</span>' +
+        '<p class="exp-text">' + escapeHtml(mistake.explanation) + '</p>' +
+        '</div>' +
+        takeawayHtml +
+        learnMoreHtml +
         '</div>';
 }
 
@@ -4616,6 +7395,19 @@ if (reviewMistakesFinalBtn) {
     reviewMistakesFinalBtn.addEventListener("click", function () {
         AudioManager.playSound("click");
         openMistakeReview("all");
+    });
+}
+
+if (resultLearnMoreToggle) {
+    resultLearnMoreToggle.addEventListener("click", function () {
+        if (!resultLearnMoreDrawer) return;
+        const isExpanded = resultLearnMoreToggle.getAttribute("aria-expanded") === "true";
+        const nextState = !isExpanded;
+        resultLearnMoreToggle.setAttribute("aria-expanded", String(nextState));
+        resultLearnMoreDrawer.style.display = nextState ? "block" : "none";
+        if (learnMoreChevron) {
+            learnMoreChevron.textContent = nextState ? "▴" : "▾";
+        }
     });
 }
 
@@ -4970,6 +7762,8 @@ DailyStreakManager.updateUI();
 renderAchievementsGrid();
 
 // Expose core game engine structures for inspection & testing
+WORLDS[0].chapters = BUILDS;
+window.WORLDS = WORLDS;
 window.BUILDS = BUILDS;
 window.AudioManager = AudioManager;
 window.DailyStreakManager = DailyStreakManager;
@@ -5038,9 +7832,14 @@ window.renderWorldMap = renderWorldMap;
 window.selectLevelFromMap = selectLevelFromMap;
 window.enterGameplayFromMap = enterGameplayFromMap;
 window.completeCurrentLevel = completeCurrentLevel;
+window.loadQuestion = loadQuestion;
+window.initCodeBuilder = initCodeBuilder;
 window.setGameTestState = function (state) {
     if (state.currentBuildIndex !== undefined) {
         currentBuildIndex = state.currentBuildIndex;
+    }
+    if (state.currentQuestion !== undefined) {
+        currentQuestion = state.currentQuestion;
     }
     if (state.successfulCorrectAnswers !== undefined) {
         successfulCorrectAnswers = state.successfulCorrectAnswers;
@@ -5128,4 +7927,75 @@ window.closeNewGameModal = closeNewGameModal;
 window.openAchievements = openAchievements;
 
 
+
+
+
+function replayCompletedLevel(levelIndex) {
+    if (levelIndex < 0 || levelIndex >= BUILDS.length) return;
+    currentBuildIndex = levelIndex;
+    successfulCorrectAnswers = 0;
+    currentQuestionIndex = 0;
+    currentQuestion = null;
+    seenQuestionIds.clear();
+    questionAttempts = 0;
+    levelMistakes = 0;
+    streak = 0;
+    lives = 3;
+    hintsRemaining = 1;
+    hintUsedForCurrentQuestion = false;
+    isAnswerLocked = false;
+
+    // Reset visually for replay
+    if (BUILDS[levelIndex].pieces) {
+        BUILDS[levelIndex].pieces.forEach(function (p) {
+            p.classList.remove("built", "piece-pop");
+        });
+    }
+
+    updateLivesDisplay();
+    updateHintDisplay();
+    switchScene(levelIndex);
+    updateBuildWorldBar();
+    updateBuilding(-1);
+    loadQuestion(true);
+
+    if (worldMapScreen) worldMapScreen.style.display = "none";
+    if (gameScreen) gameScreen.style.display = "block";
+    showToast("", "PRACTICE RUN", "Replaying Level " + (levelIndex + 1), "Checkpoints remain safe. Hone your mastery!", "🔄");
+}
+
+
+// Daily Build Event Listeners
+if (homeDailyBuildBtn) {
+    homeDailyBuildBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        DailyBuildManager.openModal();
+    });
+}
+
+if (mapDailyBuildBtn) {
+    mapDailyBuildBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        DailyBuildManager.openModal();
+    });
+}
+
+if (dailyBuildModalClose) {
+    dailyBuildModalClose.addEventListener("click", function () {
+        DailyBuildManager.closeModal();
+    });
+}
+
+// Test & Debug Interface
+window.getCurrentQuestion = function () { return currentQuestion; };
+window.getCurrentBuildIndex = function () { return currentBuildIndex; };
+window.setCurrentBuildIndex = function (val) { currentBuildIndex = val; };
+window.getSuccessfulCorrectAnswers = function () { return successfulCorrectAnswers; };
+window.setSuccessfulCorrectAnswers = function (val) { successfulCorrectAnswers = val; };
+window.getLives = function () { return lives; };
+window.setLives = function (val) { lives = val; updateLivesDisplay(); };
+window.getStreak = function () { return streak; };
+window.setStreak = function (val) { streak = val; };
+window.getTotalXp = function () { return totalXp; };
+window.DailyBuildManager = DailyBuildManager;
 

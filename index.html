@@ -29,56 +29,56 @@
         <div id="start-screen" class="start-screen">
             <div class="brand-pill">
                 <span class="pill-dot"></span>
-                <span>TECHNICAL LEARNING CHALLENGE • 3 LEVELS</span>
+                <span>🐍 PYTHON WORLD • LEARN &amp; BUILD</span>
             </div>
             
             <h1 class="game-title">BUILD IT!</h1>
             <p class="tagline">Learn. Build. Level Up.</p>
             <p class="game-desc">
-                Master programming, logic, and systems step-by-step through interactive construction! Every correct answer places a piece on your build. Conquer each level to reach permanent checkpoints!
+                Master Python programming step-by-step through interactive construction! Every correct MCQ adds a physical piece to your build. Advance from absolute beginner to Python mastery!
             </p>
 
-            <!-- 3 Level Progression Roadmap -->
+            <!-- Python World Progression Roadmap -->
             <div class="level-progression-wrapper">
                 <div class="progression-header">
-                    <span class="progression-title">BUILD WORLD ROADMAP</span>
-                    <span class="progression-subtitle">3 Progressive Milestones</span>
+                    <span class="progression-title">🐍 PYTHON WORLD JOURNEY</span>
+                    <span class="progression-subtitle">Beginner → Basic → Intermediate → Advanced → Mastery</span>
                 </div>
                 <div class="level-preview-grid">
                     <div class="preview-card card-l1">
-                        <div class="card-step-badge badge-l1">LEVEL 1</div>
+                        <div class="card-step-badge badge-l1">CHAPTER 1</div>
                         <div class="preview-icon">🏠</div>
-                        <h3>House</h3>
-                        <p class="preview-topic">Python Fundamentals, Variables & Print</p>
+                        <h3>Python Basics</h3>
+                        <p class="preview-topic">print(), strings, numbers, variables &amp; types</p>
                         <div class="preview-meta">
-                            <span>🎯 10 Successful Answers</span>
-                            <span>🧱 10 Pieces</span>
+                            <span>🎯 10 MCQ Stages</span>
+                            <span>🧱 Builds House</span>
                         </div>
                     </div>
 
                     <div class="progression-arrow" aria-hidden="true">➔</div>
 
                     <div class="preview-card card-l2">
-                        <div class="card-step-badge badge-l2">LEVEL 2</div>
+                        <div class="card-step-badge badge-l2">CHAPTER 2</div>
                         <div class="preview-icon">🚀</div>
-                        <h3>Rocket</h3>
-                        <p class="preview-topic">Strings, Operators, Loops & Functions</p>
+                        <h3>Logic &amp; Loops</h3>
+                        <p class="preview-topic">operators, if/else, loops &amp; functions</p>
                         <div class="preview-meta">
-                            <span>🎯 10 Successful Answers</span>
-                            <span>🧱 10 Pieces</span>
+                            <span>🎯 10 MCQ Stages</span>
+                            <span>🧱 Builds Rocket</span>
                         </div>
                     </div>
 
                     <div class="progression-arrow" aria-hidden="true">➔</div>
 
                     <div class="preview-card card-l3">
-                        <div class="card-step-badge badge-l3">LEVEL 3</div>
+                        <div class="card-step-badge badge-l3">CHAPTER 3</div>
                         <div class="preview-icon">🤖</div>
-                        <h3>Robot</h3>
-                        <p class="preview-topic">Lists, Tuples, Dictionaries & Classes</p>
+                        <h3>Collections &amp; Classes</h3>
+                        <p class="preview-topic">lists, tuples, dicts, OOP &amp; Mastery</p>
                         <div class="preview-meta">
-                            <span>🎯 10 Successful Answers</span>
-                            <span>🧱 10 Pieces</span>
+                            <span>🎯 10 MCQ Stages</span>
+                            <span>🧱 Builds Robot</span>
                         </div>
                     </div>
                 </div>
@@ -86,12 +86,23 @@
 
             <!-- Rules Summary Chips -->
             <div class="rules-summary">
-                <span class="rule-chip"><span class="chip-icon">🎯</span> 10 Correct Answers / Level</span>
+                <span class="rule-chip"><span class="chip-icon">🎯</span> Clean MCQ Challenges</span>
                 <span class="rule-chip"><span class="chip-icon">🧱</span> 10 Pieces per Build</span>
                 <span class="rule-chip"><span class="chip-icon">⭐</span> +10 XP per Correct</span>
-                <span class="rule-chip"><span class="chip-icon">❤️</span> 3 Lives per Level</span>
-                <span class="rule-chip"><span class="chip-icon">💡</span> 1 Hint per Level</span>
-                <span class="rule-chip"><span class="chip-icon">💾</span> Level Checkpoints</span>
+                <span class="rule-chip"><span class="chip-icon">❤️</span> 3 Lives per Chapter</span>
+                <span class="rule-chip"><span class="chip-icon">💡</span> 1 Hint per Chapter</span>
+                <span class="rule-chip"><span class="chip-icon">💾</span> Chapter Checkpoints</span>
+            </div>
+
+            <!-- Personal Objectives & Mentorship Banner -->
+            <div id="home-goals-card" class="home-goals-card" aria-label="Current Objectives">
+                <div class="goals-card-header">
+                    <span class="goals-title">🎯 ACTIVE OBJECTIVES</span>
+                    <span id="home-goals-weak-concept" class="goals-weak-tip">💡 Practice keeps your engineering sharp</span>
+                </div>
+                <div class="goals-items-row" id="home-goals-items-row">
+                    <!-- Populated dynamically via script.js -->
+                </div>
             </div>
 
             <div class="start-action-row" id="start-action-row">
@@ -110,10 +121,15 @@
                     <span class="home-nav-icon">🌍</span>
                     <span class="home-nav-text">WORLD MAP</span>
                 </button>
+                <button id="home-daily-build-btn" class="home-nav-btn btn-home-daily" type="button">
+                    <span class="home-nav-icon">📅</span>
+                    <span class="home-nav-text">DAILY BUILD</span>
+                    <span id="home-daily-badge" class="home-badge-mini daily-badge-active">READY</span>
+                </button>
                 <button id="home-achievements-btn" class="home-nav-btn btn-home-achievements" type="button">
                     <span class="home-nav-icon">🏆</span>
                     <span class="home-nav-text">ACHIEVEMENTS</span>
-                    <span id="home-achievements-badge" class="home-badge-mini">0/12</span>
+                    <span id="home-achievements-badge" class="home-badge-mini">0/16</span>
                 </button>
             </div>
         </div>
@@ -152,15 +168,68 @@
                 </div>
             </div>
 
+            <!-- Multi-World Progression Tabs -->
+            <div id="world-selector-nav" class="world-selector-nav" role="tablist" aria-label="Available Worlds">
+                <button type="button" class="world-selector-tab active" data-world="python" role="tab" aria-selected="true">
+                    <span>🐍 PYTHON WORLD</span>
+                    <span class="world-tab-badge">WORLD 1 • ACTIVE</span>
+                </button>
+                <button type="button" class="world-selector-tab" data-world="sql" role="tab" aria-selected="false">
+                    <span>🔒 🗄️ SQL WORLD</span>
+                    <span class="world-tab-badge">COMING LATER</span>
+                </button>
+                <button type="button" class="world-selector-tab" data-world="javascript" role="tab" aria-selected="false">
+                    <span>🔒 ⚡ JAVASCRIPT</span>
+                    <span class="world-tab-badge">COMING LATER</span>
+                </button>
+                <button type="button" class="world-selector-tab" data-world="ai_ml" role="tab" aria-selected="false">
+                    <span>🔒 🧠 AI / ML</span>
+                    <span class="world-tab-badge">COMING LATER</span>
+                </button>
+            </div>
+
             <!-- Dynamic Progression Journey Container (Generated from BUILDS in script.js) -->
             <div id="world-map-journey" class="world-map-journey" aria-label="Progression Journey Path">
                 <!-- Dynamically rendered via renderWorldMap() in script.js -->
+            </div>
+
+            <!-- Future Worlds Roadmap Container -->
+            <div id="future-worlds-section" class="future-worlds-section">
+                <div class="future-worlds-title-bar">
+                    <span class="future-title">🗺️ EXPANDING WORLD ROADMAP</span>
+                </div>
+                <div id="future-worlds-grid" class="future-worlds-grid">
+                    <!-- Populated dynamically via script.js -->
+                </div>
+            </div>
+
+            <!-- Concept Mastery Section -->
+            <div id="world-map-mastery-section" class="map-mastery-section">
+                <div class="map-mastery-header">
+                    <div class="mastery-header-left">
+                        <span class="mastery-icon">🧠</span>
+                        <div class="mastery-title-group">
+                            <h3 class="mastery-title">CONCEPT MASTERY</h3>
+                            <span class="mastery-subtitle">Track your programming mastery across 12 core domains</span>
+                        </div>
+                    </div>
+                    <div id="mastery-weak-tip-box" class="mastery-weak-tip-box">
+                        <span class="tip-icon">💡</span>
+                        <span id="map-weak-concept-text" class="tip-text">Solve challenges to unlock mastery levels!</span>
+                    </div>
+                </div>
+                <div id="concept-mastery-grid" class="concept-mastery-grid">
+                    <!-- Populated dynamically via script.js -->
+                </div>
             </div>
 
             <!-- World Map Footer Actions -->
             <div class="map-footer-actions">
                 <button id="map-back-btn" class="map-secondary-btn" type="button">
                     <span>← BACK / HOME</span>
+                </button>
+                <button id="map-daily-build-btn" class="map-primary-btn" type="button">
+                    <span>📅 PLAY DAILY BUILD (+30 XP)</span>
                 </button>
             </div>
         </div>
@@ -180,7 +249,7 @@
                 <div class="achievements-stats-bar">
                     <div class="ach-stat-chip">
                         <span class="ach-chip-label">COLLECTION STATUS</span>
-                        <span id="achievements-count-badge" class="ach-chip-val">0 / 12 UNLOCKED</span>
+                        <span id="achievements-count-badge" class="ach-chip-val">0 / 16 UNLOCKED</span>
                     </div>
                 </div>
             </div>
@@ -204,14 +273,14 @@
         <div id="game-screen" style="display: none;">
 
             <!-- Build World Progression Header -->
-            <div id="build-world-bar" class="build-world-bar" aria-label="Build World Progression">
+            <div id="build-world-bar" class="build-world-bar" aria-label="Python World Progression">
                 <div class="world-header-row">
-                    <span class="world-title-label">CHECKPOINT PROGRESSION</span>
+                    <span class="world-title-label">🐍 PYTHON WORLD • CHAPTERS</span>
                     <div class="in-game-nav-btns">
                         <button id="open-world-map-btn" class="open-map-btn" type="button" title="View Full World Map">🌍 WORLD MAP</button>
                         <button id="open-achievements-btn" class="open-map-btn open-ach-btn" type="button" title="View Achievements">🏆 ACHIEVEMENTS</button>
                     </div>
-                    <span class="world-level-count">3 Levels</span>
+                    <span class="world-level-count">3 Chapters</span>
                 </div>
                 <div id="world-items-row" class="world-items-row">
                     <!-- Dynamic build world items generated from BUILDS in script.js -->
@@ -222,7 +291,7 @@
             <header class="game-header">
                 <div class="header-top">
                     <div class="level-badge-wrap">
-                        <span id="level-indicator" class="level-indicator level-1">LEVEL 1 — 🏠 HOUSE</span>
+                        <span id="level-indicator" class="level-indicator level-1">CHAPTER 1 — 🏠 PYTHON BASICS</span>
                     </div>
                     <span id="question-progress" class="question-progress">BUILD PROGRESS: 0 / 10</span>
                 </div>
@@ -366,20 +435,33 @@
                         <span class="b-val">💡 1 Clue Available</span>
                     </div>
                     <div class="briefing-card-item full-width">
-                        <span class="b-label">CHALLENGE TYPES ENCOUNTERED</span>
+                        <span class="b-label">CHALLENGE STRUCTURE</span>
                         <div class="briefing-chips-row" id="briefing-chips-row">
-                            <span class="b-chip chip-mcq">🎯 MCQ</span>
-                            <span class="b-chip chip-output">⚡ OUTPUT</span>
-                            <span class="b-chip chip-code">💻 CODE-CHOICE</span>
-                            <span class="b-chip chip-bug">🔍 BUG</span>
+                            <span class="b-chip chip-mcq">🎯 Clean MCQ</span>
+                            <span class="b-chip chip-code">🧱 10 Build Pieces</span>
+                            <span class="b-chip chip-output">💡 Rich Learning Feedback</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="briefing-action-row">
                     <button id="briefing-start-btn" class="btn-action primary-btn briefing-start-btn" type="button">
-                        START LEVEL ➔
+                        START CHAPTER ➔
                     </button>
+                </div>
+            </div>
+
+            <!-- Mission Progression Tracker Bar (5 Missions Inside Current Level) -->
+            <div id="mission-tracker" class="mission-tracker" aria-label="Current Level Missions">
+                <div class="mission-tracker-header">
+                    <div class="tracker-left">
+                        <span class="tracker-tag">CURRENT MISSION</span>
+                        <span id="tracker-mission-name" class="tracker-mission-name">1. Variable Workshop</span>
+                    </div>
+                    <span id="tracker-piece-target" class="tracker-piece-target">🎯 Piece 1/10 • Foundation Base</span>
+                </div>
+                <div id="mission-steps-row" class="mission-steps-row" role="tablist">
+                    <!-- Populated dynamically via script.js -->
                 </div>
             </div>
 
@@ -393,9 +475,27 @@
                     </div>
                 </div>
 
+                <!-- Practice Banner (Encouraging review of previously missed concepts) -->
+                <div id="revenge-banner" class="revenge-banner" style="display: none;">
+                    <span class="revenge-icon">💡</span>
+                    <div class="revenge-text-group">
+                        <span class="revenge-title">PRACTICE &amp; TRY AGAIN</span>
+                        <span id="revenge-subtitle" class="revenge-subtitle">Let's practice this concept with a fresh question!</span>
+                    </div>
+                </div>
+
+                <!-- Orientation Strip: WHERE AM I? WHAT AM I LEARNING? WHAT DO I NEED TO DO? -->
+                <div class="challenge-orientation-bar" id="challenge-orientation-bar" style="display: flex; gap: 8px; font-size: 0.75rem; color: #94a3b8; font-weight: 700; margin-bottom: 8px; align-items: center;">
+                    <span id="orientation-world-tag" style="color: #38bdf8;">🐍 PYTHON WORLD</span>
+                    <span>•</span>
+                    <span id="orientation-stage-tag" style="color: #f1f5f9;">CHAPTER 1: PYTHON BASICS</span>
+                    <span>•</span>
+                    <span id="orientation-mission-tag" style="color: #4ade80;">1. Python Basics</span>
+                </div>
+
                 <p id="question-text">Loading question...</p>
 
-                <!-- Code block display for code questions -->
+                <!-- Code block display for questions with code -->
                 <div id="code-snippet-box" class="code-snippet-box" style="display: none;">
                     <div class="code-header">
                         <span class="code-dot red"></span>
@@ -409,7 +509,7 @@
                 <!-- Hint display container -->
                 <div id="hint-box" class="hint-box" style="display: none;"></div>
 
-                <!-- Answer buttons grid -->
+                <!-- Answer buttons grid (MCQ Only) -->
                 <div class="answers-grid">
                     <button id="correct-answer" class="answer-btn" type="button"></button>
                     <button id="wrong-answer-1" class="answer-btn" type="button"></button>
@@ -431,11 +531,51 @@
                         </div>
                     </div>
 
+                    <!-- Concept Label Badge (V11-B Learning Depth) -->
+                    <div id="result-concept-bar" class="result-concept-bar" style="display: none;">
+                        <span class="concept-badge-prefix">CONCEPT</span>
+                        <span id="result-concept-text" class="concept-badge-text"></span>
+                    </div>
+
+                    <!-- Correct Answer Row (Shown for wrong answers) -->
                     <div id="result-correct-answer" class="result-correct-answer" style="display: none;"></div>
 
+                    <!-- Selected Wrong Answer Note (Shown when useful for wrong answers) -->
+                    <div id="result-wrong-choice-note" class="result-wrong-choice-note" style="display: none;">
+                        <span class="wrong-choice-icon">⚠️</span>
+                        <div class="wrong-choice-body">
+                            <span class="wrong-choice-label">YOUR ANSWER:</span>
+                            <span id="result-wrong-choice-text" class="wrong-choice-text"></span>
+                        </div>
+                    </div>
+
+                    <!-- Main Explanation Container -->
                     <div class="result-explanation-container">
                         <span class="explanation-icon">💡</span>
-                        <p id="result-explanation" class="result-explanation"></p>
+                        <div class="explanation-body">
+                            <span id="result-explanation-heading" class="explanation-heading">WHY IT WORKS</span>
+                            <p id="result-explanation" class="result-explanation"></p>
+                        </div>
+                    </div>
+
+                    <!-- Short Practical Takeaway (V11-B Learning Depth) -->
+                    <div id="result-takeaway-box" class="result-takeaway-box" style="display: none;">
+                        <span class="takeaway-icon">🎯</span>
+                        <div class="takeaway-body">
+                            <span class="takeaway-label">KEY TAKEAWAY</span>
+                            <p id="result-takeaway-text" class="result-takeaway-text"></p>
+                        </div>
+                    </div>
+
+                    <!-- Optional Expandable "Learn More" (V11-B Learning Depth) -->
+                    <div id="result-learn-more-wrap" class="result-learn-more-wrap" style="display: none;">
+                        <button id="result-learn-more-toggle" class="learn-more-toggle-btn" type="button" aria-expanded="false" aria-controls="result-learn-more-drawer">
+                            <span class="learn-more-btn-label">📖 LEARN MORE</span>
+                            <span id="learn-more-chevron" class="learn-more-chevron">▾</span>
+                        </button>
+                        <div id="result-learn-more-drawer" class="result-learn-more-drawer" style="display: none;">
+                            <p id="result-learn-more-text" class="learn-more-text"></p>
+                        </div>
                     </div>
 
                     <button id="continue-button" class="btn-action continue-btn" type="button">CONTINUE ➔</button>
@@ -497,6 +637,38 @@
 
                 <!-- Achievements Showcase -->
                 <div id="final-achievements-showcase" class="final-achievements-showcase"></div>
+
+                <!-- 4 Learning Evolution Feedback Quadrants -->
+                <div id="final-learning-quadrants" class="final-learning-quadrants">
+                    <div class="quadrant-card quad-well">
+                        <div class="quad-head">
+                            <span class="quad-icon">✨</span>
+                            <h4 class="quad-title">WHAT I DID WELL</h4>
+                        </div>
+                        <div id="quad-well-content" class="quad-content"></div>
+                    </div>
+                    <div class="quadrant-card quad-struggled">
+                        <div class="quad-head">
+                            <span class="quad-icon">⚠️</span>
+                            <h4 class="quad-title">WHAT I STRUGGLED WITH</h4>
+                        </div>
+                        <div id="quad-struggled-content" class="quad-content"></div>
+                    </div>
+                    <div class="quadrant-card quad-learned">
+                        <div class="quad-head">
+                            <span class="quad-icon">🧠</span>
+                            <h4 class="quad-title">WHAT I LEARNED</h4>
+                        </div>
+                        <div id="quad-learned-content" class="quad-content"></div>
+                    </div>
+                    <div class="quadrant-card quad-next">
+                        <div class="quad-head">
+                            <span class="quad-icon">🎯</span>
+                            <h4 class="quad-title">WHAT TO PRACTICE NEXT</h4>
+                        </div>
+                        <div id="quad-next-content" class="quad-content"></div>
+                    </div>
+                </div>
 
                 <!-- Victory Actions Row -->
                 <div class="victory-actions">
@@ -576,6 +748,24 @@
                 <button id="new-game-confirm-btn" class="btn-action danger-btn confirm-reset-btn" type="button">
                     RESET &amp; START LEVEL 1 ➔
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================== -->
+    <!-- DAILY BUILD MODAL                             -->
+    <!-- ============================================== -->
+    <div id="daily-build-modal" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="daily-build-title">
+        <div class="review-modal-card daily-modal-card">
+            <div class="modal-header">
+                <div>
+                    <span class="modal-badge">📅 DAILY ENGINEERING CHALLENGE</span>
+                    <h3 id="daily-build-title" class="modal-title">DAILY BUILD</h3>
+                </div>
+                <button id="daily-build-modal-close" class="modal-close-btn" type="button" aria-label="Close dialog">✕</button>
+            </div>
+            <div class="daily-modal-body" id="daily-modal-body">
+                <!-- Dynamically populated via script.js -->
             </div>
         </div>
     </div>
