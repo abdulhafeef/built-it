@@ -5,6 +5,12 @@
 
 // DOM Element References
 const startButton = document.getElementById("start-button");
+const startButtonText = document.getElementById("start-button-text");
+const newGameButton = document.getElementById("new-game-button");
+const newGameConfirmModal = document.getElementById("new-game-confirm-modal");
+const newGameModalClose = document.getElementById("new-game-modal-close");
+const newGameCancelBtn = document.getElementById("new-game-cancel-btn");
+const newGameConfirmBtn = document.getElementById("new-game-confirm-btn");
 const startScreen = document.getElementById("start-screen");
 const gameScreen = document.getElementById("game-screen");
 
@@ -17,6 +23,14 @@ const mapStreakVal = document.getElementById("map-streak-val");
 const mapBackBtn = document.getElementById("map-back-btn");
 const openWorldMapBtn = document.getElementById("open-world-map-btn");
 const buildWorldBar = document.getElementById("build-world-bar");
+
+// Dedicated Achievements Screen Elements
+const achievementsScreen = document.getElementById("achievements-screen");
+const achievementsBackBtn = document.getElementById("achievements-back-btn");
+const homeWorldMapBtn = document.getElementById("home-world-map-btn");
+const homeAchievementsBtn = document.getElementById("home-achievements-btn");
+const homeAchievementsBadge = document.getElementById("home-achievements-badge");
+const openAchievementsBtn = document.getElementById("open-achievements-btn");
 
 const scoreDisplay = document.getElementById("score");
 const streakDisplay = document.getElementById("streak");
@@ -1314,11 +1328,48 @@ const AudioManager = {
 };
 
 // ==================================================
+// PERSISTENT STORAGE ENGINE — V11-A
+// Unified Browser-Side LocalStorage Architecture
+// ==================================================
+
+const SAVE_STORAGE_KEY = "BUILD_IT_SAVE";
+const CURRENT_SAVE_VERSION = 1;
+
+const SafeStorage = {
+    getItem(key) {
+        try {
+            return localStorage.getItem(key);
+        } catch (e) {
+            console.warn("BUILD IT! SafeStorage.getItem error:", e);
+            return null;
+        }
+    },
+    setItem(key, value) {
+        try {
+            localStorage.setItem(key, value);
+            return true;
+        } catch (e) {
+            console.warn("BUILD IT! SafeStorage.setItem error:", e);
+            return false;
+        }
+    },
+    removeItem(key) {
+        try {
+            localStorage.removeItem(key);
+            return true;
+        } catch (e) {
+            console.warn("BUILD IT! SafeStorage.removeItem error:", e);
+            return false;
+        }
+    }
+};
+
+// ==================================================
 // DAILY STREAK SYSTEM (LocalStorage Calendar Tracking)
 // ==================================================
 
 const DailyStreakManager = {
-    STORAGE_KEY: "built_it_daily_streak",
+    LEGACY_STORAGE_KEY: "built_it_daily_streak",
 
     getTodayDateString() {
         const d = new Date();
@@ -1339,30 +1390,64 @@ const DailyStreakManager = {
 
     getData() {
         try {
-            const raw = localStorage.getItem(this.STORAGE_KEY);
-            if (raw) {
-                const parsed = JSON.parse(raw);
-                if (parsed && typeof parsed === "object") {
+            // First check unified BUILD_IT_SAVE
+            const rawSave = SafeStorage.getItem(SAVE_STORAGE_KEY);
+            if (rawSave) {
+                const parsedSave = JSON.parse(rawSave);
+                if (parsedSave && parsedSave.dailyStreak && typeof parsedSave.dailyStreak === "object") {
                     return {
-                        lastActiveDate: typeof parsed.lastActiveDate === "string" ? parsed.lastActiveDate : "",
-                        currentStreak: Number.isInteger(parsed.currentStreak) ? parsed.currentStreak : 0,
-                        bestStreak: Number.isInteger(parsed.bestStreak) ? parsed.bestStreak : 0
+                        lastActiveDate: typeof parsedSave.dailyStreak.lastActiveDate === "string" ? parsedSave.dailyStreak.lastActiveDate : "",
+                        currentStreak: Number.isInteger(parsedSave.dailyStreak.currentStreak) ? parsedSave.dailyStreak.currentStreak : 0,
+                        bestStreak: Number.isInteger(parsedSave.dailyStreak.bestStreak) ? parsedSave.dailyStreak.bestStreak : 0
+                    };
+                }
+            }
+            // Fallback: check legacy key if exists
+            const legacyRaw = SafeStorage.getItem(this.LEGACY_STORAGE_KEY);
+            if (legacyRaw) {
+                const legacyParsed = JSON.parse(legacyRaw);
+                if (legacyParsed && typeof legacyParsed === "object") {
+                    return {
+                        lastActiveDate: typeof legacyParsed.lastActiveDate === "string" ? legacyParsed.lastActiveDate : "",
+                        currentStreak: Number.isInteger(legacyParsed.currentStreak) ? legacyParsed.currentStreak : 0,
+                        bestStreak: Number.isInteger(legacyParsed.bestStreak) ? legacyParsed.bestStreak : 0
                     };
                 }
             }
         } catch (e) {
-            // localStorage unavailable
+            // storage unavailable
         }
         return { lastActiveDate: "", currentStreak: 0, bestStreak: 0 };
     },
 
     saveData(data) {
         try {
-            localStorage.setItem(this.STORAGE_KEY, JSON.stringify({
-                lastActiveDate: data.lastActiveDate,
-                currentStreak: data.currentStreak,
-                bestStreak: data.bestStreak
-            }));
+            const rawSave = SafeStorage.getItem(SAVE_STORAGE_KEY);
+            let saveObj = null;
+            if (rawSave) {
+                try { saveObj = JSON.parse(rawSave); } catch (e) { saveObj = null; }
+            }
+            if (saveObj && typeof saveObj === "object") {
+                saveObj.dailyStreak = {
+                    lastActiveDate: data.lastActiveDate,
+                    currentStreak: data.currentStreak,
+                    bestStreak: data.bestStreak
+                };
+                SafeStorage.setItem(SAVE_STORAGE_KEY, JSON.stringify(saveObj));
+            } else {
+                if (typeof saveGameProgress === "function") {
+                    saveGameProgress();
+                } else {
+                    SafeStorage.setItem(SAVE_STORAGE_KEY, JSON.stringify({
+                        version: CURRENT_SAVE_VERSION,
+                        dailyStreak: {
+                            lastActiveDate: data.lastActiveDate,
+                            currentStreak: data.currentStreak,
+                            bestStreak: data.bestStreak
+                        }
+                    }));
+                }
+            }
         } catch (e) {
             // ignore
         }
@@ -1787,6 +1872,558 @@ function showFloatingXp(targetElement, text) {
     }, 850);
 }
 
+// ==================================================
+// PERSISTENT PROGRESSION ENGINE (V11-A)
+// ==================================================
+
+function validateSaveData(data) {
+    if (!data || typeof data !== "object" || Array.isArray(data)) {
+        return null;
+    }
+
+    // Version validation (supports future migrations)
+    if (!Number.isInteger(data.version) || data.version < 1) {
+        return null;
+    }
+
+    // Completed levels array validation
+    if (!Array.isArray(data.completedLevels)) {
+        return null;
+    }
+
+    const maxLevels = BUILDS.length;
+    const validatedCompleted = [];
+    for (let i = 0; i < maxLevels; i++) {
+        // Enforce strictly linear progression: level i can only be true if prior levels are true
+        if (i === 0) {
+            validatedCompleted.push(Boolean(data.completedLevels[i]));
+        } else {
+            const priorCompleted = validatedCompleted[i - 1];
+            validatedCompleted.push(priorCompleted && Boolean(data.completedLevels[i]));
+        }
+    }
+
+    // XP validation (non-negative finite number)
+    let checkpointXpVal = 0;
+    if (typeof data.checkpointXp === "number" && Number.isFinite(data.checkpointXp) && data.checkpointXp >= 0) {
+        checkpointXpVal = Math.min(100000, Math.floor(data.checkpointXp));
+    }
+
+    let totalXpVal = checkpointXpVal;
+    if (typeof data.totalXp === "number" && Number.isFinite(data.totalXp) && data.totalXp >= 0) {
+        totalXpVal = Math.min(100000, Math.floor(data.totalXp));
+    }
+    totalXpVal = Math.max(totalXpVal, checkpointXpVal);
+
+    // Best streak validation
+    let bestStreakVal = 0;
+    if (typeof data.bestStreak === "number" && Number.isFinite(data.bestStreak) && data.bestStreak >= 0) {
+        bestStreakVal = Math.floor(data.bestStreak);
+    }
+
+    // Unlocked achievements validation (whitelist against defined ACHIEVEMENTS)
+    const validAchIds = new Set(ACHIEVEMENTS.map(function (a) { return a.id; }));
+    const validatedAch = [];
+    if (Array.isArray(data.unlockedAchievements)) {
+        data.unlockedAchievements.forEach(function (id) {
+            if (typeof id === "string" && validAchIds.has(id) && !validatedAch.includes(id)) {
+                validatedAch.push(id);
+            }
+        });
+    }
+
+    // Unlocked rewards validation (whitelist against defined REWARDS)
+    const validRewardIds = new Set(Object.keys(REWARDS));
+    const validatedRewards = [];
+    if (Array.isArray(data.unlockedRewards)) {
+        data.unlockedRewards.forEach(function (id) {
+            if (typeof id === "string" && validRewardIds.has(id) && !validatedRewards.includes(id)) {
+                validatedRewards.push(id);
+            }
+        });
+    }
+
+    // Personal records validation
+    const validatedRecords = {
+        bestStreak: 0,
+        bestLevelAccuracy: 0,
+        mostXpRun: 0,
+        mostPiecesRun: 0,
+        fewestWorldWrongAttempts: null,
+        bestChallengeAccuracy: { mcq: 0, output: 0, "code-choice": 0, bug: 0 }
+    };
+    if (data.personalRecords && typeof data.personalRecords === "object") {
+        const pr = data.personalRecords;
+        if (typeof pr.bestStreak === "number" && Number.isFinite(pr.bestStreak) && pr.bestStreak >= 0) {
+            validatedRecords.bestStreak = Math.floor(pr.bestStreak);
+        }
+        if (typeof pr.bestLevelAccuracy === "number" && Number.isFinite(pr.bestLevelAccuracy)) {
+            validatedRecords.bestLevelAccuracy = Math.max(0, Math.min(100, Math.floor(pr.bestLevelAccuracy)));
+        }
+        if (typeof pr.mostXpRun === "number" && Number.isFinite(pr.mostXpRun) && pr.mostXpRun >= 0) {
+            validatedRecords.mostXpRun = Math.floor(pr.mostXpRun);
+        }
+        if (typeof pr.mostPiecesRun === "number" && Number.isFinite(pr.mostPiecesRun) && pr.mostPiecesRun >= 0) {
+            validatedRecords.mostPiecesRun = Math.min(30, Math.floor(pr.mostPiecesRun));
+        }
+        if (pr.fewestWorldWrongAttempts !== null && pr.fewestWorldWrongAttempts !== undefined) {
+            if (typeof pr.fewestWorldWrongAttempts === "number" && Number.isFinite(pr.fewestWorldWrongAttempts) && pr.fewestWorldWrongAttempts >= 0) {
+                validatedRecords.fewestWorldWrongAttempts = Math.floor(pr.fewestWorldWrongAttempts);
+            }
+        }
+        if (pr.bestChallengeAccuracy && typeof pr.bestChallengeAccuracy === "object") {
+            ["mcq", "output", "code-choice", "bug"].forEach(function (type) {
+                const val = pr.bestChallengeAccuracy[type];
+                if (typeof val === "number" && Number.isFinite(val)) {
+                    validatedRecords.bestChallengeAccuracy[type] = Math.max(0, Math.min(100, Math.floor(val)));
+                }
+            });
+        }
+    }
+
+    // Daily streak validation
+    const validatedDaily = { lastActiveDate: "", currentStreak: 0, bestStreak: 0 };
+    if (data.dailyStreak && typeof data.dailyStreak === "object") {
+        if (typeof data.dailyStreak.lastActiveDate === "string") {
+            validatedDaily.lastActiveDate = data.dailyStreak.lastActiveDate.slice(0, 30);
+        }
+        if (Number.isInteger(data.dailyStreak.currentStreak) && data.dailyStreak.currentStreak >= 0) {
+            validatedDaily.currentStreak = data.dailyStreak.currentStreak;
+        }
+        if (Number.isInteger(data.dailyStreak.bestStreak) && data.dailyStreak.bestStreak >= 0) {
+            validatedDaily.bestStreak = data.dailyStreak.bestStreak;
+        }
+    }
+
+    // Completed level stats validation
+    const validatedStats = [];
+    if (Array.isArray(data.completedLevelStats)) {
+        data.completedLevelStats.forEach(function (s, idx) {
+            if (idx < maxLevels && s && typeof s === "object" && validatedCompleted[idx]) {
+                validatedStats[idx] = s;
+            } else {
+                validatedStats[idx] = null;
+            }
+        });
+    }
+
+    // Flawless levels validation
+    const validatedFlawless = [];
+    if (Array.isArray(data.flawlessLevels)) {
+        data.flawlessLevels.forEach(function (idx) {
+            if (Number.isInteger(idx) && idx >= 0 && idx < maxLevels && validatedCompleted[idx]) {
+                validatedFlawless.push(idx);
+            }
+        });
+    }
+
+    return {
+        version: data.version,
+        completedLevels: validatedCompleted,
+        checkpointXp: checkpointXpVal,
+        totalXp: totalXpVal,
+        bestStreak: bestStreakVal,
+        unlockedAchievements: validatedAch,
+        unlockedRewards: validatedRewards,
+        flawlessLevels: validatedFlawless,
+        levelCorrectHistory: Array.isArray(data.levelCorrectHistory) ? data.levelCorrectHistory.slice(0, maxLevels) : [],
+        bestNoHintLevelScore: typeof data.bestNoHintLevelScore === "number" ? Math.max(0, Math.min(10, data.bestNoHintLevelScore)) : 0,
+        completedLevelStats: validatedStats,
+        personalRecords: validatedRecords,
+        dailyStreak: validatedDaily,
+        metrics: data.metrics && typeof data.metrics === "object" ? data.metrics : null
+    };
+}
+
+function hasSavedProgress() {
+    // True if player has completed at least one level or has permanent checkpoint XP
+    if (completedLevels && completedLevels.some(Boolean)) return true;
+    if (checkpointXp > 0 || totalXp > 0) return true;
+    return false;
+}
+
+function updateStartScreenUI(hasProgress) {
+    if (hasProgress === undefined) {
+        hasProgress = hasSavedProgress();
+    }
+
+    const startBtn = document.getElementById("start-button");
+    const textSpan = document.getElementById("start-button-text") || (startBtn ? startBtn.querySelector(".btn-start-text") : null);
+    const newGameBtn = document.getElementById("new-game-button");
+
+    if (textSpan) {
+        if (hasProgress) {
+            textSpan.textContent = "CONTINUE BUILDING";
+        } else {
+            textSpan.textContent = "START GAME";
+        }
+    }
+
+    if (newGameBtn) {
+        newGameBtn.style.display = hasProgress ? "inline-flex" : "none";
+    }
+
+    if (homeAchievementsBadge && typeof unlockedAchievements !== "undefined") {
+        homeAchievementsBadge.textContent = unlockedAchievements.size + "/" + ACHIEVEMENTS.length;
+    }
+}
+
+function saveGameProgress() {
+    try {
+        const streakData = DailyStreakManager.getData();
+
+        // Calculate highest unlocked build index
+        let unlockedIndex = 0;
+        for (let i = 0; i < BUILDS.length; i++) {
+            if (completedLevels[i]) {
+                unlockedIndex = Math.min(BUILDS.length - 1, i + 1);
+            }
+        }
+
+        // Only persist completed build pieces; active incomplete build restarts with 0 pieces
+        const persistentPieces = BUILDS.map(function (b, idx) {
+            if (completedLevels[idx]) {
+                return b.pieces ? b.pieces.length : b.questions.length;
+            }
+            return 0;
+        });
+
+        const saveData = {
+            version: CURRENT_SAVE_VERSION,
+            timestamp: Date.now(),
+            unlockedBuildIndex: unlockedIndex,
+            completedLevels: completedLevels.slice(0, BUILDS.length),
+            checkpointXp: checkpointXp,
+            totalXp: checkpointXp, // Permanent XP saved to localStorage
+            bestStreak: bestStreak,
+            buildPieces: persistentPieces,
+            unlockedAchievements: Array.from(unlockedAchievements),
+            unlockedRewards: Array.from(unlockedRewards),
+            flawlessLevels: Array.from(flawlessLevels),
+            levelCorrectHistory: levelCorrectHistory.slice(0, BUILDS.length),
+            bestNoHintLevelScore: bestNoHintLevelScore,
+            completedLevelStats: completedLevelStats.slice(0, BUILDS.length).map(function (s) {
+                return s ? Object.assign({}, s) : null;
+            }),
+            personalRecords: {
+                bestStreak: sessionPersonalRecords.bestStreak || 0,
+                bestLevelAccuracy: sessionPersonalRecords.bestLevelAccuracy || 0,
+                mostXpRun: sessionPersonalRecords.mostXpRun || 0,
+                mostPiecesRun: sessionPersonalRecords.mostPiecesRun || 0,
+                fewestWorldWrongAttempts: sessionPersonalRecords.fewestWorldWrongAttempts,
+                bestChallengeAccuracy: Object.assign({}, sessionPersonalRecords.bestChallengeAccuracy)
+            },
+            dailyStreak: streakData,
+            metrics: {
+                totalQuestionsAttempted: totalQuestionsAttempted,
+                totalCorrectAnswers: totalCorrectAnswers,
+                outputAttempts: outputAttempts,
+                outputCorrect: outputCorrect,
+                bugAttempts: bugAttempts,
+                bugCorrect: bugCorrect,
+                attemptsByType: Object.assign({}, attemptsByType),
+                correctByType: Object.assign({}, correctByType)
+            }
+        };
+
+        SafeStorage.setItem(SAVE_STORAGE_KEY, JSON.stringify(saveData));
+        updateStartScreenUI(hasSavedProgress());
+        return true;
+    } catch (e) {
+        console.warn("BUILD IT! saveGameProgress exception:", e);
+        return false;
+    }
+}
+
+function loadGameProgress() {
+    try {
+        const raw = SafeStorage.getItem(SAVE_STORAGE_KEY);
+        if (!raw) {
+            completedLevels = new Array(BUILDS.length).fill(false);
+            buildPieces = new Array(BUILDS.length).fill(0);
+            checkpointXp = 0;
+            totalXp = 0;
+            currentBuildIndex = 0;
+            successfulCorrectAnswers = 0;
+            currentQuestionIndex = 0;
+            currentQuestion = null;
+            seenQuestionIds.clear();
+            unlockedAchievements.clear();
+            unlockedRewards.clear();
+            updateStartScreenUI(false);
+            return false;
+        }
+
+        let parsed = null;
+        try {
+            parsed = JSON.parse(raw);
+        } catch (e) {
+            console.warn("BUILD IT! Save file corrupted (invalid JSON). Starting fresh.");
+            completedLevels = new Array(BUILDS.length).fill(false);
+            buildPieces = new Array(BUILDS.length).fill(0);
+            checkpointXp = 0;
+            totalXp = 0;
+            currentBuildIndex = 0;
+            successfulCorrectAnswers = 0;
+            currentQuestionIndex = 0;
+            currentQuestion = null;
+            seenQuestionIds.clear();
+            unlockedAchievements.clear();
+            unlockedRewards.clear();
+            updateStartScreenUI(false);
+            return false;
+        }
+
+        const valid = validateSaveData(parsed);
+        if (!valid) {
+            console.warn("BUILD IT! Save data failed validation. Starting fresh.");
+            completedLevels = new Array(BUILDS.length).fill(false);
+            buildPieces = new Array(BUILDS.length).fill(0);
+            checkpointXp = 0;
+            totalXp = 0;
+            currentBuildIndex = 0;
+            successfulCorrectAnswers = 0;
+            currentQuestionIndex = 0;
+            currentQuestion = null;
+            seenQuestionIds.clear();
+            unlockedAchievements.clear();
+            unlockedRewards.clear();
+            updateStartScreenUI(false);
+            return false;
+        }
+
+        // Restore completed checkpoints
+        completedLevels = valid.completedLevels.slice();
+        checkpointXp = valid.checkpointXp;
+        totalXp = valid.totalXp;
+        bestStreak = Math.max(bestStreak, valid.bestStreak);
+
+        // Restore achievements
+        unlockedAchievements.clear();
+        valid.unlockedAchievements.forEach(function (id) {
+            unlockedAchievements.add(id);
+        });
+
+        // Restore rewards
+        unlockedRewards.clear();
+        valid.unlockedRewards.forEach(function (id) {
+            unlockedRewards.add(id);
+            if (REWARDS[id] && REWARDS[id].cssClass) {
+                document.body.classList.add(REWARDS[id].cssClass);
+            }
+        });
+
+        // Restore personal records
+        if (valid.personalRecords) {
+            Object.assign(sessionPersonalRecords, valid.personalRecords);
+            if (sessionPersonalRecords.bestStreak > bestStreak) {
+                bestStreak = sessionPersonalRecords.bestStreak;
+            }
+        }
+
+        // Restore completed level stats
+        completedLevelStats.length = 0;
+        valid.completedLevelStats.forEach(function (s, idx) {
+            completedLevelStats[idx] = s;
+        });
+
+        // Restore flawless levels & history
+        flawlessLevels.clear();
+        valid.flawlessLevels.forEach(function (idx) {
+            flawlessLevels.add(idx);
+        });
+        levelCorrectHistory.length = 0;
+        valid.levelCorrectHistory.forEach(function (h) {
+            levelCorrectHistory.push(h);
+        });
+        bestNoHintLevelScore = valid.bestNoHintLevelScore || 0;
+
+        // Restore extended metrics
+        if (valid.metrics) {
+            if (typeof valid.metrics.totalQuestionsAttempted === "number") totalQuestionsAttempted = valid.metrics.totalQuestionsAttempted;
+            if (typeof valid.metrics.totalCorrectAnswers === "number") totalCorrectAnswers = valid.metrics.totalCorrectAnswers;
+            if (typeof valid.metrics.outputAttempts === "number") outputAttempts = valid.metrics.outputAttempts;
+            if (typeof valid.metrics.outputCorrect === "number") outputCorrect = valid.metrics.outputCorrect;
+            if (typeof valid.metrics.bugAttempts === "number") bugAttempts = valid.metrics.bugAttempts;
+            if (typeof valid.metrics.bugCorrect === "number") bugCorrect = valid.metrics.bugCorrect;
+            if (valid.metrics.attemptsByType) Object.assign(attemptsByType, valid.metrics.attemptsByType);
+            if (valid.metrics.correctByType) Object.assign(correctByType, valid.metrics.correctByType);
+        }
+
+        // Determine currentBuildIndex (first incomplete level, or last level if all completed)
+        let firstIncomplete = -1;
+        for (let i = 0; i < BUILDS.length; i++) {
+            if (!completedLevels[i]) {
+                firstIncomplete = i;
+                break;
+            }
+        }
+        currentBuildIndex = (firstIncomplete >= 0) ? firstIncomplete : (BUILDS.length - 1);
+
+        // Update buildPieces: 10 for completed builds, 0 for incomplete builds
+        buildPieces = BUILDS.map(function (b, idx) {
+            return completedLevels[idx] ? (b.pieces ? b.pieces.length : 10) : 0;
+        });
+
+        // Reset temporary active gameplay variables to safe fresh level-entry state
+        successfulCorrectAnswers = 0;
+        currentQuestionIndex = 0;
+        currentQuestion = null;
+        seenQuestionIds.clear();
+        questionAttempts = 0;
+        levelMistakes = 0;
+        streak = 0;
+        lives = 3;
+        hintsRemaining = 1;
+        hintUsedForCurrentQuestion = false;
+        isAnswerLocked = false;
+
+        // Update displays
+        if (scoreDisplay) scoreDisplay.textContent = "⭐ " + totalXp + " XP";
+        if (streakDisplay) streakDisplay.textContent = "🔥 0";
+        updateLivesDisplay();
+        updateHintDisplay();
+
+        const hasSaved = hasSavedProgress();
+        updateStartScreenUI(hasSaved);
+
+        return true;
+    } catch (e) {
+        console.warn("BUILD IT! loadGameProgress exception:", e);
+        updateStartScreenUI(false);
+        return false;
+    }
+}
+
+function openNewGameModal() {
+    const modal = document.getElementById("new-game-confirm-modal");
+    if (modal) {
+        modal.style.display = "flex";
+    }
+}
+
+function closeNewGameModal() {
+    const modal = document.getElementById("new-game-confirm-modal");
+    if (modal) {
+        modal.style.display = "none";
+    }
+}
+
+function resetWorldProgressForNewRun() {
+    // Reset active world progression to Level 1
+    completedLevels = new Array(BUILDS.length).fill(false);
+    buildPieces = new Array(BUILDS.length).fill(0);
+    checkpointXp = 0;
+    totalXp = 0;
+    currentBuildIndex = 0;
+    successfulCorrectAnswers = 0;
+    currentQuestionIndex = 0;
+    currentQuestion = null;
+    seenQuestionIds.clear();
+    questionAttempts = 0;
+    levelMistakes = 0;
+    streak = 0;
+    lives = 3;
+    hintsRemaining = 1;
+    hintUsedForCurrentQuestion = false;
+    isAnswerLocked = false;
+    completedLevelStats.length = 0;
+    runMistakes.length = 0;
+    flawlessLevels.clear();
+    levelCorrectHistory.length = 0;
+
+    // Reset visual pieces for all builds
+    BUILDS.forEach(function (b) {
+        if (b.pieces) {
+            b.pieces.forEach(function (p) {
+                p.classList.remove("built", "piece-pop");
+            });
+        }
+    });
+
+    if (scoreDisplay) scoreDisplay.textContent = "⭐ 0 XP";
+    if (streakDisplay) streakDisplay.textContent = "🔥 0";
+    updateLivesDisplay();
+    updateHintDisplay();
+
+    // Persist this reset (keeps unlocked achievements, personal records, and daily streak safe!)
+    saveGameProgress();
+
+    updateStartScreenUI(false);
+    if (startScreen) startScreen.style.display = "none";
+    if (worldMapScreen) worldMapScreen.style.display = "none";
+    if (achievementsScreen) achievementsScreen.style.display = "none";
+    if (gameScreen) gameScreen.style.display = "block";
+    switchScene(0);
+    updateBuildWorldBar();
+    updateBuilding(-1);
+    loadQuestion(true);
+    showMissionBriefing(0);
+    renderWorldMap();
+    renderAchievementsGrid();
+    DailyStreakManager.updateUI();
+
+    showToast("", "NEW RUN STARTED", "✓ Ready for Level 1", "Your build world has been reset to Level 1. Good luck!", "🧱");
+}
+
+function clearSavedProgress() {
+    SafeStorage.removeItem(SAVE_STORAGE_KEY);
+    SafeStorage.removeItem("built_it_daily_streak");
+
+    completedLevels = new Array(BUILDS.length).fill(false);
+    buildPieces = new Array(BUILDS.length).fill(0);
+    checkpointXp = 0;
+    totalXp = 0;
+    streak = 0;
+    bestStreak = 0;
+    lives = 3;
+    hintsRemaining = 1;
+    hintUsedForCurrentQuestion = false;
+    isAnswerLocked = false;
+    currentBuildIndex = 0;
+    successfulCorrectAnswers = 0;
+    currentQuestionIndex = 0;
+    currentQuestion = null;
+    seenQuestionIds.clear();
+    questionAttempts = 0;
+    levelMistakes = 0;
+    completedLevelStats.length = 0;
+    runMistakes.length = 0;
+    flawlessLevels.clear();
+    levelCorrectHistory.length = 0;
+    bestNoHintLevelScore = 0;
+    unlockedAchievements.clear();
+    unlockedRewards.clear();
+
+    sessionPersonalRecords.bestStreak = 0;
+    sessionPersonalRecords.bestLevelAccuracy = 0;
+    sessionPersonalRecords.mostXpRun = 0;
+    sessionPersonalRecords.mostPiecesRun = 0;
+    sessionPersonalRecords.fewestWorldWrongAttempts = null;
+    sessionPersonalRecords.bestChallengeAccuracy = { mcq: 0, output: 0, "code-choice": 0, bug: 0 };
+
+    BUILDS.forEach(function (b) {
+        if (b.pieces) {
+            b.pieces.forEach(function (p) {
+                p.classList.remove("built", "piece-pop");
+            });
+        }
+    });
+
+    if (scoreDisplay) scoreDisplay.textContent = "⭐ 0 XP";
+    if (streakDisplay) streakDisplay.textContent = "🔥 0";
+    updateLivesDisplay();
+    updateHintDisplay();
+
+    updateStartScreenUI(false);
+    switchScene(0);
+    updateBuildWorldBar();
+    loadQuestion(true);
+    renderWorldMap();
+    renderAchievementsGrid();
+    DailyStreakManager.updateUI();
+}
+
 function unlockAchievement(id) {
     if (unlockedAchievements.has(id)) return;
     unlockedAchievements.add(id);
@@ -1805,6 +2442,7 @@ function unlockAchievement(id) {
     }
 
     renderAchievementsGrid();
+    saveGameProgress();
 }
 
 function unlockReward(rewardId) {
@@ -1820,6 +2458,7 @@ function unlockReward(rewardId) {
 
     AudioManager.playSound("reward");
     showToast("reward", "🎁 REWARD UNLOCKED", reward.title, reward.description, "🎁");
+    saveGameProgress();
 }
 
 function checkAchievements(trigger, payload) {
@@ -1940,6 +2579,9 @@ function renderAchievementsGrid() {
     if (achievementsCountBadge) {
         achievementsCountBadge.textContent = unlockedAchievements.size + " / " + ACHIEVEMENTS.length + " UNLOCKED";
     }
+    if (homeAchievementsBadge) {
+        homeAchievementsBadge.textContent = unlockedAchievements.size + "/" + ACHIEVEMENTS.length;
+    }
 
     const totalPiecesBuilt = buildPieces.reduce(function (sum, count) {
         return sum + count;
@@ -1976,7 +2618,7 @@ function renderAchievementsGrid() {
                     '<div class="ach-info">' +
                         '<div class="ach-title-row">' +
                             '<span class="ach-name">' + escapeHtml(ach.title) + '</span>' +
-                            '<span class="ach-status-badge">UNLOCKED</span>' +
+                            '<span class="ach-status-badge">✓ UNLOCKED</span>' +
                         '</div>' +
                         '<div class="ach-badges-row">' +
                             '<span class="ach-rarity-badge ' + rarityClass + '">' + escapeHtml(ach.rarity) + '</span>' +
@@ -1993,7 +2635,7 @@ function renderAchievementsGrid() {
                     '<div class="ach-info">' +
                         '<div class="ach-title-row">' +
                             '<span class="ach-name">⚡ THE LAST SPARK</span>' +
-                            '<span class="ach-status-badge">SECRET</span>' +
+                            '<span class="ach-status-badge">🔒 SECRET</span>' +
                         '</div>' +
                         '<div class="ach-badges-row">' +
                             '<span class="ach-rarity-badge ' + rarityClass + '">' + escapeHtml(ach.rarity) + '</span>' +
@@ -2035,7 +2677,7 @@ function renderAchievementsGrid() {
                     '<div class="ach-info">' +
                         '<div class="ach-title-row">' +
                             '<span class="ach-name">' + escapeHtml(ach.title) + '</span>' +
-                            '<span class="ach-status-badge">LOCKED</span>' +
+                            '<span class="ach-status-badge">🔒 LOCKED</span>' +
                         '</div>' +
                         '<div class="ach-badges-row">' +
                             '<span class="ach-rarity-badge ' + rarityClass + '">' + escapeHtml(ach.rarity) + '</span>' +
@@ -2372,6 +3014,7 @@ function selectLevelFromMap(targetIndex) {
     // If all levels are already completed, show final victory screen
     if (completedLevels.every(Boolean)) {
         if (worldMapScreen) worldMapScreen.style.display = "none";
+        if (achievementsScreen) achievementsScreen.style.display = "none";
         if (gameScreen) gameScreen.style.display = "block";
         showGameComplete();
         return;
@@ -2379,8 +3022,9 @@ function selectLevelFromMap(targetIndex) {
 
     AudioManager.playSound("click");
 
-    // Hide world map and start screen, show game screen
+    // Hide world map, achievements and start screen, show game screen
     if (worldMapScreen) worldMapScreen.style.display = "none";
+    if (achievementsScreen) achievementsScreen.style.display = "none";
     if (startScreen) startScreen.style.display = "none";
     if (gameScreen) gameScreen.style.display = "block";
 
@@ -2452,15 +3096,15 @@ function enterGameplayFromMap(targetIndex) {
     selectLevelFromMap(targetIndex !== undefined ? targetIndex : currentBuildIndex);
 }
 
-// PHASE 9: Contextual World Map origin tracking
+// Contextual World Map origin tracking
 let worldMapOrigin = "title"; // "game" or "title"
 
 function updateMapBackButton() {
     if (!mapBackBtn) return;
     if (worldMapOrigin === "game") {
-        mapBackBtn.textContent = "← BACK TO GAME";
+        mapBackBtn.innerHTML = "<span>← BACK TO GAME</span>";
     } else {
-        mapBackBtn.textContent = "← TITLE SCREEN";
+        mapBackBtn.innerHTML = "<span>← BACK / HOME</span>";
     }
 }
 
@@ -2475,8 +3119,37 @@ function openWorldMap(origin) {
     updateMapBackButton();
     if (gameScreen) gameScreen.style.display = "none";
     if (startScreen) startScreen.style.display = "none";
+    if (achievementsScreen) achievementsScreen.style.display = "none";
     if (worldMapScreen) worldMapScreen.style.display = "block";
     renderWorldMap();
+}
+
+// Dedicated Achievements Screen Origin Tracking & Navigation
+let achievementsOrigin = "title"; // "game" or "title"
+
+function updateAchievementsBackButton() {
+    if (!achievementsBackBtn) return;
+    if (achievementsOrigin === "game") {
+        achievementsBackBtn.innerHTML = "<span>← BACK TO GAME</span>";
+    } else {
+        achievementsBackBtn.innerHTML = "<span>← BACK / HOME</span>";
+    }
+}
+
+function openAchievements(origin) {
+    if (origin) {
+        achievementsOrigin = origin;
+    } else if (gameScreen && gameScreen.style.display !== "none") {
+        achievementsOrigin = "game";
+    } else {
+        achievementsOrigin = "title";
+    }
+    updateAchievementsBackButton();
+    if (gameScreen) gameScreen.style.display = "none";
+    if (startScreen) startScreen.style.display = "none";
+    if (worldMapScreen) worldMapScreen.style.display = "none";
+    if (achievementsScreen) achievementsScreen.style.display = "block";
+    renderAchievementsGrid();
 }
 
 // PHASE 10: Clean level retry helper (used by both TRY AGAIN button and World Map retry)
@@ -3140,7 +3813,8 @@ function completeCurrentLevel() {
     completedLevels[currentBuildIndex] = true;
 
     // Save checkpoint XP permanently
-    checkpointXp = totalXp;
+    checkpointXp = Math.max(totalXp, (currentBuildIndex + 1) * 100);
+    totalXp = checkpointXp;
 
     const levelScore = Math.max(0, 10 - levelMistakes);
     levelCorrectHistory[currentBuildIndex] = levelScore;
@@ -3198,6 +3872,7 @@ function completeCurrentLevel() {
     });
 
     updateBuildWorldBar();
+    saveGameProgress();
 
     if (currentBuildIndex < BUILDS.length - 1) {
         lastUnlockedBuildIndex = currentBuildIndex + 1;
@@ -3664,6 +4339,7 @@ function showGameComplete() {
     }
 
     updateBuildWorldBar();
+    saveGameProgress();
 }
 
 // Bind Play Again Button for Game Complete Screen
@@ -3751,7 +4427,8 @@ function startNewGame() {
     checkpointXp = 0;
     totalXp = 0;
     streak = 0;
-    bestStreak = 0;
+    // Best streak is preserved across new runs / replay
+    bestStreak = Math.max(bestStreak, sessionPersonalRecords.bestStreak || 0);
     lives = 3;
     hintsRemaining = 1;                 // Exactly 1 hint
     hintUsedForCurrentQuestion = false;
@@ -3785,6 +4462,9 @@ function startNewGame() {
     gameCompleteCard.style.display = "none";
     tryAgainButton.style.display = "none";
     questionCard.style.display = "block";
+
+    saveGameProgress();
+    updateStartScreenUI();
 
     switchScene(0);
     updateBuildWorldBar();
@@ -4009,6 +4689,16 @@ document.addEventListener("keydown", function (e) {
         return; // Don't trigger gameplay behind the modal
     }
 
+    // New Game Confirmation Modal (Modal is open)
+    const ngModal = document.getElementById("new-game-confirm-modal");
+    if (ngModal && ngModal.style.display !== "none" && ngModal.style.display !== "") {
+        if (e.key === "Escape") {
+            closeNewGameModal();
+            return;
+        }
+        return; // Don't trigger actions behind confirm modal
+    }
+
     // Primary Actions (Enter or Space)
     if (e.key === "Enter" || e.key === " " || e.code === "Space") {
         // If an enabled button already has keyboard focus, let native browser activation proceed
@@ -4121,16 +4811,64 @@ answerButtons.forEach(function (button, index) {
     });
 });
 
-// Bind Start Button
+// Bind Start Button (CONTINUE BUILDING or START GAME)
 startButton.addEventListener("click", function () {
     AudioManager.playSound("click");
-    startScreen.style.display = "none";
-    gameScreen.style.display = "none";
-    worldMapScreen.style.display = "block";
-    worldMapOrigin = "title";
-    updateMapBackButton();
-    renderWorldMap();
+    selectLevelFromMap(currentBuildIndex);
 });
+
+// Bind Home Navigation Buttons (World Map & Achievements)
+if (homeWorldMapBtn) {
+    homeWorldMapBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        openWorldMap("title");
+    });
+}
+
+if (homeAchievementsBtn) {
+    homeAchievementsBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        openAchievements("title");
+    });
+}
+
+// Bind New Game Button & Confirmation Modal
+if (newGameButton) {
+    newGameButton.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        openNewGameModal();
+    });
+}
+
+if (newGameModalClose) {
+    newGameModalClose.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        closeNewGameModal();
+    });
+}
+
+if (newGameCancelBtn) {
+    newGameCancelBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        closeNewGameModal();
+    });
+}
+
+if (newGameConfirmBtn) {
+    newGameConfirmBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        closeNewGameModal();
+        resetWorldProgressForNewRun();
+    });
+}
+
+if (newGameConfirmModal) {
+    newGameConfirmModal.addEventListener("click", function (e) {
+        if (e.target === newGameConfirmModal) {
+            closeNewGameModal();
+        }
+    });
+}
 
 // Bind World Map Actions & Navigation
 if (mapBackBtn) {
@@ -4157,10 +4895,42 @@ if (mapBackBtn) {
     });
 }
 
+// Bind Dedicated Achievements Actions & Navigation
+if (achievementsBackBtn) {
+    achievementsBackBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        if (achievementsOrigin === "game") {
+            achievementsScreen.style.display = "none";
+            gameScreen.style.display = "block";
+            if (lives === 0) {
+                resetLevelForRetry(currentBuildIndex);
+            } else if (successfulCorrectAnswers === 0) {
+                showMissionBriefing(currentBuildIndex);
+            } else {
+                if (missionBriefingCard) missionBriefingCard.style.display = "none";
+                if (questionCard) questionCard.style.display = "block";
+                if (!currentQuestion || !questionText.textContent || questionText.textContent === "Loading question...") {
+                    loadQuestion();
+                }
+            }
+        } else {
+            achievementsScreen.style.display = "none";
+            startScreen.style.display = "block";
+        }
+    });
+}
+
 if (openWorldMapBtn) {
     openWorldMapBtn.addEventListener("click", function () {
         AudioManager.playSound("click");
         openWorldMap("game");
+    });
+}
+
+if (openAchievementsBtn) {
+    openAchievementsBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        openAchievements("game");
     });
 }
 
@@ -4188,8 +4958,10 @@ document.addEventListener("click", function () {
     AudioManager.init();
 }, { once: true });
 
-// Initial Setup on load
-switchScene(0);
+// Initial Setup on load (V11-A)
+checkAchievementVersionMigration();
+loadGameProgress();
+switchScene(currentBuildIndex);
 updateBuilding(-1);
 updateBuildWorldBar();
 loadQuestion(true);
@@ -4205,6 +4977,7 @@ window.ACHIEVEMENTS = ACHIEVEMENTS;
 window.REWARDS = REWARDS;
 window.getGameState = function () {
     return {
+        hasSavedProgress: hasSavedProgress(),
         currentBuildIndex: currentBuildIndex,
         currentQuestionIndex: successfulCorrectAnswers,
         successfulCorrectAnswers: successfulCorrectAnswers,
@@ -4341,4 +5114,18 @@ window.setGameTestState = function (state) {
         Object.assign(sessionPersonalRecords, state.sessionPersonalRecords);
     }
 };
+
+// V11-A Persistent Player Progress System Exports
+window.SAVE_STORAGE_KEY = SAVE_STORAGE_KEY;
+window.saveGameProgress = saveGameProgress;
+window.loadGameProgress = loadGameProgress;
+window.clearSavedProgress = clearSavedProgress;
+window.validateSaveData = validateSaveData;
+window.hasSavedProgress = hasSavedProgress;
+window.resetWorldProgressForNewRun = resetWorldProgressForNewRun;
+window.openNewGameModal = openNewGameModal;
+window.closeNewGameModal = closeNewGameModal;
+window.openAchievements = openAchievements;
+
+
 
