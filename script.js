@@ -114,12 +114,12 @@ const finalAchievementsShowcase = document.getElementById("final-achievements-sh
 
 // --------------------------------------------------
 // LEVEL 1: 🏠 HOUSE (Python Fundamentals, Variables & Print)
-// Mix: 4 MCQ, 3 Output, 2 Code-Choice, 1 Bug
-// Distribution: A: 3, B: 3, C: 2, D: 2
+// Pool: 20 Unique Questions (MCQ, Output, Code-Choice, Bug)
 // --------------------------------------------------
 const houseQuestions = [
     // Q1
     {
+        id: "l1-mcq-001",
         question: "Which built-in Python function displays text or numbers in the console?",
         options: ["display()", "print()", "write()", "output()"],
         correct: 1,
@@ -130,6 +130,7 @@ const houseQuestions = [
     },
     // Q2
     {
+        id: "l1-code-001",
         question: "Which line of Python code correctly stores the number 10 in a variable named score?",
         options: ["score = 10", "var score = 10", "int score = 10", "10 -> score"],
         correct: 0,
@@ -140,6 +141,7 @@ const houseQuestions = [
     },
     // Q3
     {
+        id: "l1-output-001",
         question: "What will this Python calculation output?",
         code: "print(10 + 5)",
         options: ["105", "50", "15", "Error"],
@@ -151,6 +153,7 @@ const houseQuestions = [
     },
     // Q4
     {
+        id: "l1-bug-001",
         question: "What is wrong with this Python code?",
         code: "age = 20\nprint(Age)",
         options: [
@@ -167,6 +170,7 @@ const houseQuestions = [
     },
     // Q5
     {
+        id: "l1-output-002",
         question: "What will this string concatenation print?",
         code: "first = 'Py'\nsecond = 'thon'\nprint(first + second)",
         options: ["Python", "Py thon", "Py+thon", "None"],
@@ -178,6 +182,7 @@ const houseQuestions = [
     },
     // Q6
     {
+        id: "l1-code-002",
         question: "Which code correctly prints the text 'Hello, World!' in Python?",
         options: [
             "echo 'Hello, World!'",
@@ -193,6 +198,7 @@ const houseQuestions = [
     },
     // Q7
     {
+        id: "l1-mcq-002",
         question: "What data type does the value 3.14 belong to in Python?",
         options: ["int", "str", "float", "bool"],
         correct: 2,
@@ -203,6 +209,7 @@ const houseQuestions = [
     },
     // Q8
     {
+        id: "l1-mcq-003",
         question: "Which symbol is used to assign a value to a variable in Python?",
         options: [":=", "==", "->", "="],
         correct: 3,
@@ -213,6 +220,7 @@ const houseQuestions = [
     },
     // Q9
     {
+        id: "l1-output-003",
         question: "What will this variable reassignment print?",
         code: "x = 5\nx = x + 3\nprint(x)",
         options: ["5", "8", "53", "3"],
@@ -224,6 +232,7 @@ const houseQuestions = [
     },
     // Q10
     {
+        id: "l1-mcq-004",
         question: "What is the result of evaluating 10 > 20 in Python?",
         options: ["False", "True", "None", "Error"],
         correct: 0,
@@ -231,17 +240,147 @@ const houseQuestions = [
         hint: "Ask yourself: is 10 strictly greater than 20?",
         type: "mcq",
         difficulty: "VERY EASY"
+    },
+    // Q11
+    {
+        id: "l1-mcq-005",
+        question: "What built-in function is used to find the data type of any variable in Python?",
+        options: ["typeof()", "type()", "kind()", "classof()"],
+        correct: 1,
+        explanation: "The `type()` function returns the data type of the given object (e.g., `<class 'int'>`).",
+        hint: "A simple 4-letter function: 'type'.",
+        type: "mcq",
+        difficulty: "VERY EASY"
+    },
+    // Q12
+    {
+        id: "l1-code-003",
+        question: "Which of the following is a valid variable name in Python?",
+        options: ["2nd_player", "player_score", "player-score", "class"],
+        correct: 1,
+        explanation: "Variable names can contain letters, numbers, and underscores, but cannot start with a digit or contain hyphens, nor can they be reserved keywords like `class`.",
+        hint: "Uses letters and underscores without starting with numbers.",
+        type: "code-choice",
+        difficulty: "VERY EASY"
+    },
+    // Q13
+    {
+        id: "l1-output-004",
+        question: "What will this arithmetic calculation print?",
+        code: "print(20 - 7)",
+        options: ["27", "13", "14", "Error"],
+        correct: 1,
+        explanation: "`20 - 7` subtracts 7 from 20, resulting in `13`.",
+        hint: "Subtract 7 from 20.",
+        type: "output",
+        difficulty: "VERY EASY"
+    },
+    // Q14
+    {
+        id: "l1-bug-002",
+        question: "What error will occur when executing this line?",
+        code: "print(\"Welcome to Python!)",
+        options: [
+            "TypeError",
+            "SyntaxError: unterminated string literal",
+            "NameError: Welcome is not defined",
+            "ZeroDivisionError"
+        ],
+        correct: 1,
+        explanation: "The opening double quote has no matching closing quote before the closing parenthesis, causing a `SyntaxError`.",
+        hint: "Notice the missing closing quote at the end of the text.",
+        type: "bug",
+        difficulty: "VERY EASY"
+    },
+    // Q15
+    {
+        id: "l1-output-005",
+        question: "What will this multiplication output in Python?",
+        code: "print(4 * 3)",
+        options: ["7", "43", "12", "1"],
+        correct: 2,
+        explanation: "The `*` symbol is the multiplication operator in Python. `4 * 3` gives `12`.",
+        hint: "Multiply 4 times 3.",
+        type: "output",
+        difficulty: "VERY EASY"
+    },
+    // Q16
+    {
+        id: "l1-mcq-006",
+        question: "What are the two possible Boolean values in Python?",
+        options: ["TRUE and FALSE", "yes and no", "True and False", "1 and 0"],
+        correct: 2,
+        explanation: "In Python, Boolean values are written with capital first letters: `True` and `False`.",
+        hint: "Capital T and Capital F.",
+        type: "mcq",
+        difficulty: "VERY EASY"
+    },
+    // Q17
+    {
+        id: "l1-code-004",
+        question: "How do you write a single-line comment in Python?",
+        options: [
+            "# This is a comment",
+            "// This is a comment",
+            "/* This is a comment */",
+            "-- This is a comment"
+        ],
+        correct: 0,
+        explanation: "Python uses the hash symbol `#` for single-line comments.",
+        hint: "Starts with the '#' character.",
+        type: "code-choice",
+        difficulty: "VERY EASY"
+    },
+    // Q18
+    {
+        id: "l1-mcq-007",
+        question: "What data type does the text \"Hello\" belong to in Python?",
+        options: ["char", "text", "str", "word"],
+        correct: 2,
+        explanation: "Text enclosed in quotes has the type `str` (short for string) in Python.",
+        hint: "Short for 'string'.",
+        type: "mcq",
+        difficulty: "VERY EASY"
+    },
+    // Q19
+    {
+        id: "l1-output-006",
+        question: "What will this variable update print?",
+        code: "color = 'red'\ncolor = 'blue'\nprint(color)",
+        options: ["red", "blue", "redblue", "None"],
+        correct: 1,
+        explanation: "Variables store the most recently assigned value. The value was updated from `'red'` to `'blue'`.",
+        hint: "Variables take on the newest assigned value.",
+        type: "output",
+        difficulty: "VERY EASY"
+    },
+    // Q20
+    {
+        id: "l1-bug-003",
+        question: "Why does this assignment raise a SyntaxError?",
+        code: "100 = total",
+        options: [
+            "Variable names must be in uppercase",
+            "Numbers cannot be used in Python programs",
+            "Cannot assign to a literal number; variable name must be on the left",
+            "total is a reserved keyword"
+        ],
+        correct: 2,
+        explanation: "In Python, the variable being assigned to must always be on the left-hand side of `=` (e.g. `total = 100`).",
+        hint: "Variable name goes on the left, value goes on the right.",
+        type: "bug",
+        difficulty: "VERY EASY"
     }
 ];
 
 // --------------------------------------------------
 // LEVEL 2: 🚀 ROCKET (Strings, Operators, Loops & Functions)
-// Mix: 4 MCQ, 3 Output, 2 Code-Choice, 1 Bug
-// Distribution: A: 3, B: 2, C: 3, D: 2
+// Pool: 20 Unique Questions (MCQ, Output, Code-Choice, Bug)
 // --------------------------------------------------
 const rocketQuestions = [
     // Q1
     {
+        id: "l2-mcq-001",
         question: "Which symbol is used for writing single-line comments in Python?",
         options: ["//", "/*", "#", "--"],
         correct: 2,
@@ -252,6 +391,7 @@ const rocketQuestions = [
     },
     // Q2
     {
+        id: "l2-output-001",
         question: "What will this string method output?",
         code: "city = 'tokyo'\nprint(city.upper())",
         options: ["TOKYO", "tokyo", "Tokyo", "Error"],
@@ -263,6 +403,7 @@ const rocketQuestions = [
     },
     // Q3
     {
+        id: "l2-code-001",
         question: "Which keyword is used to define a reusable function in Python?",
         options: ["function", "def", "func", "fn"],
         correct: 1,
@@ -273,6 +414,7 @@ const rocketQuestions = [
     },
     // Q4
     {
+        id: "l2-bug-001",
         question: "What is the syntax bug in this if statement?",
         code: "score = 85\nif score >= 50\n    print('Passed')",
         options: [
@@ -289,6 +431,7 @@ const rocketQuestions = [
     },
     // Q5
     {
+        id: "l2-output-002",
         question: "What will this function call output?",
         code: "def multiply_by_two(n):\n    return n * 2\n\nprint(multiply_by_two(4))",
         options: ["4", "6", "16", "8"],
@@ -300,6 +443,7 @@ const rocketQuestions = [
     },
     // Q6
     {
+        id: "l2-code-002",
         question: "Which code creates a for loop that repeats exactly 3 times?",
         options: [
             "for i in range(3):",
@@ -315,6 +459,7 @@ const rocketQuestions = [
     },
     // Q7
     {
+        id: "l2-mcq-002",
         question: "What is the result of evaluating True and False in Python?",
         options: ["True", "False", "None", "Error"],
         correct: 1,
@@ -325,6 +470,7 @@ const rocketQuestions = [
     },
     // Q8
     {
+        id: "l2-output-003",
         question: "What will be printed after this loop finishes?",
         code: "total = 0\nfor n in [1, 2, 3]:\n    total = total + n\nprint(total)",
         options: ["3", "5", "6", "0"],
@@ -336,6 +482,7 @@ const rocketQuestions = [
     },
     // Q9
     {
+        id: "l2-mcq-003",
         question: "Which operator checks if two values are equal in Python?",
         options: ["=", ":=", "equals", "=="],
         correct: 3,
@@ -346,6 +493,7 @@ const rocketQuestions = [
     },
     // Q10
     {
+        id: "l2-mcq-004",
         question: "What method adds a new item to the end of a Python list?",
         options: ["append()", "push()", "insert_end()", "add()"],
         correct: 0,
@@ -353,17 +501,143 @@ const rocketQuestions = [
         hint: "It starts with the letter 'a'.",
         type: "mcq",
         difficulty: "VERY EASY"
+    },
+    // Q11
+    {
+        id: "l2-output-004",
+        question: "What will this len() function output?",
+        code: "word = 'rocket'\nprint(len(word))",
+        options: ["5", "6", "7", "Error"],
+        correct: 1,
+        explanation: "`len()` counts the number of characters in the string `'rocket'`, which has 6 letters.",
+        hint: "Count the letters in 'rocket'.",
+        type: "output",
+        difficulty: "VERY EASY"
+    },
+    // Q12
+    {
+        id: "l2-output-005",
+        question: "What will this string repetition output in Python?",
+        code: "print('Go!' * 3)",
+        options: ["Go! 3", "Go!Go!Go!", "Go!*3", "Error"],
+        correct: 1,
+        explanation: "Multiplying a string by an integer repeats the string that many times: `'Go!Go!Go!'`.",
+        hint: "The string is repeated 3 times without spaces.",
+        type: "output",
+        difficulty: "VERY EASY"
+    },
+    // Q13
+    {
+        id: "l2-mcq-005",
+        question: "What is the result of evaluating not True in Python?",
+        options: ["True", "False", "None", "Error"],
+        correct: 1,
+        explanation: "The `not` operator inverts a Boolean value: `not True` becomes `False`.",
+        hint: "The opposite of True.",
+        type: "mcq",
+        difficulty: "VERY EASY"
+    },
+    // Q14
+    {
+        id: "l2-bug-002",
+        question: "What is missing in this function definition header?",
+        code: "def calculate_area(width, height)\n    return width * height",
+        options: [
+            "Missing return type keyword",
+            "Missing colon (:) after (width, height)",
+            "Parameters cannot have commas",
+            "def should be replaced by function"
+        ],
+        correct: 1,
+        explanation: "Every function header in Python must terminate with a colon `:` before the indented block.",
+        hint: "Check the punctuation at the end of the first line.",
+        type: "bug",
+        difficulty: "VERY EASY"
+    },
+    // Q15
+    {
+        id: "l2-mcq-006",
+        question: "What sequence of numbers does range(4) generate?",
+        options: ["1, 2, 3, 4", "0, 1, 2, 3", "0, 1, 2, 3, 4", "1, 2, 3"],
+        correct: 1,
+        explanation: "`range(4)` starts at 0 and produces 4 numbers: 0, 1, 2, and 3 (stops before 4).",
+        hint: "Starts at 0 and stops before 4.",
+        type: "mcq",
+        difficulty: "VERY EASY"
+    },
+    // Q16
+    {
+        id: "l2-output-006",
+        question: "What will this inequality comparison output?",
+        code: "print(10 != 5)",
+        options: ["True", "False", "10", "None"],
+        correct: 0,
+        explanation: "`!=` means 'not equal to'. Since 10 is indeed not equal to 5, the expression evaluates to `True`.",
+        hint: "Is 10 different from 5?",
+        type: "output",
+        difficulty: "VERY EASY"
+    },
+    // Q17
+    {
+        id: "l2-code-003",
+        question: "Which statement properly returns a result from a Python function?",
+        options: ["give result", "send result", "return result", "output result"],
+        correct: 2,
+        explanation: "The `return` keyword passes back a value from a function to its caller.",
+        hint: "The standard keyword is 'return'.",
+        type: "code-choice",
+        difficulty: "VERY EASY"
+    },
+    // Q18
+    {
+        id: "l2-mcq-007",
+        question: "Which loop type in Python repeatedly executes as long as a condition remains True?",
+        options: ["for loop", "while loop", "repeat loop", "until loop"],
+        correct: 1,
+        explanation: "A `while` loop continues running its block repeatedly as long as its test condition evaluates to `True`.",
+        hint: "Starts with 'w'.",
+        type: "mcq",
+        difficulty: "VERY EASY"
+    },
+    // Q19
+    {
+        id: "l2-bug-003",
+        question: "What causes an IndentationError in Python?",
+        code: "def launch():\nprint('Blast off!')",
+        options: [
+            "Missing parentheses around 'Blast off!'",
+            "launch is a restricted keyword",
+            "The line inside the function body is not indented",
+            "print() cannot be used inside functions"
+        ],
+        correct: 2,
+        explanation: "Python uses indentation (typically 4 spaces) to define code blocks. The statement inside `launch()` must be indented.",
+        hint: "Python requires code inside functions to be indented.",
+        type: "bug",
+        difficulty: "VERY EASY"
+    },
+    // Q20
+    {
+        id: "l2-output-007",
+        question: "What will this lower() string method output?",
+        code: "planet = 'MARS'\nprint(planet.lower())",
+        options: ["mars", "MARS", "Mars", "Error"],
+        correct: 0,
+        explanation: "`lower()` converts all characters in a string to lowercase, outputting `'mars'`.",
+        hint: "Converts uppercase letters to lowercase.",
+        type: "output",
+        difficulty: "VERY EASY"
     }
 ];
 
 // --------------------------------------------------
 // LEVEL 3: 🤖 ROBOT (Lists, Tuples, Dictionaries & Classes)
-// Mix: 4 MCQ, 3 Output, 2 Code-Choice, 1 Bug
-// Distribution: A: 3, B: 2, C: 2, D: 3
+// Pool: 20 Unique Questions (MCQ, Output, Code-Choice, Bug)
 // --------------------------------------------------
 const robotQuestions = [
     // Q1
     {
+        id: "l3-mcq-001",
         question: "Which Python data structure is defined using parentheses () and cannot be modified after creation?",
         options: ["List", "Dictionary", "Set", "Tuple"],
         correct: 3,
@@ -374,6 +648,7 @@ const robotQuestions = [
     },
     // Q2
     {
+        id: "l3-output-001",
         question: "What is printed when accessing index -1 of this list?",
         code: "items = ['book', 'pen', 'laptop']\nprint(items[-1])",
         options: ["book", "laptop", "pen", "IndexError"],
@@ -385,6 +660,7 @@ const robotQuestions = [
     },
     // Q3
     {
+        id: "l3-output-002",
         question: "What will this list slice produce?",
         code: "letters = ['a', 'b', 'c', 'd']\nprint(letters[0:2])",
         options: ["['a', 'b']", "['a', 'b', 'c']", "['b', 'c']", "['a']"],
@@ -396,6 +672,7 @@ const robotQuestions = [
     },
     // Q4
     {
+        id: "l3-code-001",
         question: "Which code correctly accesses the value of the key 'brand' in this dictionary?",
         code: "car = {'brand': 'Tesla', 'model': '3'}",
         options: [
@@ -412,6 +689,7 @@ const robotQuestions = [
     },
     // Q5
     {
+        id: "l3-bug-001",
         question: "What is the bug in this Python function definition?",
         code: "def greet(name)\n    return 'Hello ' + name",
         options: [
@@ -428,6 +706,7 @@ const robotQuestions = [
     },
     // Q6
     {
+        id: "l3-mcq-002",
         question: "In Object-Oriented Programming (OOP), what is a blueprint used for creating objects?",
         options: ["Class", "Method", "Module", "Variable"],
         correct: 0,
@@ -438,6 +717,7 @@ const robotQuestions = [
     },
     // Q7
     {
+        id: "l3-output-003",
         question: "What will this simple class method call output?",
         code: "class Bot:\n    def speak(self):\n        return 'Beep'\n\nb = Bot()\nprint(b.speak())",
         options: ["None", "Beep", "Bot", "Error"],
@@ -449,6 +729,7 @@ const robotQuestions = [
     },
     // Q8
     {
+        id: "l3-code-002",
         question: "Which code correctly defines a class named Robot in Python?",
         options: [
             "define Robot():",
@@ -464,6 +745,7 @@ const robotQuestions = [
     },
     // Q9
     {
+        id: "l3-mcq-003",
         question: "What does the len() function return when passed a dictionary with 3 key-value pairs?",
         options: ["6", "1", "Error", "3"],
         correct: 3,
@@ -474,12 +756,134 @@ const robotQuestions = [
     },
     // Q10
     {
+        id: "l3-mcq-004",
         question: "What keyword is used inside a loop to stop it immediately?",
         options: ["break", "exit", "stop", "halt"],
         correct: 0,
         explanation: "The `break` keyword immediately terminates the innermost enclosing loop.",
         hint: "To 'break' out of a loop.",
         type: "mcq",
+        difficulty: "VERY EASY"
+    },
+    // Q11
+    {
+        id: "l3-output-004",
+        question: "What will be printed when modifying this dictionary and checking its size?",
+        code: "bot = {'id': 1}\nbot['name'] = 'Alpha'\nprint(len(bot))",
+        options: ["1", "2", "3", "Error"],
+        correct: 1,
+        explanation: "The dictionary started with 1 key (`'id'`) and added another key (`'name'`), so `len(bot)` is `2`.",
+        hint: "Count how many keys are in the dictionary.",
+        type: "output",
+        difficulty: "VERY EASY"
+    },
+    // Q12
+    {
+        id: "l3-mcq-005",
+        question: "Which list method removes and returns the last item from a list?",
+        options: ["pop()", "remove()", "delete()", "discard()"],
+        correct: 0,
+        explanation: "`pop()` removes and returns the last element from the list (or from a specific index if provided).",
+        hint: "Think of 'popping' an item off a stack.",
+        type: "mcq",
+        difficulty: "VERY EASY"
+    },
+    // Q13
+    {
+        id: "l3-code-003",
+        question: "What is the conventional name for the first parameter of an instance method in a Python class?",
+        options: ["this", "self", "me", "inst"],
+        correct: 1,
+        explanation: "In Python, `self` represents the instance of the class and is conventionally the first parameter of instance methods.",
+        hint: "A 4-letter word starting with 's'.",
+        type: "code-choice",
+        difficulty: "VERY EASY"
+    },
+    // Q14
+    {
+        id: "l3-bug-002",
+        question: "Why does this code cause a TypeError in Python?",
+        code: "coords = (10, 20)\ncoords[0] = 50",
+        options: [
+            "coords is not a variable name",
+            "Tuples are immutable and cannot be modified after creation",
+            "Index 0 does not exist in coords",
+            "Parentheses cannot hold numbers"
+        ],
+        correct: 1,
+        explanation: "Tuples cannot be altered once created; attempting to assign to an element raises a `TypeError`.",
+        hint: "Tuples are immutable.",
+        type: "bug",
+        difficulty: "VERY EASY"
+    },
+    // Q15
+    {
+        id: "l3-output-005",
+        question: "What will this list index lookup print?",
+        code: "nums = [10, 20, 30]\nprint(nums[1])",
+        options: ["10", "20", "30", "IndexError"],
+        correct: 1,
+        explanation: "Python uses 0-based indexing: `nums[0]` is `10`, and `nums[1]` is `20`.",
+        hint: "Lists start at index 0.",
+        type: "output",
+        difficulty: "VERY EASY"
+    },
+    // Q16
+    {
+        id: "l3-code-004",
+        question: "Which special method is the constructor used to initialize newly created class instances?",
+        options: ["__start__()", "__init__()", "__new__()", "__create__()"],
+        correct: 1,
+        explanation: "`__init__()` is Python's initialization constructor method called when an object is instantiated.",
+        hint: "Short for initialize with double underscores.",
+        type: "code-choice",
+        difficulty: "VERY EASY"
+    },
+    // Q17
+    {
+        id: "l3-output-006",
+        question: "What is the output after appending an element to this list?",
+        code: "colors = ['red', 'green']\ncolors.append('blue')\nprint(len(colors))",
+        options: ["2", "3", "4", "Error"],
+        correct: 1,
+        explanation: "`colors` originally has 2 items. Appending `'blue'` increases the length to `3`.",
+        hint: "2 original items plus 1 appended item.",
+        type: "output",
+        difficulty: "VERY EASY"
+    },
+    // Q18
+    {
+        id: "l3-mcq-006",
+        question: "Which keyword checks whether a specific key exists in a dictionary?",
+        options: ["has", "exists", "in", "contains"],
+        correct: 2,
+        explanation: "The `in` keyword checks membership (e.g., `'model' in car`).",
+        hint: "A 2-letter keyword: 'in'.",
+        type: "mcq",
+        difficulty: "VERY EASY"
+    },
+    // Q19
+    {
+        id: "l3-bug-003",
+        question: "What exception is raised when looking up a key that does not exist in a dictionary?",
+        code: "profile = {'name': 'Ada'}\nprint(profile['age'])",
+        options: ["IndexError", "KeyError", "ValueError", "AttributeError"],
+        correct: 1,
+        explanation: "Accessing a non-existent dictionary key directly with `[]` raises a `KeyError`.",
+        hint: "It has 'Key' in the name of the error.",
+        type: "bug",
+        difficulty: "VERY EASY"
+    },
+    // Q20
+    {
+        id: "l3-output-007",
+        question: "What will accessing index 0 of this tuple print?",
+        code: "point = (4, 9)\nprint(point[0])",
+        options: ["4", "9", "(4, 9)", "Error"],
+        correct: 0,
+        explanation: "Tuples support 0-based indexing: `point[0]` accesses the first item, which is `4`.",
+        hint: "The first item in the tuple.",
+        type: "output",
         difficulty: "VERY EASY"
     }
 ];
@@ -541,7 +945,11 @@ const BUILDS = [
 // ==================================================
 
 let currentBuildIndex = 0;                                  // Index in BUILDS (0 = House, 1 = Rocket, 2 = Robot...)
-let currentQuestionIndex = 0;                               // 0 to (build.questions.length - 1) within current level
+let successfulCorrectAnswers = 0;                           // Exactly 0 to 10 successful correct answers required per level
+let currentQuestionIndex = 0;                               // Synced alias for successfulCorrectAnswers
+let currentQuestion = null;                                 // Active question object currently presented to player
+const seenQuestionIds = new Set();                          // Question IDs displayed during the current level attempt (prevents repeats)
+let questionAttempts = 0;                                   // Total question attempts in current level
 let buildPieces = new Array(BUILDS.length).fill(0);         // Dynamic pieces built per build
 let completedLevels = new Array(BUILDS.length).fill(false); // Dynamic checkpoint completion flags per build
 let checkpointXp = 0;                                       // Permanent XP preserved from completed levels
@@ -1746,7 +2154,7 @@ function renderWorldMap() {
                         '<h3 class="node-title">' + escapeHtml(build.name.toUpperCase()) + '</h3>' +
                         '<p class="node-topic">' + escapeHtml(build.description || "") + '</p>' +
                         '<div class="node-meta-row">' +
-                            '<span class="node-meta-chip">🎯 ' + build.questions.length + ' Questions</span>' +
+                            '<span class="node-meta-chip">🎯 10 Correct to Build</span>' +
                             '<span class="node-meta-chip">🧱 ' + (state === "completed" ? totalPieces : currentPieces) + ' / ' + totalPieces + ' Pieces</span>' +
                         '</div>' +
                     '</div>' +
@@ -1754,7 +2162,7 @@ function renderWorldMap() {
 
         // Node Footer (Action or Status message)
         if (state === "current") {
-            const btnLabel = (currentQuestionIndex > 0 || buildPieces[index] > 0) ? "RESUME BUILDING ➔" : "START BUILDING ➔";
+            const btnLabel = (successfulCorrectAnswers > 0 || buildPieces[index] > 0) ? "RESUME BUILDING ➔" : "START BUILDING ➔";
             html += '<div class="node-footer">' +
                 '<button class="btn-action primary-btn node-action-btn" type="button" data-level="' + index + '">' +
                     btnLabel +
@@ -1864,8 +2272,7 @@ hintButton.addEventListener("click", function () {
         return;
     }
 
-    const build = BUILDS[currentBuildIndex];
-    const question = build.questions[currentQuestionIndex];
+    const question = currentQuestion || BUILDS[currentBuildIndex].questions[0];
 
     if (!hintUsedForCurrentQuestion && hintsRemaining > 0) {
         hintsRemaining = 0;
@@ -1926,21 +2333,46 @@ function escapeHtml(str) {
 }
 
 // ==================================================
+// QUESTION SELECTION & PROGRESSION ENGINE
+// ==================================================
+
+function getNextUnseenQuestion(buildIndex) {
+    const build = BUILDS[buildIndex];
+    const pool = build.questions;
+    const unseen = pool.filter(function (q) {
+        return !seenQuestionIds.has(q.id);
+    });
+
+    if (unseen.length === 0) {
+        // Fallback safeguard (pool has 20 questions, max possible seen per attempt is 12)
+        return pool[0];
+    }
+
+    const selectedQuestion = unseen[0];
+    seenQuestionIds.add(selectedQuestion.id);
+    return selectedQuestion;
+}
+
+// ==================================================
 // QUESTION LOADING & UI UPDATES
 // ==================================================
 
-function loadQuestion() {
+function loadQuestion(forceNew) {
+    if (forceNew === undefined) forceNew = true;
     const build = BUILDS[currentBuildIndex];
-    const question = build.questions[currentQuestionIndex];
-    const totalQuestions = build.questions.length;
 
-    // Header level indicator & question progress
+    if (forceNew || !currentQuestion) {
+        currentQuestion = getNextUnseenQuestion(currentBuildIndex);
+    }
+    const question = currentQuestion;
+
+    // Header level indicator & build progress (strictly tracking successful correct answers)
     levelIndicator.textContent = build.topicName;
     levelIndicator.className = "level-indicator level-" + build.levelNumber;
-    questionProgress.textContent = "Question " + (currentQuestionIndex + 1) + " / " + totalQuestions;
+    questionProgress.textContent = "BUILD PROGRESS: " + successfulCorrectAnswers + " / 10";
 
-    // Question number & difficulty badge
-    questionNumber.textContent = "Question " + (currentQuestionIndex + 1) + " / " + totalQuestions + " (" + build.name + ")";
+    // Question number badge & difficulty badge
+    questionNumber.textContent = "BUILD PROGRESS: " + successfulCorrectAnswers + " / 10 (" + build.name + ")";
     difficultyBadge.textContent = question.difficulty || "VERY EASY";
     difficultyBadge.className = "difficulty-badge badge-easy";
 
@@ -2028,12 +2460,11 @@ function handleAnswer(selectedIndex) {
     });
 
     const build = BUILDS[currentBuildIndex];
-    const question = build.questions[currentQuestionIndex];
+    const question = currentQuestion;
     const isCorrect = (selectedIndex === question.correct);
-    const isFinalQuestion = (currentQuestionIndex === build.questions.length - 1);
-    const totalQuestions = build.questions.length;
     const qType = question.type || "mcq";
 
+    questionAttempts++;
     sessionQuestionsAnswered++;
     if (sessionQuestionsAnswered === 5) {
         DailyStreakManager.recordActivity();
@@ -2053,6 +2484,10 @@ function handleAnswer(selectedIndex) {
         correctByType[qType] = (correctByType[qType] || 0) + 1;
         if (qType === "output") outputCorrect++;
         else if (qType === "bug") bugCorrect++;
+
+        // Exactly 1 successful correct answer incremented toward 10 required
+        successfulCorrectAnswers++;
+        currentQuestionIndex = successfulCorrectAnswers; // Synced for compatibility
 
         // Correct answer: +10 XP, +1 streak, build exactly 1 piece
         totalXp = totalXp + 10;
@@ -2076,7 +2511,11 @@ function handleAnswer(selectedIndex) {
         }
 
         checkStreakMilestone(streak);
-        buildNextPiece();
+
+        // Update physical build piece
+        buildPieces[currentBuildIndex] = successfulCorrectAnswers;
+        updateBuilding(successfulCorrectAnswers - 1);
+        AudioManager.playSound("build");
 
         answerButtons[selectedIndex].classList.add("btn-correct", "btn-pop");
         checkAchievements("answer");
@@ -2107,23 +2546,24 @@ function handleAnswer(selectedIndex) {
         resultCorrectAnswer.style.display = "none";
         resultExplanation.textContent = question.explanation;
 
-        if (isFinalQuestion) {
+        if (successfulCorrectAnswers === 10) {
             continueButton.textContent = "COMPLETE LEVEL " + build.levelNumber + " ➔";
         } else {
             continueButton.textContent = "CONTINUE ➔";
         }
 
     } else {
-        // Wrong answer: -1 life on current level, reset streak, build NOTHING
+        // Wrong answer: -1 life on current level, reset streak, build NOTHING, 0 XP
+        // Question attempt is discarded; successfulCorrectAnswers DOES NOT INCREASE.
         levelMistakes++;
         lives = Math.max(0, lives - 1);
         minLivesInLevel = Math.min(minLivesInLevel, lives);
         if (lives === 1) reachedOneLifeInLevel = true;
         streak = 0;
-        if (currentQuestionIndex >= totalQuestions - 5) {
+        if (successfulCorrectAnswers >= 5) {
             levelFinal5Correct = false;
         }
-        if (currentQuestionIndex >= totalQuestions - 3) {
+        if (successfulCorrectAnswers >= 7) {
             levelFinal3Correct = false;
         }
         streakDisplay.textContent = "🔥 0";
@@ -2171,8 +2611,6 @@ function handleAnswer(selectedIndex) {
         // If lives reach 0, update continue button text
         if (lives === 0) {
             continueButton.textContent = "SEE RESULTS 💀";
-        } else if (isFinalQuestion) {
-            continueButton.textContent = "COMPLETE LEVEL " + build.levelNumber + " ➔";
         } else {
             continueButton.textContent = "CONTINUE ➔";
         }
@@ -2183,7 +2621,7 @@ function handleAnswer(selectedIndex) {
 }
 
 // ==================================================
-// CONTINUE BUTTON HANDLER (Manual Progression)
+// CONTINUE BUTTON HANDLER (Progression & Replacement)
 // ==================================================
 
 continueButton.addEventListener("click", function () {
@@ -2194,14 +2632,12 @@ continueButton.addEventListener("click", function () {
         return;
     }
 
-    const build = BUILDS[currentBuildIndex];
-    // If more questions remain in the level, advance to next question
-    if (currentQuestionIndex < build.questions.length - 1) {
-        currentQuestionIndex = currentQuestionIndex + 1;
-        loadQuestion();
-    } else {
-        // Final question of level reached and player survived!
+    // If 10 successful correct answers achieved, complete level
+    if (successfulCorrectAnswers >= 10) {
         completeCurrentLevel();
+    } else {
+        // Load next unseen question (replacement question if wrong, or next target question if correct)
+        loadQuestion(true);
     }
 });
 
@@ -2218,8 +2654,8 @@ function completeCurrentLevel() {
     // Save checkpoint XP permanently
     checkpointXp = totalXp;
 
-    const levelCorrect = build.questions.length - levelMistakes;
-    levelCorrectHistory[currentBuildIndex] = levelCorrect;
+    const levelCorrect = 10;
+    levelCorrectHistory[currentBuildIndex] = 10 - levelMistakes;
 
     // Check if level was completed with 0 mistakes and 3 lives -> Perfect Level
     const isPerfect = (levelMistakes === 0 && lives === 3);
@@ -2240,7 +2676,7 @@ function completeCurrentLevel() {
     // Check level complete achievements
     checkAchievements("level_complete", {
         buildIndex: currentBuildIndex,
-        levelCorrect: levelCorrect,
+        levelCorrect: levelCorrectHistory[currentBuildIndex],
         isPerfect: isPerfect,
         noHint: noHint,
         usedHint: levelUsedHint,
@@ -2256,14 +2692,14 @@ function completeCurrentLevel() {
         levelCompleteCard.style.display = "block";
 
         const nextBuild = BUILDS[currentBuildIndex + 1];
-        const totalPieces = build.pieces ? build.pieces.length : build.questions.length;
+        const totalPieces = 10;
 
         levelCompleteTitle.textContent = "LEVEL " + build.levelNumber + " COMPLETE!";
         const completeBadge = document.getElementById("build-complete-badge");
         if (completeBadge) {
             completeBadge.textContent = build.icon + " " + build.name.toUpperCase() + " BUILT!";
         }
-        levelCompleteMessage.textContent = "Outstanding work! You completed all " + build.questions.length + " questions in Level " + build.levelNumber + " and established a permanent checkpoint!";
+        levelCompleteMessage.textContent = "Outstanding work! You successfully answered all 10 required questions in Level " + build.levelNumber + " and established a permanent checkpoint!";
 
         buildCompleteStats.innerHTML =
             '<div class="stat-card-row">' +
@@ -2294,7 +2730,11 @@ nextLevelButton.addEventListener("click", function () {
 
     // Advance to next level
     currentBuildIndex = currentBuildIndex + 1;
+    successfulCorrectAnswers = 0;
     currentQuestionIndex = 0;
+    currentQuestion = null;
+    seenQuestionIds.clear();
+    questionAttempts = 0;
     levelMistakes = 0;
 
     // Unlock celebration
@@ -2306,8 +2746,9 @@ nextLevelButton.addEventListener("click", function () {
     // Each new level gets fresh 3 lives & fresh 1 hint!
     lives = 3;
     hintsRemaining = 1;
+    hintUsedForCurrentQuestion = false;
+    isAnswerLocked = false;
     streak = 0;
-    levelMistakes = 0;
     minLivesInLevel = 3;
     reachedOneLifeInLevel = false;
     levelUsedHint = false;
@@ -2318,7 +2759,7 @@ nextLevelButton.addEventListener("click", function () {
     updateHintDisplay();
     switchScene(currentBuildIndex);
     updateBuildWorldBar();
-    loadQuestion();
+    loadQuestion(true);
 
     // Transition to World Map progression screen
     gameScreen.style.display = "none";
@@ -2340,7 +2781,7 @@ function showLevelFailed() {
     hintButton.disabled = true;
 
     const build = BUILDS[currentBuildIndex];
-    const totalPieces = build.pieces ? build.pieces.length : build.questions.length;
+    const totalPieces = 10;
     const gameOverTitle = document.getElementById("game-over-title");
     if (gameOverTitle) {
         gameOverTitle.textContent = "💀 LEVEL " + build.levelNumber + " FAILED";
@@ -2350,7 +2791,7 @@ function showLevelFailed() {
 
     gameOverStats.innerHTML =
         '<div class="stat-card-row">' +
-            '<div class="mini-stat-card"><span class="m-label">STOPPED AT</span><span class="m-val">Question ' + (currentQuestionIndex + 1) + ' / ' + build.questions.length + '</span></div>' +
+            '<div class="mini-stat-card"><span class="m-label">BUILD PROGRESS</span><span class="m-val">🧱 ' + successfulCorrectAnswers + ' / 10 Built</span></div>' +
             '<div class="mini-stat-card"><span class="m-label">PIECES BUILT</span><span class="m-val">🧱 ' + buildPieces[currentBuildIndex] + ' / ' + totalPieces + '</span></div>' +
             '<div class="mini-stat-card"><span class="m-label">SAVED CHECKPOINT XP</span><span class="m-val">⭐ ' + checkpointXp + ' XP</span></div>' +
         '</div>' +
@@ -2362,7 +2803,11 @@ function showLevelFailed() {
 // When TRY AGAIN is clicked on a failed level:
 tryAgainButton.addEventListener("click", function () {
     AudioManager.playSound("click");
+    successfulCorrectAnswers = 0;
     currentQuestionIndex = 0;
+    currentQuestion = null;
+    seenQuestionIds.clear();
+    questionAttempts = 0;
     levelMistakes = 0;
     minLivesInLevel = 3;
     reachedOneLifeInLevel = false;
@@ -2372,6 +2817,8 @@ tryAgainButton.addEventListener("click", function () {
     buildPieces[currentBuildIndex] = 0; // Reset only this level's build pieces
     lives = 3;                         // Fresh 3 lives for retry!
     hintsRemaining = 1;                // Reset hints for retry (strictly 1 hint)!
+    hintUsedForCurrentQuestion = false;
+    isAnswerLocked = false;
     streak = 0;
     totalXp = checkpointXp;            // Restore XP from previously completed checkpoints
 
@@ -2396,7 +2843,7 @@ tryAgainButton.addEventListener("click", function () {
 
     switchScene(currentBuildIndex);
     updateBuildWorldBar();
-    loadQuestion();
+    loadQuestion(true);
 });
 
 // ==================================================
@@ -2454,15 +2901,11 @@ function showGameComplete() {
             namesText + "!";
     }
 
-    const maxPossibleXp = BUILDS.reduce(function (sum, b) {
-        return sum + (b.questions.length * 10);
-    }, 0);
+    const maxPossibleXp = BUILDS.length * 10 * 10; // Exactly 10 questions per level * 10 XP = 300 XP
     const totalPiecesBuilt = buildPieces.reduce(function (sum, count) {
         return sum + count;
     }, 0);
-    const maxPossiblePieces = BUILDS.reduce(function (sum, b) {
-        return sum + (b.pieces ? b.pieces.length : b.questions.length);
-    }, 0);
+    const maxPossiblePieces = BUILDS.length * 10; // Exactly 10 pieces per level = 30 pieces
     const completedCount = completedLevels.filter(Boolean).length;
 
     finalStats.innerHTML =
@@ -2513,7 +2956,11 @@ if (playAgainButton) {
 
 function startNewGame() {
     currentBuildIndex = 0;
+    successfulCorrectAnswers = 0;
     currentQuestionIndex = 0;
+    currentQuestion = null;
+    seenQuestionIds.clear();
+    questionAttempts = 0;
     levelMistakes = 0;
     sessionQuestionsAnswered = 0;
     lastUnlockedBuildIndex = -1;
@@ -2605,7 +3052,7 @@ function startNewGame() {
 
     switchScene(0);
     updateBuildWorldBar();
-    loadQuestion();
+    loadQuestion(true);
     renderWorldMap();
     DailyStreakManager.updateUI();
     renderAchievementsGrid();
@@ -2671,7 +3118,7 @@ document.addEventListener("click", function () {
 switchScene(0);
 updateBuilding(-1);
 updateBuildWorldBar();
-loadQuestion();
+loadQuestion(true);
 renderWorldMap();
 DailyStreakManager.updateUI();
 renderAchievementsGrid();
@@ -2685,7 +3132,11 @@ window.REWARDS = REWARDS;
 window.getGameState = function () {
     return {
         currentBuildIndex: currentBuildIndex,
-        currentQuestionIndex: currentQuestionIndex,
+        currentQuestionIndex: successfulCorrectAnswers,
+        successfulCorrectAnswers: successfulCorrectAnswers,
+        currentQuestion: currentQuestion,
+        seenQuestionIds: Array.from(seenQuestionIds),
+        questionAttempts: questionAttempts,
         buildPieces: buildPieces.slice(),
         completedLevels: completedLevels.slice(),
         totalXp: totalXp,
@@ -2721,6 +3172,20 @@ window.unlockReward = unlockReward;
 window.checkAchievementVersionMigration = checkAchievementVersionMigration;
 window.flawlessLevels = flawlessLevels;
 window.setGameTestState = function (state) {
+    if (state.successfulCorrectAnswers !== undefined) {
+        successfulCorrectAnswers = state.successfulCorrectAnswers;
+        currentQuestionIndex = state.successfulCorrectAnswers;
+        buildPieces[currentBuildIndex] = state.successfulCorrectAnswers;
+    }
+    if (state.currentQuestionIndex !== undefined) {
+        successfulCorrectAnswers = state.currentQuestionIndex;
+        currentQuestionIndex = state.currentQuestionIndex;
+        buildPieces[currentBuildIndex] = state.currentQuestionIndex;
+    }
+    if (state.seenQuestionIds !== undefined) {
+        seenQuestionIds.clear();
+        state.seenQuestionIds.forEach(function (id) { seenQuestionIds.add(id); });
+    }
     if (state.streak !== undefined) streak = state.streak;
     if (state.bestStreak !== undefined) bestStreak = state.bestStreak;
     if (state.lives !== undefined) lives = state.lives;
