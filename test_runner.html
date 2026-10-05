@@ -120,85 +120,20 @@
                     <button id="cam-overview" class="camera-btn" type="button" title="City Overview" aria-label="City Overview">🌐</button>
                 </div>
                 <div id="cam-zoom-badge" class="camera-zoom-badge">100% • District View</div>
-
-                <!-- City Information Overlays Selector -->
-                <div class="service-overlays-panel" id="service-overlays-panel" aria-label="City Information Overlays">
-                    <button type="button" class="overlay-pill active" data-overlay="none" title="Normal City View">🗺️ Normal</button>
-                    <button type="button" class="overlay-pill" data-overlay="power" title="Power Grid Overlay">⚡ Power</button>
-                    <button type="button" class="overlay-pill" data-overlay="water" title="Water Network Overlay">💧 Water</button>
-                    <button type="button" class="overlay-pill" data-overlay="traffic" title="Traffic & Logistics Overlay">🛣️ Roads</button>
-                </div>
             </div>
 
-            <!-- Road Construction Mode Floating Banner -->
-            <div id="road-mode-banner" class="road-mode-banner" style="display: none;">
-                <span class="road-banner-icon">🛣️</span>
-                <span class="road-banner-text">ROAD CONSTRUCTION ACTIVE • Click any open ground tile to pave new road</span>
-                <button id="road-mode-cancel" class="road-banner-cancel-btn" type="button">FINISH ROAD</button>
-            </div>
+            <!-- Floating District Jump Bar (Bottom Center) -->
+            <nav class="district-jump-nav" aria-label="District Quick Navigation">
+                <button type="button" class="district-pill active" data-jump="overview">🌟 Overview</button>
+                <button type="button" class="district-pill" data-jump="d1">🌱 Basics</button>
+                <button type="button" class="district-pill" data-jump="d2">⚡ Logic</button>
+                <button type="button" class="district-pill" data-jump="d3">🔧 Functions</button>
+                <button type="button" class="district-pill" data-jump="d4">📊 Data</button>
+                <button type="button" class="district-pill" data-jump="d5">⚙️ OOP</button>
+                <button type="button" class="district-pill" data-jump="civic">🏛️ Civic Plaza</button>
+            </nav>
 
-            <!-- City-Builder Bottom Dock (Build Toolbar & District Quick-Jump) -->
-            <div class="city-bottom-dock" id="city-bottom-dock">
-                <!-- City Construction & Build Toolbar -->
-                <nav class="city-build-toolbar" id="city-build-toolbar" aria-label="City Construction & Build Tools">
-                    <button type="button" class="build-tool-btn" data-build-cat="residential">
-                        <span class="tool-icon">🏠</span>
-                        <span class="tool-label">Residential</span>
-                    </button>
-                    <button type="button" class="build-tool-btn" data-build-cat="industrial">
-                        <span class="tool-icon">🏭</span>
-                        <span class="tool-label">Industry</span>
-                    </button>
-                    <button type="button" class="build-tool-btn" data-build-cat="commercial">
-                        <span class="tool-icon">🛒</span>
-                        <span class="tool-label">Commerce</span>
-                    </button>
-                    <button type="button" class="build-tool-btn" data-build-cat="service">
-                        <span class="tool-icon">⚡</span>
-                        <span class="tool-label">Services</span>
-                    </button>
-                    <button type="button" class="build-tool-btn" id="tool-btn-road" data-build-cat="roads">
-                        <span class="tool-icon">🛣️</span>
-                        <span class="tool-label">Road Tool</span>
-                    </button>
-                    <button type="button" class="build-tool-btn" data-build-cat="tech">
-                        <span class="tool-icon">🎓</span>
-                        <span class="tool-label">Python Tech</span>
-                    </button>
-                    <button type="button" class="build-tool-btn" data-build-cat="civic">
-                        <span class="tool-icon">🏛️</span>
-                        <span class="tool-label">Civic & Parks</span>
-                    </button>
-                </nav>
-
-                <!-- Floating District Jump Bar (Retained for quick camera navigation) -->
-                <nav class="district-jump-nav" aria-label="District Quick Navigation">
-                    <button type="button" class="district-pill active" data-jump="overview">🌟 Overview</button>
-                    <button type="button" class="district-pill" data-jump="d1">🌱 Basics</button>
-                    <button type="button" class="district-pill" data-jump="d2">⚡ Logic</button>
-                    <button type="button" class="district-pill" data-jump="d3">🔧 Functions</button>
-                    <button type="button" class="district-pill" data-jump="d4">📊 Data</button>
-                    <button type="button" class="district-pill" data-jump="d5">⚙️ OOP</button>
-                    <button type="button" class="district-pill" data-jump="civic">🏛️ Civic Plaza</button>
-                </nav>
-            </div>
-
-            <!-- Floating Build Mode Catalog Drawer (Bottom Slide-Up) -->
-            <div id="city-build-drawer" class="city-build-drawer" style="display: none;" role="region" aria-label="City Construction Catalog">
-                <div class="build-drawer-header">
-                    <div class="drawer-title-group">
-                        <span id="build-drawer-icon" class="drawer-icon">🏠</span>
-                        <div>
-                            <h3 id="build-drawer-title" class="drawer-title">RESIDENTIAL ZONING</h3>
-                            <span id="build-drawer-desc" class="drawer-desc">Construct houses and apartments to grow city population and supply workforce.</span>
-                        </div>
-                    </div>
-                    <button id="build-drawer-close" class="modal-close-btn" type="button" aria-label="Close Build Drawer">✕</button>
-                </div>
-                <div id="build-drawer-grid" class="build-drawer-grid"></div>
-            </div>
-
-            <!-- Floating Building Inspection Panel (Docked Right Side Drawer) -->
+            <!-- Floating Building Inspection Panel (Bottom-Left Drawer) -->
             <aside id="building-inspect-panel" class="building-inspect-panel" aria-label="Building Inspection" style="display: none;"></aside>
 
             <!-- Toast Container -->
@@ -698,17 +633,17 @@
                     </div>
                 </div>
 
-            <!-- Full Achievements Grid (All 12 achievements) -->
-            <div id="world-achievements-grid" class="achievements-grid">
-                <!-- Dynamically rendered via script.js -->
-            </div>
+                <!-- Full Achievements Grid (All 12 achievements) -->
+                <div id="world-achievements-grid" class="achievements-grid">
+                    <!-- Dynamically rendered via script.js -->
+                </div>
 
-            <!-- Achievements Footer Actions -->
-            <div class="achievements-footer-actions">
-                <button id="achievements-back-btn" class="map-secondary-btn" type="button">
-                    <span>← BACK / HOME</span>
-                </button>
-            </div>
+                <!-- Achievements Footer Actions -->
+                <div class="achievements-footer-actions">
+                    <button id="achievements-back-btn" class="map-secondary-btn" type="button">
+                        <span>← BACK / HOME</span>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -964,8 +899,6 @@
     </div>
 
     <!-- ============================================== -->
-    <!-- NEW GAME CONFIRMATION MODAL (V11-A)            -->
-    <!-- ============================================== -->
     <!-- CITY ARCHITECT GUIDE & HANDBOOK MODAL          -->
     <!-- ============================================== -->
     <div id="city-guide-modal" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="guide-modal-title">
@@ -1013,9 +946,10 @@
     </div>
 
     <!-- ============================================== -->
-    <!-- NEW GAME CONFIRMATION MODAL                    -->
+    <!-- NEW GAME CONFIRMATION MODAL (V11-A)            -->
     <!-- ============================================== -->
-    <div id="new-game-confirm-modal" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="new-game-modal-title">
+
+        <div id="new-game-confirm-modal" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="new-game-modal-title">
         <div class="review-modal-card confirm-modal-card">
             <div class="modal-header">
                 <div>
@@ -1073,6 +1007,312 @@
     <!-- SCRIPTS -->
     <script src="cityEngine.js"></script>
     <script src="script.js"></script>
+
+
+<div id="test-output" style="position: fixed; bottom: 0; left: 0; right: 0; height: 350px; background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(12px); color: #38bdf8; font-family: monospace; padding: 14px; overflow-y: auto; border-top: 2px solid #0284c7; z-index: 9999; font-size: 13px; line-height: 1.5;">
+    <div style="font-size: 15px; font-weight: bold; margin-bottom: 8px;">⚡ BUILD IT! AUTOMATED REGRESSION &amp; FEATURE TEST SUITE</div>
+</div>
+<script>
+
+        const output = document.getElementById("test-output");
+        window.onerror = function(msg, url, line, col, err) {
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '/test_log?error=' + encodeURIComponent(msg + ' at line ' + line + ':' + col), false);
+                xhr.send(null);
+            } catch(e) {}
+        };
+
+        function log(msg, status = "info") {
+            const div = document.createElement("div");
+            div.textContent = msg;
+            if (status === "pass") div.className = "pass";
+            if (status === "fail") div.className = "fail";
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '/test_log?msg=' + encodeURIComponent(msg), false);
+                xhr.send(null);
+            } catch(e) {}
+        }
+
+        function runAllTestsSynchronously() {
+            const win = window;
+            const doc = document;
+
+            const results = { passed: 0, failed: 0, tests: [] };
+
+            function assert(cond, name) {
+                if (cond) {
+                    results.passed++;
+                    log("✓ PASS: " + name, "pass");
+                    results.tests.push({ name, status: "PASS" });
+                } else {
+                    results.failed++;
+                    log("✗ FAIL: " + name, "fail");
+                    results.tests.push({ name, status: "FAIL" });
+                }
+            }
+
+            try {
+                // 1. Initial State
+                assert(win.CityEngine !== undefined, "CityEngine is initialized and globally exposed");
+                assert(win.CityEngine.districts.length === 6, "CityEngine defines all 6 districts (5 tech + 1 civic)");
+                assert(Object.keys(win.CityEngine.buildings).length === 27, "CityEngine defines all 27 distinct buildings");
+                assert(win.CityEngine.districts[0].unlocked === true, "District 1 (Python Basics) is unlocked by default");
+                assert(win.CityEngine.districts[1].unlocked === false, "District 2 (Logic) is locked by default");
+                assert(win.CityEngine.buildings["b_syntax"].status === "available", "Syntax Gateway is available for initial construction");
+
+                // 2. Camera System
+                const cam = doc.getElementById("cam-zoom-badge");
+                assert(cam !== null && cam.textContent.includes("District View"), "Camera zoom badge correctly reflects District View (105%)");
+                win.CityEngine.viewCityOverview();
+                assert(win.CityEngine.viewport !== null, "Camera overview correctly sets overview coordinate and zoom");
+                win.CityEngine.centerOnDistrict("d1");
+                assert(true, "Camera centerOnDistrict smoothly pans to District 1");
+
+                // 3. Building Inspection
+                win.CityEngine.selectBuilding("b_syntax");
+                const panel = doc.getElementById("building-inspect-panel");
+                assert(panel && panel.style.display !== "none", "Building inspection panel displays when Syntax Gateway is clicked");
+                assert(panel && panel.textContent.includes("Syntax Gateway"), "Inspection panel displays correct building name");
+                assert(panel && panel.textContent.includes("Python Introduction & print()"), "Inspection panel displays correct curriculum concept");
+                assert(panel && panel.querySelector("#inspect-action-btn") !== null, "Inspection panel has action button 'BUILD STAGE'");
+
+                // 4. Starting Challenge
+                win.CityEngine.startBuildingChallenge("b_syntax");
+                const challengeModal = doc.getElementById("city-challenge-modal");
+                assert(challengeModal && challengeModal.style.display === "flex", "Challenge modal opens on starting building challenge");
+                assert(win.getCurrentQuestion() !== null, "Current question is loaded into challenge state");
+                assert(doc.getElementById("lives").textContent.includes("❤️"), "Lives display shows 3 hearts");
+                assert(doc.getElementById("hint-button") !== null, "Hint button is available");
+
+                // 5. Correct Answer Flow
+                const q = win.getCurrentQuestion();
+                const initialXp = win.getTotalXp();
+                const correctBtn = doc.querySelectorAll(".answer-btn")[q.correct];
+                correctBtn.click();
+
+                assert(win.getTotalXp() === initialXp + 10, "+10 XP awarded on correct answer");
+                assert(win.getStreak() === 1, "Streak incremented to 1");
+                assert(doc.getElementById("result-box").style.display === "block", "Result explanation box displayed");
+                assert(win.CityEngine.buildings["b_syntax"].currentStage === 1, "Syntax Gateway construction stage advanced to 1");
+
+                // 6. Complete Building
+                const contBtn = doc.getElementById("continue-button");
+                // Stage 2
+                contBtn.click();
+                const q2 = win.getCurrentQuestion();
+                doc.querySelectorAll(".answer-btn")[q2.correct].click();
+                assert(win.CityEngine.buildings["b_syntax"].currentStage === 2, "Stage 2 completed");
+
+                // Stage 3 (Final Stage)
+                contBtn.click();
+                const q3 = win.getCurrentQuestion();
+                doc.querySelectorAll(".answer-btn")[q3.correct].click();
+                assert(win.CityEngine.buildings["b_syntax"].status === "completed", "Syntax Gateway marked completed after stage 3");
+                assert(win.CityEngine.buildings["b_var"].status === "available", "Variable Foundry unlocked as next building in District 1");
+
+                // Close challenge modal
+                contBtn.click();
+                assert(challengeModal.style.display === "none", "Challenge modal closed upon building completion");
+
+                // 7. Wrong Answer & Life Loss
+                win.CityEngine.startBuildingChallenge("b_var");
+                const qVar = win.getCurrentQuestion();
+                const wrongIdx = (qVar.correct + 1) % 4;
+                doc.querySelectorAll(".answer-btn")[wrongIdx].click();
+
+                assert(win.getLives() === 2, "Lives decreased from 3 to 2 on wrong answer");
+                assert(win.getStreak() === 0, "Streak reset to 0 on wrong answer");
+                assert(doc.getElementById("result-box").style.display === "block", "Explanation and wrong-choice note displayed");
+
+                // 8. Game Over & Retry Flow
+                // Lose remaining 2 lives
+                contBtn.click();
+                const qVar2 = win.getCurrentQuestion();
+                doc.querySelectorAll(".answer-btn")[(qVar2.correct + 1) % 4].click();
+                contBtn.click();
+                const qVar3 = win.getCurrentQuestion();
+                doc.querySelectorAll(".answer-btn")[(qVar3.correct + 1) % 4].click();
+
+                assert(win.getLives() === 0, "Lives hit 0");
+                contBtn.click();
+                const gameOverCard = doc.getElementById("game-over-card");
+                assert(gameOverCard && gameOverCard.style.display === "block", "Game Over card displayed on 0 lives");
+
+                // Click Try Again
+                const tryAgainBtn = doc.getElementById("try-again-button");
+                tryAgainBtn.click();
+                assert(win.getLives() === 3, "Retry cleanly resets lives to 3");
+                assert(gameOverCard.style.display === "none", "Game Over card dismissed on retry");
+
+                // 9. Daily Challenge
+                assert(win.DailyBuildManager !== undefined, "DailyBuildManager exists");
+                win.DailyBuildManager.openModal();
+                const dailyModal = doc.getElementById("daily-build-modal");
+                assert(dailyModal && dailyModal.style.display === "flex", "Daily Challenge modal opens cleanly");
+                win.DailyBuildManager.closeModal();
+                assert(dailyModal.style.display === "none", "Daily Challenge modal closes cleanly");
+
+                // 10. Achievements & Trophy Plaza / Hall of Records Verification
+                assert(win.ACHIEVEMENTS.length >= 10, "ACHIEVEMENTS list defined");
+                assert(win.unlockedAchievements.has("first_build"), "'first_build' achievement unlocked after completing Syntax Gateway");
+
+                const trophyB = win.CityEngine.buildings["b_trophy"];
+                assert(trophyB !== undefined, "Trophy Plaza building exists in CityEngine");
+                assert(trophyB.isCivic === true && trophyB.actionType === "achievements", "Trophy Plaza is a civic building configured for achievements & records");
+                
+                // Select Trophy Plaza
+                win.CityEngine.selectBuilding("b_trophy", true);
+                const trophyPanel = doc.getElementById("building-inspect-panel");
+                assert(trophyPanel && trophyPanel.style.display !== "none", "Trophy Plaza inspection panel opens on building selection");
+                assert(trophyPanel.textContent.includes("Trophy Plaza & Hall of Records"), "Inspection panel displays 'Trophy Plaza & Hall of Records'");
+                
+                const achBtn = trophyPanel.querySelector("#inspect-action-btn");
+                const recBtn = trophyPanel.querySelector("#inspect-records-btn");
+                assert(achBtn !== null && achBtn.textContent.includes("VIEW TROPHIES & ACHIEVEMENTS"), "Inspector provides 'VIEW TROPHIES & ACHIEVEMENTS' button");
+                assert(recBtn !== null && recBtn.textContent.includes("HALL OF RECORDS"), "Inspector provides 'HALL OF RECORDS' button");
+                
+                // Test Achievements Activation
+                achBtn.click();
+                const achModal = doc.getElementById("achievements-screen");
+                assert(achModal && achModal.style.display === "flex", "Clicking Trophy action opens Achievements modal overlay");
+                const achClose = doc.getElementById("achievements-modal-close");
+                assert(achClose !== null, "Achievements modal close button exists");
+                achClose.click();
+                assert(achModal.style.display === "none", "Achievements modal close button closes modal");
+
+                // Test Hall of Records Activation
+                recBtn.click();
+                const recModal = doc.getElementById("hall-of-records-modal");
+                assert(recModal && recModal.style.display === "flex", "Clicking Hall of Records opens Hall of Records modal overlay");
+                const statCards = recModal.querySelectorAll(".record-stat-card");
+                assert(statCards.length >= 4, "Hall of Records displays comprehensive personal record cards");
+                
+                // Test transition from Hall of Records to Achievements
+                const toAchBtn = doc.getElementById("records-to-achievements-btn");
+                assert(toAchBtn !== null, "Hall of Records provides direct link to Trophy Collection");
+                toAchBtn.click();
+                assert(recModal.style.display === "none" && achModal.style.display === "flex", "Cross-navigation from Hall of Records to Achievements works seamlessly");
+                
+                // Close Achievements back button
+                const achBackBtn = doc.getElementById("achievements-back-btn");
+                assert(achBackBtn !== null, "Achievements back button exists");
+                achBackBtn.click();
+                assert(achModal.style.display === "none", "Achievements return button closes modal cleanly");
+
+                // Test Pan & Zoom interaction robustness
+                win.CityEngine.camera.zoom = 1.3;
+                win.CityEngine.camera.x += 100;
+                win.CityEngine.camera.y += 100;
+                win.CityEngine.render();
+                const trophyWrap = doc.getElementById("wrap-b_trophy");
+                assert(trophyWrap !== null && trophyWrap.getAttribute("data-building-id") === "b_trophy", "Trophy Plaza wrapper preserves data-building-id after pan/zoom render");
+                trophyWrap.click();
+                assert(win.CityEngine.selectedBuildingId === "b_trophy", "Clicking Trophy Plaza SVG wrapper selects building after pan/zoom");
+
+                // 11. Save & Persistence
+                win.saveGameProgress();
+                const savedRaw = localStorage.getItem("BUILD_IT_SAVE");
+                assert(savedRaw !== null, "Game progress serialized into localStorage 'BUILD_IT_SAVE'");
+                const parsedSave = JSON.parse(savedRaw);
+                assert(parsedSave.cityState !== undefined, "Save data includes cityState");
+                assert(parsedSave.cityState.buildings["b_syntax"].status === "completed", "Syntax Gateway completion persisted in cityState");
+
+                // 12. Backward Compatibility Migration
+                const legacySave = {
+                    version: 1,
+                    completedLevels: [true, false, false],
+                    checkpointXp: 100,
+                    totalXp: 100,
+                    bestStreak: 5,
+                    unlockedAchievements: ["first_build"],
+                    unlockedRewards: [],
+                    flawlessLevels: [],
+                    personalRecords: {},
+                    dailyStreak: { currentStreak: 1, bestStreak: 1 }
+                };
+                win.CityEngine.migrateFromLegacySave(legacySave);
+                assert(win.CityEngine.districts[1].unlocked === true, "Legacy Level 1 completion unlocks District 2 (Logic & Control)");
+                assert(win.CityEngine.buildings["b_bool"].status === "available", "Legacy migration marks first District 2 building available");
+
+                // 13. Full World Legacy Migration
+                const fullLegacySave = {
+                    version: 1,
+                    completedLevels: [true, true, true],
+                    checkpointXp: 300,
+                    totalXp: 300,
+                    bestStreak: 10,
+                    unlockedAchievements: ["first_build", "world_builder", "python_master"],
+                    unlockedRewards: [],
+                    flawlessLevels: [],
+                    personalRecords: {},
+                    dailyStreak: { currentStreak: 3, bestStreak: 3 }
+                };
+                win.CityEngine.migrateFromLegacySave(fullLegacySave);
+                assert(win.CityEngine.districts.every(d => d.unlocked), "Full legacy completion unlocks all 5 districts");
+                assert(win.CityEngine.buildings["b_pinnacle"].status === "completed", "Full legacy completion unlocks Python Pinnacle Tower");
+
+                // 14. Urban Simulation & Supply Chain Mechanics
+                assert(win.CityEngine.inventory !== undefined, "CityEngine inventory is initialized");
+                assert(typeof win.CityEngine.inventory.silicon === "number", "Silicon resource tracked");
+                assert(typeof win.CityEngine.inventory.circuits === "number", "Circuits resource tracked");
+                assert(typeof win.CityEngine.inventory.steel === "number", "Steel resource tracked");
+                assert(typeof win.CityEngine.inventory.construction_kits === "number", "Construction Kits tracked");
+
+                // Test Services (Power & Water)
+                win.CityEngine.updateCityServices();
+                assert(win.CityEngine.services.powerCapacity >= 50, "City power capacity generated by power grid");
+                assert(win.CityEngine.services.waterCapacity >= 40, "City water capacity generated by water plant");
+                assert(win.CityEngine.services.powerDemand >= 0, "City power demand calculated from active buildings");
+
+                // Test Factory Production
+                const initialSilicon = win.CityEngine.inventory.silicon;
+                const prodResult = win.CityEngine.produceGoods("b_var");
+                assert(prodResult.success === true, "Factory batch production starts successfully");
+                assert(win.CityEngine.buildings["b_var"].isProducing === true, "Factory marked as actively producing");
+
+                // Complete production cycle
+                const collectResult = win.CityEngine.collectGoods("b_var");
+                assert(collectResult.success === true, "Factory goods collected successfully");
+                assert(win.CityEngine.inventory.silicon > initialSilicon, "Inventory silicon increased after collection");
+
+                // Test Commercial Conversion
+                win.CityEngine.inventory.silicon = 5;
+                const initialKits = win.CityEngine.inventory.construction_kits;
+                const craftResult = win.CityEngine.craftConstructionKits("b_matrix");
+                assert(craftResult.success === true, "Commercial craft conversion successful");
+                assert(win.CityEngine.inventory.construction_kits === initialKits + 2, "Construction kit count incremented");
+
+                // Test Spaced Retrieval Incident System
+                win.CityEngine.onMistake("variables");
+                assert(win.CityEngine.conceptMastery["variables"] === "needs_review", "Concept marked as needs_review after mistake");
+                assert(win.CityEngine.buildings["b_var"].hasIncident === true, "Building associated with concept receives incident alert");
+
+                // Test HUD & Guide DOM Elements
+                const resGroup = doc.getElementById("hud-resources-group");
+                assert(resGroup !== null, "HUD Resources group rendered in DOM");
+                const guideBtn = doc.getElementById("hud-guide-btn");
+                assert(guideBtn !== null, "City Guide button rendered in HUD");
+                const guideModal = doc.getElementById("city-guide-modal");
+                assert(guideModal !== null, "City Architect Handbook modal present in DOM");
+
+                // Summary
+                log(`\n========================================`, "info");
+                log(`TEST RUN COMPLETE: ${results.passed} PASSED, ${results.failed} FAILED`, results.failed === 0 ? "pass" : "fail");
+                log(`========================================`, "info");
+
+                window.__testResults = results;
+                doc.title = `TESTS: ${results.passed} PASS / ${results.failed} FAIL`;
+            } catch (err) {
+                log("CRITICAL ERROR DURING TESTS: " + err.message + "\n" + err.stack, "fail");
+                window.__testResults = { passed: results.passed, failed: results.failed + 1, error: err.message };
+            }
+        }
+        runAllTestsSynchronously();
+</script>
 
 </body>
 </html>

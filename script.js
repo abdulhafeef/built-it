@@ -4,6 +4,15 @@
 // ==================================================
 
 // DOM Element References
+
+const hudDailyBtn = document.getElementById("hud-daily-btn");
+const hudAchievementsBtn = document.getElementById("hud-achievements-btn");
+const hudReviewBtn = document.getElementById("hud-review-btn");
+const hudRecordsBtn = document.getElementById("hud-records-btn");
+const hudNewGameBtn = document.getElementById("hud-new-game-btn");
+const challengeModalClose = document.getElementById("challenge-modal-close");
+const cityChallengeModal = document.getElementById("city-challenge-modal");
+
 const startButton = document.getElementById("start-button");
 const startButtonText = document.getElementById("start-button-text");
 const newGameButton = document.getElementById("new-game-button");
@@ -3373,6 +3382,7 @@ function validateSaveData(data) {
         dailyStreak: validatedDaily,
         conceptMastery: data.conceptMastery && typeof data.conceptMastery === "object" ? data.conceptMastery : null,
         dailyBuild: data.dailyBuild && typeof data.dailyBuild === "object" ? data.dailyBuild : null,
+        cityState: data.cityState && typeof data.cityState === "object" ? data.cityState : null,
         metrics: data.metrics && typeof data.metrics === "object" ? data.metrics : null
     };
 }
@@ -3465,7 +3475,8 @@ function saveGameProgress() {
             dailyStreak: streakData,
             conceptMastery: ConceptMasteryManager.getData(),
             dailyBuild: DailyBuildManager.getData(),
-            metrics: {
+            cityState: (window.CityEngine && window.CityEngine.getState) ? window.CityEngine.getState() : null,
+        metrics: {
                 totalQuestionsAttempted: totalQuestionsAttempted,
                 totalCorrectAnswers: totalCorrectAnswers,
                 outputAttempts: outputAttempts,
@@ -3502,7 +3513,27 @@ function loadGameProgress() {
     seenBossQuestionIds.clear();
             unlockedAchievements.clear();
             unlockedRewards.clear();
-            updateStartScreenUI(false);
+            // Reset City State
+    if (window.CityEngine) {
+        window.CityEngine.districts.forEach(function (d, idx) {
+            d.unlocked = (idx === 0 || d.id === "civic");
+        });
+        Object.keys(window.CityEngine.buildings).forEach(function (k) {
+            const b = window.CityEngine.buildings[k];
+            if (b.isCivic) {
+                b.status = "completed";
+                b.currentStage = 1;
+            } else {
+                b.currentStage = 0;
+                b.status = (k === "b_syntax") ? "available" : "locked";
+            }
+        });
+        window.CityEngine.centerOnDistrict("d1");
+        window.CityEngine.render();
+        window.CityEngine.updateHUD();
+    }
+
+    updateStartScreenUI(false);
             return false;
         }
 
@@ -3644,8 +3675,14 @@ function loadGameProgress() {
         updateLivesDisplay();
         updateHintDisplay();
 
-        const hasSaved = hasSavedProgress();
-        updateStartScreenUI(hasSaved);
+        // Restore or migrate City Engine state
+        if (window.CityEngine) {
+            if (valid.cityState) {
+                window.CityEngine.loadState(valid.cityState);
+            } else {
+                window.CityEngine.migrateFromLegacySave(valid);
+            }
+        }
 
         return true;
     } catch (e) {
@@ -4617,6 +4654,14 @@ function handleCodeBuilderAnswer(isCorrect, assembledCode, expectedCode, questio
         updateBuilding(successfulCorrectAnswers - 1);
         AudioManager.playSound("build");
 
+        // City Builder construction hook
+        if (window.CityEngine && window.CityEngine.onCorrectChallengeAnswer) {
+            window.CityEngine.onCorrectChallengeAnswer();
+        }
+        if (window.CityEngine && window.CityEngine.updateHUD) {
+            window.CityEngine.updateHUD();
+        }
+
         checkAchievements("answer");
         checkAchievements("code_builder_success");
 
@@ -4711,6 +4756,9 @@ function handleCodeBuilderAnswer(isCorrect, assembledCode, expectedCode, questio
         if (question.concept) {
             ConceptMasteryManager.recordAttempt(question.concept, false);
             pendingRevengeConcept = question.concept;
+            if (window.CityEngine && window.CityEngine.onMistake) {
+                window.CityEngine.onMistake(question.concept);
+            }
         }
 
         lives = Math.max(0, lives - 1);
@@ -5534,7 +5582,9 @@ let achievementsOrigin = "title"; // "game" or "title"
 
 function updateAchievementsBackButton() {
     if (!achievementsBackBtn) return;
-    if (achievementsOrigin === "game") {
+    if (achievementsOrigin === "city") {
+        achievementsBackBtn.innerHTML = "<span>← RETURN TO CITY</span>";
+    } else if (achievementsOrigin === "game") {
         achievementsBackBtn.innerHTML = "<span>← BACK TO GAME</span>";
     } else {
         achievementsBackBtn.innerHTML = "<span>← BACK / HOME</span>";
@@ -5547,13 +5597,10 @@ function openAchievements(origin) {
     } else if (gameScreen && gameScreen.style.display !== "none") {
         achievementsOrigin = "game";
     } else {
-        achievementsOrigin = "title";
+        achievementsOrigin = "city";
     }
     updateAchievementsBackButton();
-    if (gameScreen) gameScreen.style.display = "none";
-    if (startScreen) startScreen.style.display = "none";
-    if (worldMapScreen) worldMapScreen.style.display = "none";
-    if (achievementsScreen) achievementsScreen.style.display = "block";
+    if (achievementsScreen) achievementsScreen.style.display = "flex";
     renderAchievementsGrid();
 }
 
@@ -5633,11 +5680,11 @@ function updateLivesDisplay() {
 function updateHintDisplay() {
     if (hintsRemaining <= 0) {
         hintButton.disabled = true;
-        hintButton.textContent = "💡 Hint Used";
+        hintButton.textContent = "💡 Tip Used";
         hintButton.classList.add("disabled");
     } else {
         hintButton.disabled = false;
-        hintButton.textContent = "💡 Hint (1 left)";
+        hintButton.textContent = "💡 ENGINEER TIP (1 left)";
         hintButton.classList.remove("disabled");
     }
 }
@@ -6104,6 +6151,14 @@ function handleAnswer(selectedIndex) {
         updateBuilding(successfulCorrectAnswers - 1);
         AudioManager.playSound("build");
 
+        // City Builder construction hook
+        if (window.CityEngine && window.CityEngine.onCorrectChallengeAnswer) {
+            window.CityEngine.onCorrectChallengeAnswer();
+        }
+        if (window.CityEngine && window.CityEngine.updateHUD) {
+            window.CityEngine.updateHUD();
+        }
+
         answerButtons[selectedIndex].classList.add("btn-correct", "btn-pop");
         checkAchievements("answer");
 
@@ -6231,6 +6286,9 @@ function handleAnswer(selectedIndex) {
         if (question.concept) {
             ConceptMasteryManager.recordAttempt(question.concept, false);
             pendingRevengeConcept = question.concept;
+            if (window.CityEngine && window.CityEngine.onMistake) {
+                window.CityEngine.onMistake(question.concept);
+            }
         }
 
         lives = Math.max(0, lives - 1);
@@ -6374,6 +6432,19 @@ continueButton.addEventListener("click", function () {
     if (lives === 0) {
         showLevelFailed();
         return;
+    }
+
+    // City challenge progression hook
+    if (window.CityEngine && window.CityEngine.activeChallengeBuildingId) {
+        const b = window.CityEngine.buildings[window.CityEngine.activeChallengeBuildingId];
+        if (b && (b.status === "completed" || b.currentStage >= b.totalStages)) {
+            window.CityEngine.closeChallengeModal();
+            window.CityEngine.selectBuilding(b.id);
+            return;
+        } else if (b) {
+            window.CityEngine.startBuildingChallenge(b.id);
+            return;
+        }
     }
 
     // If 10 successful correct answers achieved, complete level
@@ -6760,6 +6831,14 @@ function showLevelFailed() {
 // When TRY AGAIN is clicked on a failed level:
 tryAgainButton.addEventListener("click", function () {
     AudioManager.playSound("click");
+    if (window.CityEngine && window.CityEngine.activeChallengeBuildingId) {
+        lives = 3;
+        updateLivesDisplay();
+        gameOverCard.style.display = "none";
+        questionCard.style.display = "block";
+        window.CityEngine.startBuildingChallenge(window.CityEngine.activeChallengeBuildingId);
+        return;
+    }
     resetLevelForRetry(currentBuildIndex);
 });
 
@@ -7691,7 +7770,10 @@ if (mapBackBtn) {
 if (achievementsBackBtn) {
     achievementsBackBtn.addEventListener("click", function () {
         AudioManager.playSound("click");
-        if (achievementsOrigin === "game") {
+        if (achievementsOrigin === "city") {
+            achievementsScreen.style.display = "none";
+            if (window.CityEngine) window.CityEngine.render();
+        } else if (achievementsOrigin === "game") {
             achievementsScreen.style.display = "none";
             gameScreen.style.display = "block";
             if (lives === 0) {
@@ -7709,6 +7791,15 @@ if (achievementsBackBtn) {
             achievementsScreen.style.display = "none";
             startScreen.style.display = "block";
         }
+    });
+}
+
+const achCloseBtn = document.getElementById("achievements-modal-close");
+if (achCloseBtn) {
+    achCloseBtn.addEventListener("click", function() {
+        AudioManager.playSound("click");
+        achievementsScreen.style.display = "none";
+        if (window.CityEngine) window.CityEngine.render();
     });
 }
 
@@ -7769,6 +7860,17 @@ window.AudioManager = AudioManager;
 window.DailyStreakManager = DailyStreakManager;
 window.ACHIEVEMENTS = ACHIEVEMENTS;
 window.REWARDS = REWARDS;
+window.houseQuestions = houseQuestions;
+window.rocketQuestions = rocketQuestions;
+window.robotQuestions = robotQuestions;
+window.HOUSE_BOSS_QUESTIONS = HOUSE_BOSS_QUESTIONS;
+window.ROCKET_BOSS_QUESTIONS = ROCKET_BOSS_QUESTIONS;
+window.ROBOT_BOSS_QUESTIONS = ROBOT_BOSS_QUESTIONS;
+window.DAILY_CHALLENGE_POOL = DAILY_CHALLENGE_POOL;
+window.unlockedAchievements = unlockedAchievements;
+window.unlockedRewards = unlockedRewards;
+window.unlockAchievement = unlockAchievement;
+window.checkAchievements = checkAchievements;
 window.getGameState = function () {
     return {
         hasSavedProgress: hasSavedProgress(),
@@ -7998,4 +8100,249 @@ window.getStreak = function () { return streak; };
 window.setStreak = function (val) { streak = val; };
 window.getTotalXp = function () { return totalXp; };
 window.DailyBuildManager = DailyBuildManager;
+
+
+
+// ==================================================
+// CITY BUILDER INTEGRATION INTERFACES
+// ==================================================
+
+window.loadQuestionForCity = function (building, question) {
+    currentQuestion = question;
+    isAnswerLocked = false;
+    hintUsedForCurrentQuestion = false;
+
+    // Challenge Header
+    const bIconEl = document.getElementById("challenge-building-icon");
+    const bTitleEl = document.getElementById("challenge-building-title");
+    const distSubEl = document.getElementById("challenge-district-subtitle");
+
+    if (bIconEl) bIconEl.textContent = building.icon || "🏗️";
+    if (bTitleEl) bTitleEl.textContent = building.name.toUpperCase();
+    if (distSubEl && window.CityEngine) {
+        const d = window.CityEngine.districts.find(function (dist) { return dist.id === building.districtId; });
+        distSubEl.textContent = d ? d.name.toUpperCase() : "METROPOLIS";
+    }
+
+    // Orientation strip
+    const oWorld = document.getElementById("orientation-world-tag");
+    const oStage = document.getElementById("orientation-stage-tag");
+    const oMission = document.getElementById("orientation-mission-tag");
+    if (oWorld) oWorld.textContent = "🐍 PYTHON WORLD";
+    if (oStage && window.CityEngine) {
+        const d = window.CityEngine.districts.find(function (dist) { return dist.id === building.districtId; });
+        oStage.textContent = d ? d.name.toUpperCase() : "CITY";
+    }
+    if (oMission) oMission.textContent = building.name;
+
+    // Badges
+    if (questionNumber) {
+        const stageNum = (building.currentStage || 0) + 1;
+        questionNumber.textContent = "🎯 STAGE " + stageNum + " OF " + building.totalStages;
+    }
+    if (difficultyBadge) {
+        difficultyBadge.textContent = question.difficulty || "MODERATE";
+        difficultyBadge.className = "difficulty-badge " + (
+            question.difficulty === "VERY EASY" ? "badge-very-easy" :
+            question.difficulty === "EASY" ? "badge-easy" :
+            question.difficulty === "BOSS" ? "badge-boss" : "badge-medium"
+        );
+    }
+    if (challengeTypeBadge) {
+        const qType = question.type || "mcq";
+        challengeTypeBadge.textContent = qType === "output" ? "⚡ OUTPUT" : qType === "bug" ? "🐛 BUG HUNT" : "🎯 MCQ";
+        challengeTypeBadge.className = "challenge-type-badge type-" + qType;
+    }
+
+    // Question & Code
+    if (questionText) questionText.textContent = question.question;
+
+    if (codeSnippetBox && codeSnippetText) {
+        if (question.code) {
+            codeSnippetText.textContent = question.code;
+            codeSnippetBox.style.display = "block";
+        } else {
+            codeSnippetBox.style.display = "none";
+        }
+    }
+
+    // Reset Hint
+    if (hintBox) hintBox.style.display = "none";
+    updateHintDisplay();
+
+    // Populate standard option buttons
+    renderStandardOptionButtons(question, false);
+
+    // Reset Result Box & Cards
+    if (resultBox) resultBox.style.display = "none";
+    if (feedback) feedback.style.display = "none";
+    if (gameOverCard) gameOverCard.style.display = "none";
+    if (levelCompleteCard) levelCompleteCard.style.display = "none";
+    if (questionCard) questionCard.style.display = "block";
+
+    // Ensure lives
+    if (lives <= 0) lives = 3;
+    updateLivesDisplay();
+};
+
+// City Top HUD Event Listeners
+if (hudDailyBtn) {
+    hudDailyBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        DailyBuildManager.openModal();
+    });
+}
+
+if (hudAchievementsBtn) {
+    hudAchievementsBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        openAchievements("city");
+    });
+}
+
+if (hudReviewBtn) {
+    hudReviewBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        openMistakeReview();
+    });
+}
+
+if (hudRecordsBtn) {
+    hudRecordsBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        openAchievements("city");
+    });
+}
+
+if (hudNewGameBtn) {
+    hudNewGameBtn.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        openNewGameModal();
+    });
+}
+
+if (challengeModalClose) {
+    challengeModalClose.addEventListener("click", function () {
+        AudioManager.playSound("click");
+        if (window.CityEngine) {
+            window.CityEngine.closeChallengeModal();
+        }
+    });
+}
+
+// Hall of Records / Personal Records Controller
+function openHallOfRecords() {
+    const modal = document.getElementById("hall-of-records-modal");
+    if (!modal) return;
+
+    if (window.AudioManager) window.AudioManager.playSound("click");
+
+    const container = document.getElementById("records-stats-grid");
+    if (container) {
+        const curBestStreak = (typeof sessionPersonalRecords !== "undefined" && sessionPersonalRecords.bestStreak) || (typeof bestStreak !== "undefined" ? bestStreak : 0);
+        const curDailyStreak = (typeof dailyStreak !== "undefined" && dailyStreak.currentStreak) || 0;
+        const curDailyBest = (typeof dailyStreak !== "undefined" && dailyStreak.bestStreak) || 0;
+        const curTotalXp = (typeof totalXp !== "undefined") ? totalXp : 0;
+        const curBestAcc = (typeof sessionPersonalRecords !== "undefined" && sessionPersonalRecords.bestLevelAccuracy) || 0;
+        const unlockedCount = (typeof unlockedAchievements !== "undefined") ? unlockedAchievements.size : 0;
+        
+        let completedBuildings = 0;
+        if (window.CityEngine && window.CityEngine.buildings) {
+            completedBuildings = Object.values(window.CityEngine.buildings).filter(b => b.status === "completed").length;
+        }
+
+        container.innerHTML = `
+            <div class="record-stat-card">
+                <span class="record-stat-icon">🔥</span>
+                <div class="record-stat-info">
+                    <span class="record-stat-label">BEST STREAK</span>
+                    <span class="record-stat-val">${curBestStreak} Answers</span>
+                    <span class="record-stat-sub">Consecutive correct without mistakes</span>
+                </div>
+            </div>
+            <div class="record-stat-card">
+                <span class="record-stat-icon">📅</span>
+                <div class="record-stat-info">
+                    <span class="record-stat-label">DAILY STREAK</span>
+                    <span class="record-stat-val">${curDailyStreak} Days (Best: ${curDailyBest})</span>
+                    <span class="record-stat-sub">Consecutive days building your city</span>
+                </div>
+            </div>
+            <div class="record-stat-card">
+                <span class="record-stat-icon">⭐</span>
+                <div class="record-stat-info">
+                    <span class="record-stat-label">TOTAL EXPERIENCE</span>
+                    <span class="record-stat-val">${curTotalXp} XP</span>
+                    <span class="record-stat-sub">Earned across all engineering challenges</span>
+                </div>
+            </div>
+            <div class="record-stat-card">
+                <span class="record-stat-icon">🎯</span>
+                <div class="record-stat-info">
+                    <span class="record-stat-label">BEST ACCURACY</span>
+                    <span class="record-stat-val">${curBestAcc}%</span>
+                    <span class="record-stat-sub">Highest single-chapter precision</span>
+                </div>
+            </div>
+            <div class="record-stat-card">
+                <span class="record-stat-icon">🏆</span>
+                <div class="record-stat-info">
+                    <span class="record-stat-label">MILESTONE BADGES</span>
+                    <span class="record-stat-val">${unlockedCount} / 16 Unlocked</span>
+                    <span class="record-stat-sub">Permanent trophies secured</span>
+                </div>
+            </div>
+            <div class="record-stat-card">
+                <span class="record-stat-icon">🏙️</span>
+                <div class="record-stat-info">
+                    <span class="record-stat-label">CITY DEVELOPMENTS</span>
+                    <span class="record-stat-val">${completedBuildings} Buildings</span>
+                    <span class="record-stat-sub">Structures erected in Python World</span>
+                </div>
+            </div>
+        `;
+    }
+
+    modal.style.display = "flex";
+}
+
+function closeHallOfRecords() {
+    const modal = document.getElementById("hall-of-records-modal");
+    if (modal) modal.style.display = "none";
+    if (window.CityEngine) window.CityEngine.render();
+}
+
+window.openHallOfRecords = openHallOfRecords;
+window.closeHallOfRecords = closeHallOfRecords;
+
+const recordsCloseBtn = document.getElementById("records-modal-close");
+if (recordsCloseBtn) {
+    recordsCloseBtn.onclick = function () {
+        if (window.AudioManager) window.AudioManager.playSound("click");
+        closeHallOfRecords();
+    };
+}
+
+const recordsReturnBtn = document.getElementById("records-return-city-btn");
+if (recordsReturnBtn) {
+    recordsReturnBtn.onclick = function () {
+        if (window.AudioManager) window.AudioManager.playSound("click");
+        closeHallOfRecords();
+    };
+}
+
+const recordsToAchBtn = document.getElementById("records-to-achievements-btn");
+if (recordsToAchBtn) {
+    recordsToAchBtn.onclick = function () {
+        if (window.AudioManager) window.AudioManager.playSound("click");
+        closeHallOfRecords();
+        openAchievements("city");
+    };
+}
+
+// Initialize City Engine at startup
+if (window.CityEngine && typeof window.CityEngine.init === "function") {
+    window.CityEngine.init();
+    window.CityEngine.updateHUD();
+}
 
