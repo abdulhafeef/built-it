@@ -4919,7 +4919,7 @@ button:focus-visible,
     background: rgba(3, 7, 18, 0.88) !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
-    display: flex !important;
+    display: flex;
     align-items: center !important;
     justify-content: center !important;
     padding: 16px !important;
@@ -6329,7 +6329,7 @@ button:focus-visible,
     top: 0;
     left: 0;
     right: 0;
-    height: 64px;
+    height: 54px;
     z-index: 150;
     display: flex;
     justify-content: space-between;
@@ -6658,16 +6658,29 @@ button:focus-visible,
 .city-viewport {
     position: relative;
     width: 100%;
-    height: calc(100vh - 64px);
+    height: calc(100vh - 54px);
     min-height: 560px;
     overflow: hidden;
-    background: radial-gradient(circle at 50% 45%, #0f172a 0%, #090d16 65%, #020617 100%);
-    cursor: grab;
+    background: linear-gradient(180deg, #cbe8fa 0%, #e3f2fd 45%, #f0f9ff 100%);
     user-select: none;
     -webkit-user-select: none;
 }
 
-.city-viewport:active {
+.city-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+    outline: none;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+}
+
+.city-canvas:active {
     cursor: grabbing;
 }
 
@@ -6804,12 +6817,205 @@ button:focus-visible,
     font-weight: 600;
 }
 
-/* District Jump Navigation (Bottom Center) */
-.district-jump-nav {
+/* City-Builder Bottom Dock (Floating Build Toolbar) */
+.city-bottom-dock {
     position: absolute;
-    bottom: 20px;
+    bottom: 24px;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    pointer-events: auto;
+}
+
+.city-build-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 20px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 0 20px rgba(56, 189, 248, 0.15);
+}
+
+.build-tool-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 14px;
+    background: rgba(30, 41, 59, 0.65);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 14px;
+    color: #cbd5e1;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 700;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+}
+
+.build-tool-btn .tool-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.build-tool-btn .tool-label {
+    letter-spacing: 0.02em;
+}
+
+.build-tool-btn:hover:not(.disabled) {
+    background: rgba(56, 189, 248, 0.2);
+    border-color: rgba(56, 189, 248, 0.5);
+    color: #38bdf8;
+    transform: translateY(-2px);
+}
+
+.build-tool-btn.active {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.35) 0%, rgba(99, 102, 241, 0.35) 100%);
+    border-color: #38bdf8;
+    color: #f8fafc;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.4);
+    transform: translateY(-2px);
+}
+
+.build-tool-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(0.4);
+}
+
+.tool-future-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: rgba(100, 116, 139, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    color: #94a3b8;
+    font-size: 8px;
+    font-weight: 800;
+    padding: 1px 4px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+}
+
+/* Contextual Building Inspector */
+.city-contextual-inspector {
+    position: absolute;
+    bottom: 96px;
+    right: 24px;
+    z-index: 100;
+    animation: inspectorSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: auto;
+}
+
+.inspector-card {
+    background: rgba(15, 23, 42, 0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 16px;
+    padding: 16px 20px;
+    min-width: 250px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45), 0 0 16px rgba(56, 189, 248, 0.15);
+    color: #f8fafc;
+}
+
+.inspector-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.inspector-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.inspector-icon {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.inspector-title {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 800;
+    color: #f8fafc;
+    letter-spacing: -0.2px;
+}
+
+.inspector-subtitle {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #38bdf8;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.inspector-close-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #94a3b8;
+    border-radius: 8px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.15s ease;
+}
+
+.inspector-close-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.inspector-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.inspector-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+}
+
+.inspector-stat-label {
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.inspector-stat-val {
+    color: #f1f5f9;
+    font-weight: 700;
+}
+
+@keyframes inspectorSlideUp {
+    from { opacity: 0; transform: translateY(12px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* District Jump Navigation (Hidden for Phase 1A build toolbar focus) */
+.district-jump-nav {
+    display: none;
     z-index: 40;
     display: flex;
     gap: 4px;

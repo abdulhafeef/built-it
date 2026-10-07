@@ -6,6 +6,12 @@
 (function (window) {
     "use strict";
 
+    if (typeof SVGElement !== "undefined" && !SVGElement.prototype.click) {
+        SVGElement.prototype.click = function () {
+            this.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+        };
+    }
+
     // ------------------------------------------------------------------------
     // 1. ISOMETRIC PROJECTION CONSTANTS & MATH
     // ------------------------------------------------------------------------
@@ -891,6 +897,7 @@
     // 6. MAIN CITY ENGINE OBJECT
     // ------------------------------------------------------------------------
     const CityEngine = {
+        camera: Camera,
         districts: DISTRICTS,
         buildings: BUILDINGS,
         selectedBuildingId: null,
@@ -926,6 +933,10 @@
             this.viewport = document.getElementById("city-viewport");
             this.svg = document.getElementById("city-svg");
             this.cameraRoot = document.getElementById("city-camera-root");
+
+            if (window.CityCanvas && typeof window.CityCanvas.init === "function") {
+                window.CityCanvas.init("city-viewport");
+            }
 
             if (!this.viewport || !this.svg || !this.cameraRoot) {
                 console.warn("CityEngine: Viewport elements missing.");
@@ -995,6 +1006,10 @@
 
         // Render full isometric scene with painter's depth sorting
         render() {
+            if (window.CityCanvas && typeof window.CityCanvas.render === "function") {
+                window.CityCanvas.render();
+            }
+
             if (!this.cameraRoot) return;
 
             const items = [];
@@ -1371,7 +1386,7 @@
         bindEvents() {
             // Camera Mouse Drag
             this.viewport.addEventListener("mousedown", (e) => {
-                if (e.target.closest(".camera-controls-panel, .district-jump-nav, .building-inspect-panel")) return;
+                if (e.target.closest(".camera-controls-panel, .district-jump-nav, .building-inspect-panel, #city-canvas, .city-contextual-inspector")) return;
                 Camera.isDragging = true;
                 Camera.dragStartX = e.clientX;
                 Camera.dragStartY = e.clientY;
@@ -1394,6 +1409,7 @@
 
             // Wheel Zoom
             this.viewport.addEventListener("wheel", (e) => {
+                if (e.target.id === "city-canvas") return;
                 e.preventDefault();
                 const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
                 Camera.zoom = Camera.clampZoom(Camera.zoom * zoomFactor);
@@ -1403,7 +1419,7 @@
 
             // Mobile Touch Support
             this.viewport.addEventListener("touchstart", (e) => {
-                if (e.target.closest(".camera-controls-panel, .district-jump-nav, .building-inspect-panel")) return;
+                if (e.target.closest(".camera-controls-panel, .district-jump-nav, .building-inspect-panel, #city-canvas, .city-contextual-inspector")) return;
                 if (e.touches.length === 1) {
                     Camera.isDragging = true;
                     Camera.dragStartX = e.touches[0].clientX;

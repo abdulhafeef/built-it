@@ -106,10 +106,16 @@
         <!-- 1. MAIN INTERACTIVE ISOMETRIC CITY VIEWPORT    -->
         <!-- ============================================== -->
         <main id="city-viewport" class="city-viewport" role="region" aria-label="Interactive Isometric Python City">
-            <!-- The Procedural Isometric City Canvas -->
-            <svg id="city-svg" class="city-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+            <!-- HTML5 Isometric City Canvas -->
+            <canvas id="city-canvas" class="city-canvas" tabindex="0"></canvas>
+
+            <!-- Backward-compatibility SVG elements -->
+            <svg id="city-svg" class="city-svg" style="display: none;" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
                 <g id="city-camera-root"></g>
             </svg>
+
+            <!-- Floating Contextual Building Inspector -->
+            <div id="city-contextual-inspector" class="city-contextual-inspector" style="display: none;" role="dialog" aria-label="Building Inspector"></div>
 
             <!-- Floating Camera Controls (Top Right) -->
             <div class="camera-controls-panel" aria-label="Camera Controls">
@@ -120,68 +126,50 @@
                     <button id="cam-overview" class="camera-btn" type="button" title="City Overview" aria-label="City Overview">🌐</button>
                 </div>
                 <div id="cam-zoom-badge" class="camera-zoom-badge">100% • District View</div>
-
-                <!-- City Information Overlays Selector -->
-                <div class="service-overlays-panel" id="service-overlays-panel" aria-label="City Information Overlays">
-                    <button type="button" class="overlay-pill active" data-overlay="none" title="Normal City View">🗺️ Normal</button>
-                    <button type="button" class="overlay-pill" data-overlay="power" title="Power Grid Overlay">⚡ Power</button>
-                    <button type="button" class="overlay-pill" data-overlay="water" title="Water Network Overlay">💧 Water</button>
-                    <button type="button" class="overlay-pill" data-overlay="traffic" title="Traffic & Logistics Overlay">🛣️ Roads</button>
-                </div>
             </div>
 
-            <!-- Road Construction Mode Floating Banner -->
-            <div id="road-mode-banner" class="road-mode-banner" style="display: none;">
-                <span class="road-banner-icon">🛣️</span>
-                <span class="road-banner-text">ROAD CONSTRUCTION ACTIVE • Click any open ground tile to pave new road</span>
-                <button id="road-mode-cancel" class="road-banner-cancel-btn" type="button">FINISH ROAD</button>
-            </div>
-
-            <!-- City-Builder Bottom Dock (Build Toolbar & District Quick-Jump) -->
+            <!-- City-Builder Bottom Dock (Build Toolbar) -->
             <div class="city-bottom-dock" id="city-bottom-dock">
                 <!-- City Construction & Build Toolbar -->
                 <nav class="city-build-toolbar" id="city-build-toolbar" aria-label="City Construction & Build Tools">
-                    <button type="button" class="build-tool-btn" data-build-cat="residential">
+                    <button type="button" class="build-tool-btn active" data-tool-id="select">
+                        <span class="tool-icon">👆</span>
+                        <span class="tool-label">Inspect</span>
+                    </button>
+                    <button type="button" class="build-tool-btn" data-tool-id="residential">
                         <span class="tool-icon">🏠</span>
                         <span class="tool-label">Residential</span>
                     </button>
-                    <button type="button" class="build-tool-btn" data-build-cat="industrial">
+                    <button type="button" class="build-tool-btn" data-tool-id="roads">
+                        <span class="tool-icon">🛣️</span>
+                        <span class="tool-label">Roads</span>
+                    </button>
+                    <button type="button" class="build-tool-btn disabled" data-tool-id="industry" title="Industry (Phase 1B)">
                         <span class="tool-icon">🏭</span>
                         <span class="tool-label">Industry</span>
+                        <span class="tool-future-badge">SOON</span>
                     </button>
-                    <button type="button" class="build-tool-btn" data-build-cat="commercial">
+                    <button type="button" class="build-tool-btn disabled" data-tool-id="commerce" title="Commerce (Phase 1B)">
                         <span class="tool-icon">🛒</span>
                         <span class="tool-label">Commerce</span>
+                        <span class="tool-future-badge">SOON</span>
                     </button>
-                    <button type="button" class="build-tool-btn" data-build-cat="service">
+                    <button type="button" class="build-tool-btn disabled" data-tool-id="services" title="Services (Phase 1B)">
                         <span class="tool-icon">⚡</span>
                         <span class="tool-label">Services</span>
+                        <span class="tool-future-badge">SOON</span>
                     </button>
-                    <button type="button" class="build-tool-btn" id="tool-btn-road" data-build-cat="roads">
-                        <span class="tool-icon">🛣️</span>
-                        <span class="tool-label">Road Tool</span>
-                    </button>
-                    <button type="button" class="build-tool-btn" data-build-cat="tech">
+                    <button type="button" class="build-tool-btn disabled" data-tool-id="education" title="Education (Phase 1B)">
                         <span class="tool-icon">🎓</span>
-                        <span class="tool-label">Python Tech</span>
+                        <span class="tool-label">Education</span>
+                        <span class="tool-future-badge">SOON</span>
                     </button>
-                    <button type="button" class="build-tool-btn" data-build-cat="civic">
-                        <span class="tool-icon">🏛️</span>
-                        <span class="tool-label">Civic & Parks</span>
+                    <button type="button" class="build-tool-btn disabled" data-tool-id="parks" title="Parks / Landmarks (Phase 1B)">
+                        <span class="tool-icon">🌳</span>
+                        <span class="tool-label">Parks/Landmarks</span>
+                        <span class="tool-future-badge">SOON</span>
                     </button>
-                </nav>
-
-                <!-- Floating District Jump Bar (Retained for quick camera navigation) -->
-                <nav class="district-jump-nav" aria-label="District Quick Navigation">
-                    <button type="button" class="district-pill active" data-jump="overview">🌟 Overview</button>
-                    <button type="button" class="district-pill" data-jump="d1">🌱 Basics</button>
-                    <button type="button" class="district-pill" data-jump="d2">⚡ Logic</button>
-                    <button type="button" class="district-pill" data-jump="d3">🔧 Functions</button>
-                    <button type="button" class="district-pill" data-jump="d4">📊 Data</button>
-                    <button type="button" class="district-pill" data-jump="d5">⚙️ OOP</button>
-                    <button type="button" class="district-pill" data-jump="civic">🏛️ Civic Plaza</button>
-                </nav>
-            </div>
+                </nav>            </div>
 
             <!-- Floating Build Mode Catalog Drawer (Bottom Slide-Up) -->
             <div id="city-build-drawer" class="city-build-drawer" style="display: none;" role="region" aria-label="City Construction Catalog">
@@ -1071,6 +1059,7 @@
     </div>
 
     <!-- SCRIPTS -->
+    <script src="cityCanvas.js"></script>
     <script src="cityEngine.js"></script>
     <script src="script.js"></script>
 
